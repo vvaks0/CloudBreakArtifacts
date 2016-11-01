@@ -1,0 +1,5 @@
+Name: openstack-m3-2xlarge
+Description: 16 cores 30 GB memoery
+Instance Type: m3.2xlarge
+Attached Volumes Per Instance: 0
+Volume Size (GB): 0

@@ -1,0 +1,5 @@
+Name: openstack-m3-large
+Description: 4 cores 7.5 GB memory
+Instance Type: m3.large
+Attached Volumes Per Instance: 0
+Volume Size (GB): 0
