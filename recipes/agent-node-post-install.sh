@@ -80,4 +80,6 @@ echo "export COMETD_HOST=$COMETD_HOST" >> ~/.bash_profile
 
 env
 
+yum install -y phoenix
+
 exit 0

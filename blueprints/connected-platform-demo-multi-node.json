@@ -407,7 +407,7 @@
       "storm-env" : {
         "properties_attributes" : { },
         "properties" : {
-          "content" : "\n      #!/bin/bash\n\n      # Set Storm specific environment variables here.\n\n      # The java implementation to use.\n      export JAVA_HOME={{java64_home}}\n\n      export STORM_CONF_DIR={{conf_dir}}\n      export STORM_HOME={{storm_component_home_dir}}\n\n      export STORM_JAR_JVM_OPTS={{jar_jvm_opts}}",
+          "content" : "\n      #!/bin/bash\n\n      # Set Storm specific environment variables here.\n\n      # The java implementation to use.\n      export JAVA_HOME=/usr/jdk64\n\n      export STORM_CONF_DIR={{conf_dir}}\n      export STORM_HOME={{storm_component_home_dir}}\n\n      export STORM_JAR_JVM_OPTS={{jar_jvm_opts}}",
           "storm_logs_supported" : "true",
           "storm_log_dir" : "/var/log/storm",
           "nimbus_seeds_supported" : "true",
@@ -1568,7 +1568,7 @@
           "yarn.scheduler.capacity.resource-calculator" : "org.apache.hadoop.yarn.util.resource.DefaultResourceCalculator",
           "yarn.scheduler.capacity.root.default.maximum-capacity" : "100",
           "yarn.scheduler.capacity.node-locality-delay" : "40",
-          "yarn.scheduler.capacity.maximum-am-resource-percent" : "0.2",
+          "yarn.scheduler.capacity.maximum-am-resource-percent" : "0.3",
           "yarn.scheduler.capacity.root.default.acl_submit_applications" : "*",
           "yarn.scheduler.capacity.root.default.state" : "RUNNING",
           "capacity-scheduler" : "null",
@@ -1760,7 +1760,7 @@
           "yarn.nodemanager.delete.debug-delay-sec" : "0",
           "hadoop.registry.zk.quorum" : "%HOSTGROUP::host_group_3%:2181,%HOSTGROUP::host_group_2%:2181,%HOSTGROUP::host_group_1%:2181",
           "yarn.resourcemanager.am.max-attempts" : "2",
-          "yarn.scheduler.maximum-allocation-mb" : "4096",
+          "yarn.scheduler.maximum-allocation-mb" : "16384",
           "yarn.nodemanager.resource.percentage-physical-cpu-limit" : "80",
           "yarn.timeline-service.leveldb-timeline-store.read-cache-size" : "104857600",
           "yarn.scheduler.maximum-allocation-vcores" : "3",
