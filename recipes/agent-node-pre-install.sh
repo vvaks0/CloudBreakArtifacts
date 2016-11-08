@@ -13,3 +13,5 @@ alternatives --install /usr/bin/javac javac /usr/jdk64/bin/javac 3
 alternatives --install /usr/bin/jar jar /usr/jdk64/bin/jar 3
 export JAVA_HOME=/usr/jdk64
 echo "export JAVA_HOME=/usr/jdk64" >> /etc/bashrc
+
+exit 0

@@ -79,4 +79,5 @@ echo "export COMETD_HOST=$COMETD_HOST" >> ~/.bash_profile
 . ~/.bash_profile
 
 env
+
 exit 0
