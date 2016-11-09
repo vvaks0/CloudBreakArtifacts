@@ -2,7 +2,9 @@
 exec > >(tee -i postProvisioning.log)
 exec 2>&1
 
-AMBARI_HOST=$(nslookup $(cat /etc/ambari-agent/conf/ambari-agent.ini| grep hostname= |grep -Po '([0-9.]+)')| grep -Po ' = (.*)'| grep -Po '([0-9a-zA-Z\-_.,?!@#$%^&*]+)'| rev | cut -c 2- | rev)
+#AMBARI_HOST=$(nslookup $(cat /etc/ambari-agent/conf/ambari-agent.ini| grep hostname= |grep -Po '([0-9.]+)')| grep -Po ' = (.*)'| grep -Po '([0-9a-zA-Z\-_.,?!@#$%^&*]+)'| rev | cut -c 2- | rev)
+AMBARI_HOST=$(cat /etc/ambari-agent/conf/ambari-agent.ini| grep hostname= |grep -Po '([0-9.]+)')
+
 
 export CLUSTER_NAME=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters |grep cluster_name|grep -Po ': "(.+)'|grep -Po '[a-zA-Z0-9\-_!?.]+')
 
