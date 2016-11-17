@@ -1,4 +1,6 @@
 #!/bin/bash
+exec > >(tee -i preProvisioning.log)
+exec 2>&1
 
 export AMBARI_HOST=$(hostname -f)
 echo "*********************************AMABRI HOST IS: $AMBARI_HOST"
