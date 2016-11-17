@@ -12,6 +12,12 @@ else
        	echo "*********************************CLUSTER NAME IS: $CLUSTER_NAME"
 fi
 
+git clone https://github.com/vakshorton/CloudBreakArtifacts
+cd CloudBreakArtifacts
+export ROOT_PATH=$(pwd)
+
+echo "*********************************ROOT PATH IS: $ROOT_PATH"
+
 getHiveServerHost () {
         HIVESERVER_HOST=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/HIVE/components/HIVE_SERVER|grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
 
@@ -63,8 +69,83 @@ echo "host  all rangerdba,rangerlogger ::/0 trust" >> /var/lib/pgsql/data/pg_hba
 
 sudo -u postgres /usr/bin/pg_ctl -D /var/lib/pgsql/data reload
 
-sed -r -i "s;\{\{ZK_HOST\}\};$ZK_HOST;" ranger-config/ranger-admin-site
-sed -r -i "s;\{\{AMBARI_HOST\}\};$AMBARI_HOST;" ranger-config/ranger-admin-site
-sed -r -i "s;\{\{AMBARI_HOST\}\};$AMBARI_HOST;" ranger-config/ranger-env
-sed -r -i "s;\{\{NAMENODE_HOST\}\};$NAMENODE_HOST;" ranger-config/ranger-env
-sed -r -i "s;\{\{ATLAS_HOST\}\};$ATLAS_HOST;" ranger-config/ranger-tagsync-site
+	echo "*********************************Creating RANGER service..."
+       	# Create RANGER service
+       	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/RANGER
+
+       	sleep 2
+       	# Add RANGER_ADMIN component to service
+       	echo "*********************************Adding RANGER_ADMIN component..."       	
+       	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/RANGER/components/RANGER_ADMIN
+       	
+       	sleep 2
+       	# Add RANGER_TAGSYNC component to service
+       	echo "*********************************Adding RANGER_TAGSYNC component..."
+       	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/RANGER/components/RANGER_TAGSYNC
+       	
+       	sleep 2
+       	# Add RANGER_USERSYNC component to service
+       	echo "*********************************Adding RANGER_USERSYNC component..."
+       	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/RANGER/components/RANGER_USERSYNC
+
+       	sleep 2
+       	echo "*********************************Creating RANGER configuration..."
+
+       	# Apply environment variables to RANGER configuration
+sed -r -i "s;\{\{ZK_HOST\}\};$ZK_HOST;" $ROOT_PATH/ranger-config/ranger-admin-site
+sed -r -i "s;\{\{AMBARI_HOST\}\};$AMBARI_HOST;" $ROOT_PATH/ranger-config/ranger-admin-site
+sed -r -i "s;\{\{AMBARI_HOST\}\};$AMBARI_HOST;" $ROOT_PATH/ranger-config/ranger-env
+sed -r -i "s;\{\{NAMENODE_HOST\}\};$NAMENODE_HOST;" $ROOT_PATH/ranger-config/ranger-env
+sed -r -i "s;\{\{ATLAS_HOST\}\};$ATLAS_HOST;" $ROOT_PATH/ranger-config/ranger-tagsync-site
+		
+		# Create and apply configuration
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME admin-log4j $ROOT_PATH/ranger-config/admin-log4j
+		sleep 2
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME ranger-admin-site $ROOT_PATH/ranger-config/ranger-admin-site
+		sleep 2
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME ranger-env $ROOT_PATH/ranger-config/ranger-env
+		sleep 2
+       	/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME ranger-tagsync-site $ROOT_PATH/ranger-config/ranger-tagsync-site
+       	sleep 2
+       	/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME ranger-ugsync-site $ROOT_PATH/ranger-config/ranger-ugsync-site
+       	sleep 2
+       	/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME tagsync-log4j $ROOT_PATH/ranger-config/tagsync-log4j
+       	sleep 2
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME usersync-log4j $ROOT_PATH/ranger-config/usersync-log4j
+
+		echo "*********************************Adding RANGER_ADMIN role to Host..."
+       	# Add RANGER_ADMIN role to Ambari host
+       	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/hosts/$AMBARI_HOST/host_components/RANGER_ADMIN
+
+		echo "*********************************Adding RANGER_TAGSYNC role to Host..."
+       	# Add RANGER_TAGSYNC role to Ambari host
+       	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/hosts/$AMBARI_HOST/host_components/RANGER_TAGSYNC
+
+		echo "*********************************Adding RANGER_USERSYNC role to Host..."
+       	# Add RANGER_ADMIN role to Ambari host
+       	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/hosts/$AMBARI_HOST/host_components/RANGER_USERSYNC
+		
+       	sleep 30
+       	echo "*********************************Installing RANGER Service"
+       	# Install RANGER Service
+       	TASKID=$(curl -u admin:admin -H "X-Requested-By:ambari" -i -X PUT -d '{"RequestInfo": {"context" :"Install Ranger"}, "Body": {"ServiceInfo": {"maintenance_state" : "OFF", "state": "INSTALLED"}}}' http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/RANGER | grep "id" | grep -Po '([0-9]+)')
+		
+		sleep 2       	
+       	if [ -z $TASKID ]; then
+       		until ! [ -z $TASKID ]; do
+       			TASKID=$(curl -u admin:admin -H "X-Requested-By:ambari" -i -X PUT -d '{"RequestInfo": {"context" :"Install Ranger"}, "Body": {"ServiceInfo": {"maintenance_state" : "OFF", "state": "INSTALLED"}}}' http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/RANGER | grep "id" | grep -Po '([0-9]+)')
+       		 	echo "*********************************AMBARI TaskID " $TASKID
+       		done
+       	fi
+       	
+       	echo "*********************************AMBARI TaskID " $TASKID
+       	sleep 2
+       	LOOPESCAPE="false"
+       	until [ "$LOOPESCAPE" == true ]; do
+               	TASKSTATUS=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/requests/$TASKID | grep "request_status" | grep -Po '([A-Z]+)')
+               	if [ "$TASKSTATUS" == COMPLETED ]; then
+                       	LOOPESCAPE="true"
+               	fi
+               	echo "*********************************Task Status" $TASKSTATUS
+               	sleep 2
+       	done
