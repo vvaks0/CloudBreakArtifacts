@@ -1,0 +1,18 @@
+"properties" : {
+"ranger.tagsync.dest.ranger.endpoint" : "{{ranger_external_url}}",
+"ranger.tagsync.dest.ranger.ssl.config.filename" : "/usr/hdp/current/ranger-tagsync/conf/mytruststore.jks",
+"ranger.tagsync.dest.ranger.username" : "rangertagsync",
+"ranger.tagsync.kerberos.keytab" : "",
+"ranger.tagsync.kerberos.principal" : "",
+"ranger.tagsync.keystore.filename" : "/usr/hdp/current/ranger-tagsync/conf/rangertagsync.jceks",
+"ranger.tagsync.logdir" : "/var/log/ranger/tagsync",
+"ranger.tagsync.source.atlas" : "true",
+"ranger.tagsync.source.atlasrest" : "false",
+"ranger.tagsync.source.atlasrest.download.interval.millis" : "60000",
+"ranger.tagsync.source.atlasrest.endpoint" : "http://{{ATLAS_HOST}}:21000",
+"ranger.tagsync.source.atlasrest.keystore.filename" : "/usr/hdp/current/ranger-tagsync/conf/atlasuser.jceks",
+"ranger.tagsync.source.atlasrest.username" : "admin",
+"ranger.tagsync.source.file" : "false",
+"ranger.tagsync.source.file.check.interval.millis" : "",
+"ranger.tagsync.source.file.filename" : ""
+}
