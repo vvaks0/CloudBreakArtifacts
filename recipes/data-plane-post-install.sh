@@ -1,5 +1,5 @@
 #!/bin/bash
-exec > >(tee -i preProvisioning.log)
+exec > >(tee -i postProvisioning.log)
 exec 2>&1
 
 export AMBARI_HOST=$(hostname -f)
