@@ -143,7 +143,19 @@ sudo -u postgres /usr/bin/pg_ctl -D /var/lib/pgsql/data reload
        	# Add RANGER_USERSYNC component to service
        	echo "*********************************Adding RANGER_USERSYNC component..."
        	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/RANGER/components/RANGER_USERSYNC
+	
+		echo "*********************************Adding RANGER_ADMIN role to Host..."
+       	# Add RANGER_ADMIN role to Ambari host
+       	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/hosts/$AMBARI_HOST/host_components/RANGER_ADMIN
 
+		echo "*********************************Adding RANGER_TAGSYNC role to Host..."
+       	# Add RANGER_TAGSYNC role to Ambari host
+       	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/hosts/$AMBARI_HOST/host_components/RANGER_TAGSYNC
+
+		echo "*********************************Adding RANGER_USERSYNC role to Host..."
+       	# Add RANGER_ADMIN role to Ambari host
+       	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/hosts/$AMBARI_HOST/host_components/RANGER_USERSYNC
+		
        	sleep 2
        	echo "*********************************Creating RANGER configuration..."
 
@@ -168,19 +180,8 @@ sed -r -i "s;\{\{ATLAS_HOST\}\};$ATLAS_HOST;" $ROOT_PATH/ranger-config/ranger-ta
        	/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME tagsync-log4j $ROOT_PATH/ranger-config/tagsync-log4j
        	sleep 2
 		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME usersync-log4j $ROOT_PATH/ranger-config/usersync-log4j
-
-		echo "*********************************Adding RANGER_ADMIN role to Host..."
-       	# Add RANGER_ADMIN role to Ambari host
-       	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/hosts/$AMBARI_HOST/host_components/RANGER_ADMIN
-
-		echo "*********************************Adding RANGER_TAGSYNC role to Host..."
-       	# Add RANGER_TAGSYNC role to Ambari host
-       	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/hosts/$AMBARI_HOST/host_components/RANGER_TAGSYNC
-
-		echo "*********************************Adding RANGER_USERSYNC role to Host..."
-       	# Add RANGER_ADMIN role to Ambari host
-       	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/hosts/$AMBARI_HOST/host_components/RANGER_USERSYNC
 		
+		echo "*********************************Pausing to ensure Ranger Service is ready"
        	sleep 30
        	echo "*********************************Installing RANGER Service"
        	# Install RANGER Service
