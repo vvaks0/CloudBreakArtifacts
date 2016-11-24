@@ -5,7 +5,7 @@
 "xasecure.audit.destination.solr" : "true",
 "xasecure.audit.destination.solr.batch.filespool.dir" : "/var/log/hive/audit/solr/spool",
 "xasecure.audit.destination.solr.urls" : "",
-"xasecure.audit.destination.solr.zookeepers" : “{{ZK_HOST}}:2181/infra-solr",
+"xasecure.audit.destination.solr.zookeepers" : "{{ZK_HOST}}:2181/infra-solr",
 "xasecure.audit.is.enabled" : "true",
 "xasecure.audit.provider.summary.enabled" : "false"
 }
