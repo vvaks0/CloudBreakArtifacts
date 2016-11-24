@@ -1,0 +1,7 @@
+"properties" : {
+"REPOSITORY_CONFIG_PASSWORD" : "hive",
+"REPOSITORY_CONFIG_USERNAME" : "hive",
+"common.name.for.certificate" : "",
+"jdbc.driverClassName" : "org.apache.hive.jdbc.HiveDriver",
+"policy_user" : "ambari-qa"
+}

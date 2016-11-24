@@ -72,6 +72,11 @@ getAtlasHost () {
        	
        	echo $ATLAS_HOST
 }
+getRangerHost () {
+       	RANGER_HOST=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/RANGERcomponents/RANGER_ADMIN |grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
+       	
+       	echo $RANGER_HOST
+}
 
 export JAVA_HOME=/usr/jdk64
 NAMENODE_HOST=$(getNameNodeHost)
@@ -88,6 +93,8 @@ KAFKA_BROKER=$(getKafkaBroker)
 export KAFKA_BROKER=$KAFKA_BROKER
 ATLAS_HOST=$(getAtlasHost)
 export ATLAS_HOST=$ATLAS_HOST
+RANGER_HOST=$(getRangerHost)
+export RANGER_HOST=$RANGER_HOST
 env
 
 echo "export NAMENODE_HOST=$NAMENODE_HOST" >> /etc/bashrc
@@ -96,6 +103,7 @@ echo "export KAFKA_BROKER=$KAFKA_BROKER" >> /etc/bashrc
 echo "export ATLAS_HOST=$ATLAS_HOST" >> /etc/bashrc
 echo "export HIVE_METASTORE_HOST=$HIVE_METASTORE_HOST" >> /etc/bashrc
 echo "export HIVE_METASTORE_URI=$HIVE_METASTORE_URI" >> /etc/bashrc
+echo "export RANGER_HOST=$RANGER_HOST" >> /etc/bashrc
 
 echo "export NAMENODE_HOST=$NAMENODE_HOST" >> ~/.bash_profile
 echo "export ZK_HOST=$ZK_HOST" >> ~/.bash_profile
@@ -103,27 +111,28 @@ echo "export KAFKA_BROKER=$KAFKA_BROKER" >> ~/.bash_profile
 echo "export ATLAS_HOST=$ATLAS_HOST" >> ~/.bash_profile
 echo "export HIVE_METASTORE_HOST=$HIVE_METASTORE_HOST" >> ~/.bash_profile
 echo "export HIVE_METASTORE_URI=$HIVE_METASTORE_URI" >> ~/.bash_profile
+echo "export RANGER_HOST=$RANGER_HOST" >> ~/.bash_profile
 
 . ~/.bash_profile
 
 #createTransactionHistoryTable
 
 #Configure Postgres for Ranger
-yum install -y postgresql-jdbc*
-echo "host all all 127.0.0.1/32 md5" >> /var/lib/pgsql/data/pg_hba.conf
-echo "CREATE DATABASE rangerdb;" | sudo -u postgres psql -U postgres
-echo "CREATE USER rangerdba WITH PASSWORD 'ranger';" | sudo -u postgres psql -U postgres
-echo "GRANT ALL PRIVILEGES ON DATABASE rangerdb TO rangerdba;" | sudo -u postgres psql -U postgres
+#yum install -y postgresql-jdbc*
+#echo "host all all 127.0.0.1/32 md5" >> /var/lib/pgsql/data/pg_hba.conf
+#echo "CREATE DATABASE rangerdb;" | sudo -u postgres psql -U postgres
+#echo "CREATE USER rangerdba WITH PASSWORD 'ranger';" | sudo -u postgres psql -U postgres
+#echo "GRANT ALL PRIVILEGES ON DATABASE rangerdb TO rangerdba;" | sudo -u postgres psql -U postgres
 
-ambari-server setup --jdbc-db=postgres --jdbc-driver=/usr/share/java/postgresql-jdbc.jar
+#ambari-server setup --jdbc-db=postgres --jdbc-driver=/usr/share/java/postgresql-jdbc.jar
 
-export HADOOP_CLASSPATH=${HADOOP_CLASSPATH}:${JAVA_JDBC_LIBS}:/usr/share/java/postgresql-jdbc.jar
+#export HADOOP_CLASSPATH=${HADOOP_CLASSPATH}:${JAVA_JDBC_LIBS}:/usr/share/java/postgresql-jdbc.jar
 
-echo "local all rangerdba,rangerlogger trust" >> /var/lib/pgsql/data/pg_hba.conf
-echo "host  all rangerdba,rangerlogger 0.0.0.0/0 trust" >> /var/lib/pgsql/data/pg_hba.conf
-echo "host  all rangerdba,rangerlogger ::/0 trust" >> /var/lib/pgsql/data/pg_hba.conf
+#echo "local all rangerdba,rangerlogger trust" >> /var/lib/pgsql/data/pg_hba.conf
+#echo "host  all rangerdba,rangerlogger 0.0.0.0/0 trust" >> /var/lib/pgsql/data/pg_hba.conf
+#echo "host  all rangerdba,rangerlogger ::/0 trust" >> /var/lib/pgsql/data/pg_hba.conf
 
-sudo -u postgres /usr/bin/pg_ctl -D /var/lib/pgsql/data reload
+#sudo -u postgres /usr/bin/pg_ctl -D /var/lib/pgsql/data reload
 
 	echo "*********************************Creating RANGER service..."
        	# Create RANGER service
@@ -165,6 +174,24 @@ sed -r -i "s;\{\{AMBARI_HOST\}\};$AMBARI_HOST;" $ROOT_PATH/ranger-config/ranger-
 sed -r -i "s;\{\{AMBARI_HOST\}\};$AMBARI_HOST;" $ROOT_PATH/ranger-config/ranger-env
 sed -r -i "s;\{\{NAMENODE_HOST\}\};$NAMENODE_HOST;" $ROOT_PATH/ranger-config/ranger-env
 sed -r -i "s;\{\{ATLAS_HOST\}\};$ATLAS_HOST;" $ROOT_PATH/ranger-config/ranger-tagsync-site
+		
+		
+sed -r -i "s;\{\{ZK_HOST\}\};$ZK_HOST;" $ROOT_PATH/hive-ranger-config/ranger-hive-audit
+sed -r -i "s;\{\{NAMENODE_HOST\}\};$NAMENODE_HOST;" $ROOT_PATH/hive-ranger-config/ranger-hive-audit
+sed -r -i "s;\{\{RANGER_URL\}\};http://$RANGER_HOST:6080;" $ROOT_PATH/hive-ranger-config/ranger-hive-security
+sed -r -i "s;\{\{REPO_NAME\}\};data-plane_hive;" $ROOT_PATH/hive-ranger-config/ranger-hive-security
+
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hiveserver2-site hive.security.authorization.enabled true
+		sleep 2
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hiveserver2-site hive.security.authorization.manager org.apache.ranger.authorization.hive.authorizer.RangerHiveAuthorizerFactory
+		sleep 2
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME ranger-hive-audit $ROOT_PATH/hive-ranger-config/ranger-hive-audit
+		sleep 2
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME ranger-hive-plugin-properties $ROOT_PATH/hive-ranger-config/ranger-hive-plugin-properties
+		sleep 2
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME  ranger-hive-policymgr-ssl $ROOT_PATH/hive-ranger-config/ranger-hive-policymgr-ssl
+		sleep 2
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME ranger-hive-security $ROOT_PATH/hive-ranger-config/ranger-hive-security
 		
 		# Create and apply configuration
 		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME admin-log4j $ROOT_PATH/ranger-config/admin-log4j
