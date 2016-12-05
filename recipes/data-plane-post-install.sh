@@ -73,7 +73,7 @@ getAtlasHost () {
        	echo $ATLAS_HOST
 }
 getRangerHost () {
-       	RANGER_HOST=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/RANGERcomponents/RANGER_ADMIN |grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
+       	RANGER_HOST=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/RANGER/components/RANGER_ADMIN |grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
        	
        	echo $RANGER_HOST
 }

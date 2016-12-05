@@ -7,6 +7,6 @@ cd DeviceManagerDemo
 sed -r -i 's;\{\{jdk64_home\}\};/usr/jdk64;' Nifi/config/nifi-env.json
 ./install.sh
 ./startDemoServices.sh
-./startSimulation.sh
+#./startSimulation.sh
 
 exit 0
