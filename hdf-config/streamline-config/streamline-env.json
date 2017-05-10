@@ -1,0 +1,8 @@
+"properties" : {
+"content" : "\n#!/bin/bash\n\n# Set STREAMLINE specific environment variables here.\n\n# The java implementation to use.\nexport JAVA_HOME={{java64_home}}\nexport PATH=$PATH:$JAVA_HOME/bin\nexport PID_DIR={{streamline_pid_dir}}\nexport LOG_DIR={{streamline_log_dir}}\nexport STREAMLINE_KERBEROS_PARAMS={{streamline_kerberos_params}}",
+"streamline_log_dir" : "/var/log/streamline",
+"streamline_pid_dir" : "/var/run/streamline",
+"streamline_user" : "streamline",
+"streamline_user_nofile_limit" : "65536",
+"streamline_user_nproc_limit" : "65536"
+}

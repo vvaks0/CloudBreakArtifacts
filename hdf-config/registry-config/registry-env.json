@@ -1,0 +1,8 @@
+"properties" : {
+"content" : "\n#!/bin/bash\n\n# Set REGISTRY specific environment variables here.\n\n# The java implementation to use.\nexport JAVA_HOME={{java64_home}}\nexport PATH=$PATH:$JAVA_HOME/bin\nexport PID_DIR={{registry_pid_dir}}\nexport LOG_DIR={{registry_log_dir}}\nexport REGISTRY_KERBEROS_PARAMS={{registry_kerberos_params}}",
+"registry_log_dir" : "/var/log/registry",
+"registry_pid_dir" : "/var/run/registry",
+"registry_user" : "registry",
+"registry_user_nofile_limit" : "65536",
+"registry_user_nproc_limit" : "65536"
+}

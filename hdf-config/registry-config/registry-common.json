@@ -1,0 +1,13 @@
+"properties" : {
+"adminPort" : "7789",
+"database_name" : "registry",
+"jar.storage" : "/hdf/registry",
+"port" : "7788",
+"registry.schema.cache.expiry.interval" : "3600",
+"registry.schema.cache.size" : "10000",
+"registry.storage.connector.connectURI" : "jdbc:mysql://{{mysql_host}}:3306/registry",
+"registry.storage.connector.password" : "registry",
+"registry.storage.connector.user" : "registry",
+"registry.storage.query.timeout" : "30",
+"registry.storage.type" : "mysql"
+}
