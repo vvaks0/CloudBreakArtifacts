@@ -139,9 +139,9 @@ installSchemaRegistryService () {
        	echo "*********************************Creating REGISTRY configuration..."
 
        	# Create and apply configuration
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME registry-common $ROOT_PATH/hdf-config/registry-config/registry-common.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME registry-common $ROOT_PATH/CloudBreakArtifacts/hdf-config/registry-config/registry-common.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME registry-env $ROOT_PATH/hdf-config/registry-config/registry-env.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME registry-env $ROOT_PATH/CloudBreakArtifacts/hdf-config/registry-config/registry-env.json
 		
        	echo "*********************************Adding REGISTRY SERVER role to Host..."
        	# Add REGISTRY_SERVER role to Ambari Host
@@ -188,11 +188,11 @@ installStreamlineService () {
        	echo "*********************************Creating STREAMLINE configuration..."
 
        	# Create and apply configuration
-		/var/lib/ambari-server/resources/scripts/configs.sh set localhost $CLUSTER_NAME streamline-common $ROOT_PATH/hdf-config/streamline-config/streamline-common.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set localhost $CLUSTER_NAME streamline-common $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline-common.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set localhost $CLUSTER_NAME streamline-env $ROOT_PATH/hdf-config/streamline-config/streamline-env.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set localhost $CLUSTER_NAME streamline-env $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline-env.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set localhost $CLUSTER_NAME streamline_jaas_conf $ROOT_PATH/hdf-config/streamline-config/streamline_jaas_conf.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set localhost $CLUSTER_NAME streamline_jaas_conf $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline_jaas_conf.json
 		
        	echo "*********************************Adding STREAMLINE SERVER role to Host..."
        	# Add NIFI Master role to Ambari Host
@@ -239,27 +239,27 @@ installNifiService () {
        	echo "*********************************Creating NIFI configuration..."
 
        	# Create and apply configuration
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-ambari-config $ROOT_PATH/hdf-config/nifi-config/nifi-ambari-config.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-ambari-config $ROOT_PATH/CloudBreakArtifacts/hdf-config/nifi-config/nifi-ambari-config.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-ambari-ssl-config $ROOT_PATH/hdf-config/nifi-config/nifi-ambari-ssl-config.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-ambari-ssl-config $ROOT_PATH/CloudBreakArtifacts/hdf-config/nifi-config/nifi-ambari-ssl-config.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-authorizers-env $ROOT_PATH/hdf-config/nifi-config/nifi-authorizers-env.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-authorizers-env $ROOT_PATH/CloudBreakArtifacts/hdf-config/nifi-config/nifi-authorizers-env.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-bootstrap-env $ROOT_PATH/hdf-config/nifi-config/nifi-bootstrap-env.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-bootstrap-env $ROOT_PATH/CloudBreakArtifacts/hdf-config/nifi-config/nifi-bootstrap-env.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-bootstrap-notification-services-env $ROOT_PATH/hdf-config/nifi-config/nifi-bootstrap-notification-services-env.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-bootstrap-notification-services-env $ROOT_PATH/CloudBreakArtifacts/hdf-config/nifi-config/nifi-bootstrap-notification-services-env.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-env $ROOT_PATH/hdf-config/nifi-config/nifi-env.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-env $ROOT_PATH/CloudBreakArtifacts/hdf-config/nifi-config/nifi-env.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-flow-env $ROOT_PATH/hdf-config/nifi-config/nifi-flow-env.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-flow-env $ROOT_PATH/CloudBreakArtifacts/hdf-config/nifi-config/nifi-flow-env.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-login-identity-providers-env $ROOT_PATH/hdf-config/nifi-config/nifi-login-identity-providers-env.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-login-identity-providers-env $ROOT_PATH/CloudBreakArtifacts/hdf-config/nifi-config/nifi-login-identity-providers-env.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-node-logback-env $ROOT_PATH/hdf-config/nifi-config/nifi-node-logback-env.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-node-logback-env $ROOT_PATH/CloudBreakArtifacts/hdf-config/nifi-config/nifi-node-logback-env.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-properties $ROOT_PATH/hdf-config/nifi-config/nifi-properties.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-properties $ROOT_PATH/CloudBreakArtifacts/hdf-config/nifi-config/nifi-properties.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-state-management-env $ROOT_PATH/hdf-config/nifi-config/nifi-state-management-env.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-state-management-env $ROOT_PATH/CloudBreakArtifacts/hdf-config/nifi-config/nifi-state-management-env.json
 		
        	echo "*********************************Adding NIFI MASTER role to Host..."
        	# Add NIFI Master role to Ambari Host
