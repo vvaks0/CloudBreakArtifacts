@@ -32,10 +32,10 @@ echo "*********************************Download Configurations"
 git clone https://github.com/vakshorton/CloudBreakArtifacts
 cd CloudBreakArtifacts
 
-sed -r -i 's;\{\{mysql_host\}\};$AMBARI_HOST;' $ROOTPATH/hdf-config/registry-config/registry-common.json
-sed -r -i 's;\{\{mysql_host\}\};$AMBARI_HOST;' $ROOTPATH/hdf-config/streamline-config/streamline-common.json
-sed -r -i 's;\{\{registry_host\}\};$AMBARI_HOST;' $ROOTPATH/hdf-config/streamline-config/streamline-common.json
-sed -r -i 's;\{\{superset_host\}\};$AMBARI_HOST;' $ROOTPATH/hdf-config/streamline-config/streamline-common.json
+sed -r -i 's;\{\{mysql_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/registry-config/registry-common.json
+sed -r -i 's;\{\{mysql_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline-common.json
+sed -r -i 's;\{\{registry_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline-common.json
+sed -r -i 's;\{\{superset_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline-common.json
 
 kill -9 $(netstat -nlp|grep 9090|grep -Po '[0-9]+/[a-zA-Z]+'|grep -Po '[0-9]+')
 
@@ -139,9 +139,9 @@ installSchemaRegistryService () {
        	echo "*********************************Creating REGISTRY configuration..."
 
        	# Create and apply configuration
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME registry-common $ROOTPATH/hdf-config/registry-config/registry-common.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME registry-common $ROOT_PATH/hdf-config/registry-config/registry-common.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME registry-env $ROOTPATH/hdf-config/registry-config/registry-env.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME registry-env $ROOT_PATH/hdf-config/registry-config/registry-env.json
 		
        	echo "*********************************Adding REGISTRY SERVER role to Host..."
        	# Add REGISTRY_SERVER role to Ambari Host
@@ -188,11 +188,11 @@ installStreamlineService () {
        	echo "*********************************Creating STREAMLINE configuration..."
 
        	# Create and apply configuration
-		/var/lib/ambari-server/resources/scripts/configs.sh set localhost $CLUSTER_NAME streamline-common $ROOTPATH/hdf-config/streamline-config/streamline-common.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set localhost $CLUSTER_NAME streamline-common $ROOT_PATH/hdf-config/streamline-config/streamline-common.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set localhost $CLUSTER_NAME streamline-env $ROOTPATH/hdf-config/streamline-config/streamline-env.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set localhost $CLUSTER_NAME streamline-env $ROOT_PATH/hdf-config/streamline-config/streamline-env.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set localhost $CLUSTER_NAME streamline_jaas_conf $ROOTPATH/hdf-config/streamline-config/streamline_jaas_conf.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set localhost $CLUSTER_NAME streamline_jaas_conf $ROOT_PATH/hdf-config/streamline-config/streamline_jaas_conf.json
 		
        	echo "*********************************Adding STREAMLINE SERVER role to Host..."
        	# Add NIFI Master role to Ambari Host
@@ -239,27 +239,27 @@ installNifiService () {
        	echo "*********************************Creating NIFI configuration..."
 
        	# Create and apply configuration
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-ambari-config $ROOTPATH/hdf-config/nifi-config/nifi-ambari-config.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-ambari-config $ROOT_PATH/hdf-config/nifi-config/nifi-ambari-config.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-ambari-ssl-config $ROOTPATH/hdf-config/nifi-config/nifi-ambari-ssl-config.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-ambari-ssl-config $ROOT_PATH/hdf-config/nifi-config/nifi-ambari-ssl-config.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-authorizers-env $ROOTPATH/hdf-config/nifi-config/nifi-authorizers-env.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-authorizers-env $ROOT_PATH/hdf-config/nifi-config/nifi-authorizers-env.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-bootstrap-env $ROOTPATH/hdf-config/nifi-config/nifi-bootstrap-env.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-bootstrap-env $ROOT_PATH/hdf-config/nifi-config/nifi-bootstrap-env.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-bootstrap-notification-services-env $ROOTPATH/hdf-config/nifi-config/nifi-bootstrap-notification-services-env.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-bootstrap-notification-services-env $ROOT_PATH/hdf-config/nifi-config/nifi-bootstrap-notification-services-env.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-env $ROOTPATH/hdf-config/nifi-config/nifi-env.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-env $ROOT_PATH/hdf-config/nifi-config/nifi-env.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-flow-env $ROOTPATH/hdf-config/nifi-config/nifi-flow-env.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-flow-env $ROOT_PATH/hdf-config/nifi-config/nifi-flow-env.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-login-identity-providers-env $ROOTPATH/hdf-config/nifi-config/nifi-login-identity-providers-env.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-login-identity-providers-env $ROOT_PATH/hdf-config/nifi-config/nifi-login-identity-providers-env.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-node-logback-env $ROOTPATH/hdf-config/nifi-config/nifi-node-logback-env.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-node-logback-env $ROOT_PATH/hdf-config/nifi-config/nifi-node-logback-env.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-properties $ROOTPATH/hdf-config/nifi-config/nifi-properties.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-properties $ROOT_PATH/hdf-config/nifi-config/nifi-properties.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-state-management-env $ROOTPATH/hdf-config/nifi-config/nifi-state-management-env.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME nifi-state-management-env $ROOT_PATH/hdf-config/nifi-config/nifi-state-management-env.json
 		
        	echo "*********************************Adding NIFI MASTER role to Host..."
        	# Add NIFI Master role to Ambari Host
@@ -310,22 +310,22 @@ waitForNifiServlet () {
        	done
 }
 
-wget http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.0.0.0-264/tars/hdf_ambari_mp/hdf-ambari-mpack-3.0.0.0-264.tar.gz
-ambari-server install-mpack --mpack=hdf-ambari-mpack-3.0.0.0-264.tar.gz --verbose
+#wget http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.0.0.0-264/tars/hdf_ambari_mp/hdf-ambari-mpack-3.0.0.0-264.tar.gz
+#ambari-server install-mpack --mpack=hdf-ambari-mpack-3.0.0.0-264.tar.gz --verbose
 
-ambari-server restart
+#ambari-server restart
 
-curl -u admin:admin -i -H "X-Requested-By: ambari" -X GET http://localhost:8080/api/v1/stacks/HDF/versions/3.0/operating_systems/redhat7/repositories/HDF-3.0
+#curl -u admin:admin -i -H "X-Requested-By: ambari" -X GET http://localhost:8080/api/v1/stacks/HDF/versions/3.0/operating_systems/redhat7/repositories/HDF-3.0
 
-curl -u admin:admin -i -H "X-Requested-By: ambari" -X PUT -d '{"Repositories": {"base_url":"http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.0.0.0-264","verify_base_url":true}}' http://localhost:8080/api/v1/stacks/HDF/versions/3.0/operating_systems/redhat7/repositories/HDF-3.0
+#curl -u admin:admin -i -H "X-Requested-By: ambari" -X PUT -d '{"Repositories": {"base_url":"http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.0.0.0-264","verify_base_url":true}}' http://localhost:8080/api/v1/stacks/HDF/versions/3.0/operating_systems/redhat7/repositories/HDF-3.0
 
-tee /etc/yum.repos.d/HDF.repo <<-'EOF'
-[HDF-3.0]
-name=HDF-3.0
-baseurl=http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.0.0.0-279
-path=/
-enabled=1
-EOF
+#tee /etc/yum.repos.d/HDF.repo <<-'EOF'
+#[HDF-3.0]
+#name=HDF-3.0
+#baseurl=http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.0.0.0-279
+#path=/
+#enabled=1
+#EOF
 
 #export METASTORE_HOST=$(curl -u admin:admin -X GET http://localhost:8080/api/v1/clusters/hdf01/services/HIVE/components/HIVE_METASTORE|grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
 
