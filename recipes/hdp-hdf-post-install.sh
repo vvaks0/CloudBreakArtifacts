@@ -4,7 +4,12 @@
 #http://s3.amazonaws.com/dev.hortonworks.com/ambari/centos7/2.x/BUILDS/2.5.1.0-106/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
 #http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos7/2.x/BUILDS/2.6.1.0-34
 
+export ROOT_PATH=$(pwd)
+echo "*********************************ROOT PATH IS: $ROOT_PATH"
 
+echo "*********************************Download Configurations"
+git clone https://github.com/vakshorton/CloudBreakArtifacts
+cd CloudBreakArtifacts
 
 export AMBARI_HOST=$(hostname -f)
 echo "*********************************AMABRI HOST IS: $AMBARI_HOST"
@@ -18,19 +23,12 @@ else
        	echo "*********************************CLUSTER NAME IS: $CLUSTER_NAME"
 fi
 
-export ROOT_PATH=$(pwd)
-echo "*********************************ROOT PATH IS: $ROOT_PATH"
-
 export VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
 export INTVERSION=$(echo $VERSION*10 | bc | grep -Po '([0-9][0-9])')
 echo "*********************************HDP VERSION IS: $VERSION"
 
 export HADOOP_USER_NAME=hdfs
 echo "*********************************HADOOP_USER_NAME set to HDFS"
-
-echo "*********************************Download Configurations"
-git clone https://github.com/vakshorton/CloudBreakArtifacts
-cd CloudBreakArtifacts
 
 sed -r -i 's;\{\{mysql_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/registry-config/registry-common.json
 sed -r -i 's;\{\{mysql_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline-common.json
@@ -81,7 +79,7 @@ stopService () {
        	SERVICE_STATUS=$(getServiceStatus $SERVICE)
        	echo "*********************************Stopping Service $SERVICE ..."
        	if [ "$SERVICE_STATUS" == STARTED ]; then
-        TASKID=$(curl -u admin:admin -H "X-Requested-By:ambari" -i -X PUT -d "{\"RequestInfo\": {\"context\": \"Stop \" $SERVICE}, \"ServiceInfo\": {\"maintenance_state\" : \"OFF\", \"state\": \"INSTALLED\"}}" http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/$SERVICE | grep "id" | grep -Po '([0-9]+)')
+        TASKID=$(curl -u admin:admin -H "X-Requested-By:ambari" -i -X PUT -d "{\"RequestInfo\": {\"context\": \"Stop $SERVICE\"}, \"ServiceInfo\": {\"maintenance_state\" : \"OFF\", \"state\": \"INSTALLED\"}}" http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/$SERVICE | grep "id" | grep -Po '([0-9]+)')
 
         echo "*********************************Stop $SERVICE TaskID $TASKID"
         sleep 2
@@ -105,7 +103,7 @@ startService (){
        	SERVICE_STATUS=$(getServiceStatus $SERVICE)
        		echo "*********************************Starting Service $SERVICE ..."
        	if [ "$SERVICE_STATUS" == INSTALLED ]; then
-        TASKID=$(curl -u admin:admin -H "X-Requested-By:ambari" -i -X PUT -d "{\"RequestInfo\": {\"context\": \"Start \" $SERVICE}, \"ServiceInfo\": {\"maintenance_state\" : \"OFF\", \"state\": \"INSTALLED\"}}"http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/$SERVICE | grep "id" | grep -Po '([0-9]+)')
+        TASKID=$(curl -u admin:admin -H "X-Requested-By:ambari" -i -X PUT -d "{\"RequestInfo\": {\"context\": \"Start $SERVICE\"}, \"ServiceInfo\": {\"maintenance_state\" : \"OFF\", \"state\": \"STARTED\"}}" http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/$SERVICE | grep "id" | grep -Po '([0-9]+)')
 
         echo "*********************************Start $SERVICE TaskID $TASKID"
         sleep 2
@@ -363,8 +361,10 @@ mysql --execute="GRANT ALL PRIVILEGES ON superset.* TO 'superset'@'%' WITH GRANT
 mysql --execute="FLUSH PRIVILEGES"
 mysql --execute="COMMIT"
 
+sleep 2
 installSchemaRegistryService
 
+sleep2
 REGISTRY_STATUS=$(getServiceStatus REGISTRY)
 echo "*********************************Checking REGISTRY status..."
 if ! [[ $REGISTRY_STATUS == STARTED || $REGISTRY_STATUS == INSTALLED ]]; then
@@ -379,8 +379,10 @@ else
        	echo "*********************************REGISTRY Service Started..."
 fi
 
+sleep 2
 installStreamlineService
 
+sleep 2
 STREAMLINE_STATUS=$(getServiceStatus STREAMLINE)
 echo "*********************************Checking STREAMLINE status..."
 if ! [[ $STREAMLINE_STATUS == STARTED || $STREAMLINE_STATUS == INSTALLED ]]; then
@@ -395,8 +397,10 @@ else
        	echo "*********************************STREAMLINE Service Started..."
 fi
 
+sleep 2
 installNifiService
 
+sleep 2
 NIFI_STATUS=$(getServiceStatus NIFI)
 echo "*********************************Checking NIFI status..."
 if ! [[ $NIFI_STATUS == STARTED || $NIFI_STATUS == INSTALLED ]]; then
