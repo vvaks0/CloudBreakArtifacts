@@ -3,6 +3,7 @@
 #http://s3.amazonaws.com/dev.hortonworks.com/ambari/centos7/2.x/BUILDS/2.5.1.0-106
 #http://s3.amazonaws.com/dev.hortonworks.com/ambari/centos7/2.x/BUILDS/2.5.1.0-106/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
 #http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos7/2.x/BUILDS/2.6.1.0-34
+#http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.21/repos/centos7
 
 export ROOT_PATH=$(pwd)
 echo "*********************************ROOT PATH IS: $ROOT_PATH"
@@ -308,24 +309,12 @@ waitForNifiServlet () {
        	done
 }
 
-#wget http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.0.0.0-264/tars/hdf_ambari_mp/hdf-ambari-mpack-3.0.0.0-264.tar.gz
-#ambari-server install-mpack --mpack=hdf-ambari-mpack-3.0.0.0-264.tar.gz --verbose
+wget http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.0.0.0-264/tars/hdf_ambari_mp/hdf-ambari-mpack-3.0.0.0-264.tar.gz
+ambari-server install-mpack --mpack=hdf-ambari-mpack-3.0.0.0-264.tar.gz --verbose
 
-#ambari-server restart
+ambari-server restart
 
-#curl -u admin:admin -i -H "X-Requested-By: ambari" -X GET http://localhost:8080/api/v1/stacks/HDF/versions/3.0/operating_systems/redhat7/repositories/HDF-3.0
-
-#curl -u admin:admin -i -H "X-Requested-By: ambari" -X PUT -d '{"Repositories": {"base_url":"http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.0.0.0-264","verify_base_url":true}}' http://localhost:8080/api/v1/stacks/HDF/versions/3.0/operating_systems/redhat7/repositories/HDF-3.0
-
-#tee /etc/yum.repos.d/HDF.repo <<-'EOF'
-#[HDF-3.0]
-#name=HDF-3.0
-#baseurl=http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.0.0.0-279
-#path=/
-#enabled=1
-#EOF
-
-#export METASTORE_HOST=$(curl -u admin:admin -X GET http://localhost:8080/api/v1/clusters/hdf01/services/HIVE/components/HIVE_METASTORE|grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
+curl -u admin:admin -d @payload.json -H "X-Requested-By: ambari" -X PUT http://$AMBARI_HOST:8080/api/v1/stacks/HDP/versions/2.6/repository_versions/1
 
 yum remove -y mysql57-community*
 yum remove -y mysql-community*
@@ -364,7 +353,7 @@ mysql --execute="COMMIT"
 sleep 2
 installSchemaRegistryService
 
-sleep2
+sleep 2
 REGISTRY_STATUS=$(getServiceStatus REGISTRY)
 echo "*********************************Checking REGISTRY status..."
 if ! [[ $REGISTRY_STATUS == STARTED || $REGISTRY_STATUS == INSTALLED ]]; then
