@@ -5,7 +5,7 @@
 #http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos7/2.x/BUILDS/2.6.1.0-34
 #http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.21/repos/centos7
 
-export ROOT_PATH=$(pwd)
+export ROOT_PATH=~
 echo "*********************************ROOT PATH IS: $ROOT_PATH"
 
 echo "*********************************Download Configurations"
@@ -314,7 +314,7 @@ ambari-server install-mpack --mpack=hdf-ambari-mpack-3.0.0.0-264.tar.gz --verbos
 
 ambari-server restart
 
-curl -u admin:admin -d @payload.json -H "X-Requested-By: ambari" -X PUT http://$AMBARI_HOST:8080/api/v1/stacks/HDP/versions/2.6/repository_versions/1
+curl -u admin:admin -d @$ROOT_PATH/CloudBreakArtifacts/hdf-config/api-payload/repo_update.json -H "X-Requested-By: ambari" -X PUT http://$AMBARI_HOST:8080/api/v1/stacks/HDP/versions/2.6/repository_versions/1
 
 yum remove -y mysql57-community*
 yum remove -y mysql-community*
