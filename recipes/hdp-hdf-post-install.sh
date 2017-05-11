@@ -38,6 +38,30 @@ sed -r -i 's;\{\{superset_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifac
 
 kill -9 $(netstat -nlp|grep 9090|grep -Po '[0-9]+/[a-zA-Z]+'|grep -Po '[0-9]+')
 
+waitForAmbari () {
+       	# Wait for Ambari
+       	LOOPESCAPE="false"
+       	until [ "$LOOPESCAPE" == true ]; do
+        TASKSTATUS=$(curl -u admin:admin -I -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME | grep -Po 'OK')
+        if [ "$TASKSTATUS" == OK ]; then
+                LOOPESCAPE="true"
+                TASKSTATUS="READY"
+        else
+               	AUTHSTATUS=$(curl -u admin:admin -I -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME | grep HTTP | grep -Po '( [0-9]+)'| grep -Po '([0-9]+)')
+               	if [ "$AUTHSTATUS" == 403 ]; then
+               	echo "THE AMBARI PASSWORD IS NOT SET TO: admin"
+               	echo "RUN COMMAND: ambari-admin-password-reset, SET PASSWORD: admin"
+               	exit 403
+               	else
+                TASKSTATUS="PENDING"
+               	fi
+       	fi
+       	echo "Waiting for Ambari..."
+        echo "Ambari Status... " $TASKSTATUS
+        sleep 2
+       	done
+}
+
 serviceExists () {
        	SERVICE=$1
        	SERVICE_STATUS=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/$SERVICE | grep '"status" : ' | grep -Po '([0-9]+)')
@@ -312,7 +336,13 @@ waitForNifiServlet () {
 wget http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.0.0.0-264/tars/hdf_ambari_mp/hdf-ambari-mpack-3.0.0.0-264.tar.gz
 ambari-server install-mpack --mpack=hdf-ambari-mpack-3.0.0.0-264.tar.gz --verbose
 
+sleep 2
+
 ambari-server restart
+
+waitForAmbari
+
+sleep 2
 
 curl -u admin:admin -d @$ROOT_PATH/CloudBreakArtifacts/hdf-config/api-payload/repo_update.json -H "X-Requested-By: ambari" -X PUT http://$AMBARI_HOST:8080/api/v1/stacks/HDP/versions/2.6/repository_versions/1
 
