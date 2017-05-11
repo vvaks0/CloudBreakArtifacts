@@ -5,12 +5,12 @@
 #http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos7/2.x/BUILDS/2.6.1.0-34
 #http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.21/repos/centos7
 
+#echo "*********************************Download Configurations"
+#git clone https://github.com/vakshorton/CloudBreakArtifacts
+#cd CloudBreakArtifacts
+
 export ROOT_PATH=~
 echo "*********************************ROOT PATH IS: $ROOT_PATH"
-
-echo "*********************************Download Configurations"
-git clone https://github.com/vakshorton/CloudBreakArtifacts
-cd CloudBreakArtifacts
 
 export AMBARI_HOST=$(hostname -f)
 echo "*********************************AMABRI HOST IS: $AMBARI_HOST"
