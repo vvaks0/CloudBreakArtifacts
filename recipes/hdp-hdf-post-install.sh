@@ -419,13 +419,13 @@ setupHDFDataStores (){
 }
 
 echo "*********************************Waiting for cluster install to complete..."
-waitForService YARN
+waitForServiceToStart YARN
 
-waitForService HDFS
+waitForServiceToStart HDFS
 
-waitForService HIVE
+waitForServiceToStart HIVE
 
-waitForService ZOOKEEPER
+waitForServiceToStart ZOOKEEPER
 
 sleep 10
 
