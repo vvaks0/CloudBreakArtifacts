@@ -333,57 +333,90 @@ waitForNifiServlet () {
        	done
 }
 
-wget http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.0.0.0-264/tars/hdf_ambari_mp/hdf-ambari-mpack-3.0.0.0-264.tar.gz
+instalHDFManagementPack () {
+	wget http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.0.0.0-264/tars/hdf_ambari_mp/hdf-ambari-mpack-3.0.0.0-264.tar.gz
 ambari-server install-mpack --mpack=hdf-ambari-mpack-3.0.0.0-264.tar.gz --verbose
 
-sleep 2
+	sleep 2
+	ambari-server restart
+	waitForAmbari
+	sleep 2
+}
 
-ambari-server restart
+configureAmbariRepos (){
+	tee /etc/yum.repos.d/docker.repo <<-'EOF'
+	[HDF-3.0]
+	name=HDF-3.0
+	baseurl=http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.0.0.0-264
+	path=/
+	enabled=1
+	gpgcheck=0
+	EOF
+	
+	curl -u admin:admin -d @$ROOT_PATH/CloudBreakArtifacts/hdf-config/api-payload/repo_update.json -H "X-Requested-By: ambari" -X PUT http://$AMBARI_HOST:8080/api/v1/stacks/HDP/versions/2.6/repository_versions/1
+}
 
-waitForAmbari
+installMySQL (){
+	yum remove -y mysql57-community*
+	yum remove -y mysql56-server*
+	yum remove -y mysql-community*
+	rm -Rvf /var/lib/mysql
 
-sleep 2
+	yum install -y epel-release
+	yum install -y libffi-devel.x86_64
+	ln -s /usr/lib64/libffi.so.6 /usr/lib64/libffi.so.5
 
-curl -u admin:admin -d @$ROOT_PATH/CloudBreakArtifacts/hdf-config/api-payload/repo_update.json -H "X-Requested-By: ambari" -X PUT http://$AMBARI_HOST:8080/api/v1/stacks/HDP/versions/2.6/repository_versions/1
+	yum install -y mysql-connector-java*
+	ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
 
-yum remove -y mysql57-community*
-yum remove -y mysql-community*
-rm -Rvf /var/lib/mysql
 
-yum install -y epel-release
-yum install -y libffi-devel.x86_64
-ln -s /usr/lib64/libffi.so.6 /usr/lib64/libffi.so.5
-
-yum install -y mysql-connector-java*
-ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
-
-yum localinstall -y https://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm
-yum install -y mysql-community-server
-
-#yum localinstall -y https://dev.mysql.com/get/mysql57-community-release-el7-8.noarch.rpm
+	if [ $(cat /etc/system-release|grep -Po Amazon) == Amazon ]; then       	
+		yum install -y mysql56-server
+		service mysqld start
+	else
+		yum localinstall -y https://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm
+		yum install -y mysql-community-server
+		#yum localinstall -y https://dev.mysql.com/get/mysql57-community-release-el7-8.noarch.rpm
 #yum install -y mysql-community-server
+		systemctl start mysqld.service
+	fi
+}
 
-systemctl start mysqld.service
+setupHDFDataStores (){
+	mysql --execute="CREATE DATABASE registry"
+	mysql --execute="CREATE DATABASE streamline"
+	mysql --execute="CREATE DATABASE druid DEFAULT CHARACTER SET utf8"
+	mysql --execute="CREATE DATABASE superset DEFAULT CHARACTER SET utf8"
+	mysql --execute="CREATE USER 'registry'@'%' IDENTIFIED BY 'registry'"
+	mysql --execute="CREATE USER 'streamline'@'%' IDENTIFIED BY 'streamline'"
+	mysql --execute="CREATE USER 'druid'@'%' IDENTIFIED BY 'druid'"
+	mysql --execute="CREATE USER 'superset'@'%' IDENTIFIED BY 'superset'"
+	mysql --execute="GRANT ALL PRIVILEGES ON registry.* TO 'registry'@'%' WITH GRANT OPTION"
+	mysql --execute="GRANT ALL PRIVILEGES ON streamline.* TO 'streamline'@'%' WITH GRANT OPTION"
+	mysql --execute="GRANT ALL PRIVILEGES ON druid.* TO 'druid'@'%' WITH GRANT OPTION"
+	mysql --execute="GRANT ALL PRIVILEGES ON superset.* TO 'superset'@'%' WITH GRANT OPTION"
+	mysql --execute="FLUSH PRIVILEGES"
+	mysql --execute="COMMIT"
+}
 
-mysql --execute="CREATE DATABASE registry"
-mysql --execute="CREATE DATABASE streamline"
-mysql --execute="CREATE DATABASE druid DEFAULT CHARACTER SET utf8"
-mysql --execute="CREATE DATABASE superset DEFAULT CHARACTER SET utf8"
-mysql --execute="CREATE USER 'registry'@'%' IDENTIFIED BY 'registry'"
-mysql --execute="CREATE USER 'streamline'@'%' IDENTIFIED BY 'streamline'"
-mysql --execute="CREATE USER 'druid'@'%' IDENTIFIED BY 'druid'"
-mysql --execute="CREATE USER 'superset'@'%' IDENTIFIED BY 'superset'"
-mysql --execute="GRANT ALL PRIVILEGES ON registry.* TO 'registry'@'%' WITH GRANT OPTION"
-mysql --execute="GRANT ALL PRIVILEGES ON streamline.* TO 'streamline'@'%' WITH GRANT OPTION"
-mysql --execute="GRANT ALL PRIVILEGES ON druid.* TO 'druid'@'%' WITH GRANT OPTION"
-mysql --execute="GRANT ALL PRIVILEGES ON superset.* TO 'superset'@'%' WITH GRANT OPTION"
-mysql --execute="FLUSH PRIVILEGES"
-mysql --execute="COMMIT"
+echo "*********************************Waiting for cluster install to complete..."
+waitForService HIVE
 
+instalHDFManagementPack 
 sleep 2
+
+configureAmbariRepos
+sleep 2
+
+installMySQL
+sleep 2
+
+setupHDFDataStores
+sleep 2
+
 installSchemaRegistryService
-
 sleep 2
+
 REGISTRY_STATUS=$(getServiceStatus REGISTRY)
 echo "*********************************Checking REGISTRY status..."
 if ! [[ $REGISTRY_STATUS == STARTED || $REGISTRY_STATUS == INSTALLED ]]; then
