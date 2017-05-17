@@ -118,19 +118,23 @@ echo "export RANGER_HOST=$RANGER_HOST" >> ~/.bash_profile
 #createTransactionHistoryTable
 
 #Configure Postgres for Ranger
-#yum install -y postgresql-jdbc*
+#yum install -y postgresql-server postgresql-contrib
 #echo "host all all 127.0.0.1/32 md5" >> /var/lib/pgsql/data/pg_hba.conf
-#echo "CREATE DATABASE rangerdb;" | sudo -u postgres psql -U postgres
-#echo "CREATE USER rangerdba WITH PASSWORD 'ranger';" | sudo -u postgres psql -U postgres
-#echo "GRANT ALL PRIVILEGES ON DATABASE rangerdb TO rangerdba;" | sudo -u postgres psql -U postgres
+#systemctl start postgresql
+#systemctl enable postgresql
+
+#yum install -y postgresql-jdbc*
+#echo "CREATE DATABASE ranger;" | sudo -u postgres psql -U postgres
+#echo "CREATE USER rangeradmin WITH PASSWORD 'ranger';" | sudo -u postgres psql -U postgres
+#echo "GRANT ALL PRIVILEGES ON DATABASE ranger TO rangeradmin;" | sudo -u postgres psql -U postgres
 
 #ambari-server setup --jdbc-db=postgres --jdbc-driver=/usr/share/java/postgresql-jdbc.jar
 
 #export HADOOP_CLASSPATH=${HADOOP_CLASSPATH}:${JAVA_JDBC_LIBS}:/usr/share/java/postgresql-jdbc.jar
 
-#echo "local all rangerdba,rangerlogger trust" >> /var/lib/pgsql/data/pg_hba.conf
-#echo "host  all rangerdba,rangerlogger 0.0.0.0/0 trust" >> /var/lib/pgsql/data/pg_hba.conf
-#echo "host  all rangerdba,rangerlogger ::/0 trust" >> /var/lib/pgsql/data/pg_hba.conf
+#echo "local all rangeradmin,rangerlogger trust" >> /var/lib/pgsql/data/pg_hba.conf
+#echo "host  all rangeradmin,rangerlogger 0.0.0.0/0 trust" >> /var/lib/pgsql/data/pg_hba.conf
+#echo "host  all rangeradmin,rangerlogger ::/0 trust" >> /var/lib/pgsql/data/pg_hba.conf
 
 #sudo -u postgres /usr/bin/pg_ctl -D /var/lib/pgsql/data reload
 
