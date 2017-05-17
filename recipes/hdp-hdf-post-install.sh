@@ -148,7 +148,7 @@ stopService () {
 startService (){
        	SERVICE=$1
        	SERVICE_STATUS=$(getServiceStatus $SERVICE)
-       		echo "*********************************Starting Service $SERVICE ..."
+       	echo "*********************************Starting Service $SERVICE ..."
        	if [ "$SERVICE_STATUS" == INSTALLED ]; then
         TASKID=$(curl -u admin:admin -H "X-Requested-By:ambari" -i -X PUT -d "{\"RequestInfo\": {\"context\": \"Start $SERVICE\"}, \"ServiceInfo\": {\"maintenance_state\" : \"OFF\", \"state\": \"STARTED\"}}" http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/$SERVICE | grep "id" | grep -Po '([0-9]+)')
 
@@ -157,13 +157,12 @@ startService (){
         LOOPESCAPE="false"
         until [ "$LOOPESCAPE" == true ]; do
             TASKSTATUS=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/requests/$TASKID | grep "request_status" | grep -Po '([A-Z]+)')
-            if [ "$TASKSTATUS" == COMPLETED ]; then
+            if [ "$TASKSTATUS" == COMPLETED || "$TASKSTATUS" == FAILED]; then
                 LOOPESCAPE="true"
             fi
             echo "*********************************Start $SERVICE Task Status $TASKSTATUS"
             sleep 2
         done
-        echo "*********************************$SERVICE Service Started..."
        	elif [ "$SERVICE_STATUS" == STARTED ]; then
        	echo "*********************************$SERVICE Service Started..."
        	fi
@@ -226,7 +225,7 @@ installStreamlineService () {
 
        	sleep 2
        	echo "*********************************Adding STREAMLINE SERVER component..."
-       	# Add NIFI Master component to service
+       	# Add STREAMLINE SERVER component to service
        	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/STREAMLINE/components/STREAMLINE_SERVER
 
        	sleep 2
@@ -240,7 +239,7 @@ installStreamlineService () {
 		/var/lib/ambari-server/resources/scripts/configs.sh set localhost $CLUSTER_NAME streamline_jaas_conf $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline_jaas_conf.json
 		
        	echo "*********************************Adding STREAMLINE SERVER role to Host..."
-       	# Add NIFI Master role to Ambari Host
+       	# Add STREAMLINE SERVER role to Ambari Host
        	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/hosts/$AMBARI_HOST/host_components/STREAMLINE_SERVER
 
        	sleep 30
