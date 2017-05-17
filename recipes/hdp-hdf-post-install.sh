@@ -157,7 +157,7 @@ startService (){
         LOOPESCAPE="false"
         until [ "$LOOPESCAPE" == true ]; do
             TASKSTATUS=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/requests/$TASKID | grep "request_status" | grep -Po '([A-Z]+)')
-            if [ "$TASKSTATUS" == COMPLETED || "$TASKSTATUS" == FAILED]; then
+            if [[ "$TASKSTATUS" == COMPLETED || "$TASKSTATUS" == FAILED ]]; then
                 LOOPESCAPE="true"
             fi
             echo "*********************************Start $SERVICE Task Status $TASKSTATUS"
