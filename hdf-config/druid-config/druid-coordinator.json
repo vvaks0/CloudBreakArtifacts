@@ -1,0 +1,6 @@
+########## Performing 'GET' on (Site:druid-coordinator, Tag:version1494554709368)
+"properties" : {
+"druid.coordinator.merge.on" : "false",
+"druid.port" : "8081",
+"druid.service" : "druid/coordinator"
+}

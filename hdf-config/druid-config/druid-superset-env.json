@@ -1,0 +1,11 @@
+########## Performing 'GET' on (Site:druid-superset-env, Tag:version1494554709368)
+"properties" : {
+"content" : "\n      # Set environment variables here.\n      \n      export LC_ALL=en_US.UTF-8\n      export LANG=en_US.UTF-8\n\n      # Superset Home Dir\n      export SUPERSET_CONFIG_DIR={{superset_config_dir}}\n\n      # Superset Log Dir\n      export SUPERSET_LOG_DIR={{superset_log_dir}}\n\n      # Superset Log Dir\n      export SUPERSET_BIN_DIR={{superset_bin_dir}}\n\n      # Superset PID Dir\n      export SUPERSET_PID_DIR={{superset_pid_dir}}\n\n      # Add superset_config.py to PYTHONPATH\n      export PYTHONPATH=$PYTHONPATH:{{superset_config_dir}}\n\n      export SUPERSET_WEBSERVER_PORT={{superset_webserver_port}}\n      export SUPERSET_WEBSERVER_ADDRESS={{superset_webserver_address}}\n      export SUPERSET_TIMEOUT={{superset_timeout}}\n      export SUPERSET_WORKERS={{superset_workers}}",
+"superset_admin_email" : "admin@admin.com",
+"superset_admin_firstname" : "admin",
+"superset_admin_lastname" : "admin",
+"superset_admin_password" : "SECRET:druid-superset-env:1:superset_admin_password",
+"superset_admin_user" : "admin",
+"superset_log_dir" : "/var/log/superset",
+"superset_pid_dir" : "/var/run/superset"
+}

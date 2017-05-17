@@ -1,0 +1,7 @@
+########## Performing 'GET' on (Site:druid-overlord, Tag:version1494554709368)
+"properties" : {
+"druid.indexer.runner.type" : "remote",
+"druid.indexer.storage.type" : "metadata",
+"druid.port" : "8090",
+"druid.service" : "druid/overlord"
+}
