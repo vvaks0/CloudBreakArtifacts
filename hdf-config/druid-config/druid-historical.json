@@ -1,4 +1,3 @@
-########## Performing 'GET' on (Site:druid-historical, Tag:version1494554709368)
 "properties" : {
 "druid.port" : "8083",
 "druid.processing.buffer.sizeBytes" : "1073741824",

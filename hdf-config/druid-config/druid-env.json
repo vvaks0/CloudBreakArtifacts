@@ -1,4 +1,3 @@
-########## Performing 'GET' on (Site:druid-env, Tag:version1494554709368)
 "properties" : {
 "content" : "\n      #!/bin/bash\n\n      # Set DRUID specific environment variables here.\n\n      # The java implementation to use.\n      export JAVA_HOME={{java8_home}}\n      export PATH=$PATH:$JAVA_HOME/bin\n      export DRUID_PID_DIR={{druid_pid_dir}}\n      export DRUID_LOG_DIR={{druid_log_dir}}\n      export DRUID_CONF_DIR={{druid_conf_dir}}\n      export DRUID_LIB_DIR={{druid_home}}/lib\n      export HADOOP_CONF_DIR={{hadoop_conf_dir}}",
 "druid.broker.jvm.direct.memory" : "1048576",

@@ -1,4 +1,3 @@
-########## Performing 'GET' on (Site:druid-broker, Tag:version1494554709368)
 "properties" : {
 "druid.broker.cache.populateCache" : "true",
 "druid.broker.cache.useCache" : "true",

@@ -1,4 +1,3 @@
-########## Performing 'GET' on (Site:druid-common, Tag:version1494554709368)
 "properties" : {
 "database_name" : "druid",
 "druid.discovery.curator.path" : "/druid/discovery",
@@ -15,8 +14,8 @@
 "druid.extensions.repositoryList" : "[]",
 "druid.indexer.logs.directory" : "/user/druid/logs",
 "druid.indexer.logs.type" : "hdfs",
-"druid.metadata.storage.connector.connectURI" : "jdbc:mysql://demo01-435-1-0.example.com:3306/druid?createDatabaseIfNotExist=true",
-"druid.metadata.storage.connector.password" : "SECRET:druid-common:1:druid.metadata.storage.connector.password",
+"druid.metadata.storage.connector.connectURI" : "jdbc:mysql://{{mysql_host}}:3306/druid?createDatabaseIfNotExist=true",
+"druid.metadata.storage.connector.password" : "druid",
 "druid.metadata.storage.connector.port" : "3306",
 "druid.metadata.storage.connector.user" : "druid",
 "druid.metadata.storage.type" : "mysql",
@@ -25,6 +24,6 @@
 "druid.storage.storageDirectory" : "/user/druid/data",
 "druid.storage.type" : "hdfs",
 "druid.zk.paths.base" : "/druid",
-"druid.zk.service.host" : "demo01-435-2-1.example.com:2181,demo01-435-3-2.example.com:2181,demo01-435-1-0.example.com:2181",
-"metastore_hostname" : "demo01-435-1-0.example.com"
+"druid.zk.service.host" : "{{mysql_host}}:2181",
+"metastore_hostname" : "{{mysql_host}}"
 }

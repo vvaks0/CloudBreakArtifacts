@@ -1,4 +1,3 @@
-########## Performing 'GET' on (Site:druid-middlemanager, Tag:version1494554709368)
 "properties" : {
 "druid.indexer.runner.javaOpts" : "-server -Xmx2g -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dhdp.version={{stack_version}} -Dhadoop.mapreduce.job.classloader=true",
 "druid.indexer.runner.startPort" : "8100",
