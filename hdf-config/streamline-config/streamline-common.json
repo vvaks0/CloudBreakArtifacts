@@ -6,7 +6,7 @@
 "port" : "7777",
 "registry.url" : "http://{{registry_host}}:7788/api/v1",
 "storm.client.home" : "/usr/hdf/current/storm-client",
-"streamline.dashboard.url" : "http://{{superset_host}}:9088",
+"streamline.dashboard.url" : "http://{{superset_host}}:9085",
 "streamline.storage.connector.connectURI" : "jdbc:mysql://{{mysql_host}}:3306/streamline",
 "streamline.storage.connector.password" : "streamline",
 "streamline.storage.connector.user" : "streamline",
