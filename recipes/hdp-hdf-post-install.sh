@@ -38,8 +38,9 @@ sed -r -i 's;\{\{superset_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifac
 sed -r -i 's;\{\{mysql_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/druid-config/druid-common.json
 sed -r -i 's;\{\{mysql_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/druid-config/druid-superset.json
 
-
 kill -9 $(netstat -nlp|grep 9090|grep -Po '[0-9]+/[a-zA-Z]+'|grep -Po '[0-9]+')
+
+cp -Rf $ROOT_PATH/CloudBreakArtifacts/recipes/TRUCKING_DEMO_CONTROL /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/
 
 waitForAmbari () {
        	# Wait for Ambari
