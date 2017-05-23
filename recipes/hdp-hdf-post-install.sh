@@ -357,12 +357,12 @@ waitForNifiServlet () {
 
 installDruidService () {
        	
-       	echo "*********************************Creating REGISTRY service..."
+       	echo "*********************************Creating DRUID service..."
        	# Create Druid service
        	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/DRUID
 
        	sleep 2
-       	echo "*********************************Adding REGISTRY SERVER component..."
+       	echo "*********************************Adding DRUID components..."
        	# Add DRUID BROKER component to service
        	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/DRUID/components/DRUID_BROKER
 		sleep 2
