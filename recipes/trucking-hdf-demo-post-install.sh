@@ -19,7 +19,7 @@ installDemoControl () {
 		
 		tee control-config <<-'EOF'
 			"properties" : {
-"democontrol.download_url" : "https://doc-0g-a4-docs.googleusercontent.com/docs/securesc/ha0ro937gcuc7l7deffksulhg5h7mbp1/uoj5nvk1l7bbm1lo8gc7p30dmdhec3s7/1495303200000/08833795133037282954/*/0BwT83-9bZp3eelNUbk5UOFA4SXc?e=download",
+"democontrol.download_url" : "https://s3.amazonaws.com/vvaks/Data-Loader.zip",
 "democontrol.install_dir" : "/root"
 			}
 		EOF
@@ -61,7 +61,7 @@ installDemoControl () {
 deployTemplateToNifi () {
 	echo "*********************************Importing NIFI Template..."		
        	# Import NIFI Template HDF 2.x
-       	TEMPLATEID=$(curl -v -F template=@"$ROOT_PATH/hdf-config/nifi-template/truck-nifi-flow-with-record-query.xml" -X POST http://$AMBARI_HOST:9090/nifi-api/process-groups/root/templates/upload | grep -Po '<id>([a-z0-9-]+)' | grep -Po '>([a-z0-9-]+)' | grep -Po '([a-z0-9-]+)')
+       	TEMPLATEID=$(curl -v -F template=@"$ROOT_PATH/CloudBreakArtifacts/hdf-config/nifi-template/truck-nifi-flow-with-record-query.xml" -X POST http://$AMBARI_HOST:9090/nifi-api/process-groups/root/templates/upload | grep -Po '<id>([a-z0-9-]+)' | grep -Po '>([a-z0-9-]+)' | grep -Po '([a-z0-9-]+)')
 		sleep 1
 		
 		# Instantiate NIFI Template 2.x
