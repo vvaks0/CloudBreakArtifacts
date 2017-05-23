@@ -1,5 +1,8 @@
 #!/bin/bash
 
+exec > >(tee -i $ROOT_PATH/demo-install.log)
+exec 2>&1
+
 echo "*********************************Install Maven..."		
 wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
 yum install -y apache-maven
