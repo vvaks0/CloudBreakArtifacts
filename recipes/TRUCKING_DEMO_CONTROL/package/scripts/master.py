@@ -15,13 +15,13 @@ class DemoControl(Script):
         Execute('unzip simulator.zip')
         os.chdir(params.install_dir+'/Data-Loader')
         Execute('tar -zxvf routes.tar.gz')
-        Execute(params.install_dir+'/CloudBreakArtifacts/recipes/trucking-hdf-demo-post-install.sh')
+        Execute(params.install_dir+'/CloudBreakArtifacts/recipes/trucking-hdf-demo-post-install.sh & 2>&1 '+params.install_dir+'/demo-install.log')
 
   def start(self, env):
     self.configure(env)
     import params
     Execute('echo Start Simulation')
-    Execute('nohup java -cp '+params.install_dir+'/Data-Loaderdata-loader-jar-with-dependencies.jar hortonworks.hdp.refapp.trucking.simulator.SimulationRunnerApp 20000 hortonworks.hdp.refapp.trucking.simulator.impl.domain.transport.Truck hortonworks.hdp.refapp.trucking.simulator.impl.collectors.FileEventWithSchemaInfoCollector 1 '+params.install_dir+'/Data-Loader/routes/midwest 10000 /tmp/truck-sensor-data/telemetry-device-4.txt & 2>&1 & echo $! > /var/run/TruckSim.pid')
+    Execute('nohup java -cp '+params.install_dir+'/java -cp data-loader-jar-with-dependencies.jar hortonworks.hdp.refapp.trucking.simulator.SimulationRunnerApp 20000 hortonworks.hdp.refapp.trucking.simulator.impl.domain.transport.Truck hortonworks.hdp.refapp.trucking.simulator.impl.collectors.FileEventCollector 1 '+params.install_dir+'/Data-Loader/routes/midwest/ 10000 /tmp/telemetry-device-4.txt ALL_STREAMS & 2>&1 & echo $! > /var/run/TruckSim.pid')
     
   def stop(self, env):
     self.configure(env)
