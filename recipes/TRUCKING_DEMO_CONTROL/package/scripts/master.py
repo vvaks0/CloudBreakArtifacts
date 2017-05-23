@@ -12,10 +12,11 @@ class DemoControl(Script):
     os.chdir(params.install_dir)
     if not os.path.exists(params.install_dir+'/Data-Loader'):
         Execute('wget -O simulator.zip https://doc-0g-a4-docs.googleusercontent.com/docs/securesc/ha0ro937gcuc7l7deffksulhg5h7mbp1/uoj5nvk1l7bbm1lo8gc7p30dmdhec3s7/1495303200000/08833795133037282954/*/0BwT83-9bZp3eelNUbk5UOFA4SXc?e=download')
-    	Execute('unzip simulator.zip')
-    	os.chdir(params.install_dir+'/Data-Loader')
-    	Execute('tar -zxvf routes.tar.gz')
-	Execute(params.install_dir+'/CloudBreakArtifacts/recipes/trucking-hdf-demo-post-install.sh')
+        Execute('unzip simulator.zip')
+        os.chdir(params.install_dir+'/Data-Loader')
+        Execute('tar -zxvf routes.tar.gz')
+
+Execute(params.install_dir+'/CloudBreakArtifacts/recipes/trucking-hdf-demo-post-install.sh')
 
   def start(self, env):
     self.configure(env)
