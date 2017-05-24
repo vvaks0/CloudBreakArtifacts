@@ -172,35 +172,35 @@ pushSchemasToRegistry (){
 			
 PAYLOAD="{\"name\":\"truck_events_log\",\"type\":\"avro\",\"schemaGroup\":\"truck-sensors-log\",\"description\":\"truck_events_log\",\"evolve\":true,\"compatibility\":\"BACKWARD\"}"
 
-	curl -u admin:admin -i -d "$PAYLOAD" -X POST http://$AMBARI_HOST:7788/api/v1/schemaregistry/schemas
+	curl -u admin:admin -i -H "content-type: application/json" -d "$PAYLOAD" -X POST http://$AMBARI_HOST:7788/api/v1/schemaregistry/schemas
 	
 	PAYLOAD="{\"schemaText\":\"{\"type\" :\"record\",\"namespace\":\"hortonworks.hdp.refapp.trucking\",\"name\":\"truckgeoevent\",\"fields\":[{\"name\":\"eventTime\",\"type\":\"string\"},{\"name\":\"eventSource\",\"type\":\"string\"},{\"name\":\"truckId\",\"type\":\"int\"},{ \"name\":\"driverId\",\"type\":\"int\"},{\"name\":\"driverName\",\"type\":\"string\"},{ \"name\":\"routeId\",\"type\":\"int\"},{\"name\":\"route\",\"type\":\"string\"},{\"name\" :\"eventType\",\"type\":\"string\"},{\"name\":\"latitude\",\"type\":\"double\"},{\"name\" :\"longitude\",\"type\":\"double\"},{ \"name\":\"correlationId\",\"type\":\"long\"}]},\"description\":\"truck_events_log\"}"
 	
-	curl -u admin:admin -i -d "$PAYLOAD" -X POST http://$AMBARI_HOST:7788/api/v1/schemaregistry/schemas/truck_events_log/versions
+	curl -u admin:admin -i -H "content-type: application/json" -d "$PAYLOAD" -X POST http://$AMBARI_HOST:7788/api/v1/schemaregistry/schemas/truck_events_log/versions
 	
 	PAYLOAD="{\"name\":\"truck_speed_events_log\",\"type\":\"avro\",\"schemaGroup\":\"truck-sensors-log\",\"description\":\"truck_speed_events_log\",\"evolve\":true,\"compatibility\":\"BACKWARD\"}"
 	
-	curl -u admin:admin -i -d "$PAYLOAD" -X POST http://$AMBARI_HOST:7788/api/v1/schemaregistry/schemas
+	curl -u admin:admin -i -H "content-type: application/json" -d "$PAYLOAD" -X POST http://$AMBARI_HOST:7788/api/v1/schemaregistry/schemas
 		
 	PAYLOAD="{\"schemaText\":\"{\"type\" : \"record\",\"namespace\" : \"hortonworks.hdp.refapp.trucking\",\"name\" : \"truckspeedevent\",\"fields\" : [{ \"name\" : \"eventTime\" , \"type\" : \"string\" },{ \"name\" : \"eventSource\" , \"type\" : \"string\" },{ \"name\" : \"truckId\" , \"type\" : \"int\" },{ \"name\" : \"driverId\" , \"type\" : \"int\"},{ \"name\" : \"driverName\" , \"type\" : \"string\"},{ \"name\" : \"routeId\" , \"type\" : \"int\"},{ \"name\" : \"route\" , \"type\" : \"string\"},{ \"name\" : \"speed\" , \"type\" : \"int\"}]},\"description\":\"truck_speed_events_log\"}"
 	
-	curl -u admin:admin -i -d "$PAYLOAD" -X POST http://$AMBARI_HOST:7788/api/v1/schemaregistry/schemas/truck_speed_events_log/versions
+	curl -u admin:admin -i -H "content-type: application/json" -d "$PAYLOAD" -X POST http://$AMBARI_HOST:7788/api/v1/schemaregistry/schemas/truck_speed_events_log/versions
 	
 	PAYLOAD="{\"name\":\"truck_events_avro:v\",\"type\":\"avro\",\"schemaGroup\":\"truck-sensors-log\",\"description\":\"truck_events_log\",\"evolve\":true,\"compatibility\":\"BACKWARD\"}"
 	
-	curl -u admin:admin -i -d "$PAYLOAD" -X POST http://$AMBARI_HOST:7788/api/v1/schemaregistry/schemas
+	curl -u admin:admin -i -H "content-type: application/json" -d "$PAYLOAD" -X POST http://$AMBARI_HOST:7788/api/v1/schemaregistry/schemas
 	
 	PAYLOAD="{\"schemaText\":\"{\"type\" : \"record\",\"namespace\" : \"hortonworks.hdp.refapp.trucking\",\"name\" : \"truckgeoeventkafka\",\"fields\" : [{ \"name\" : \"eventTime\" , \"type\" : \"string\" },{ \"name\" : \"eventSource\" , \"type\" : \"string\" },{ \"name\" : \"truckId\" , \"type\" : \"int\" },{ \"name\" : \"driverId\" , \"type\" : \"int\"},{ \"name\" : \"driverName\" , \"type\" : \"string\"},{ \"name\" : \"routeId\" , \"type\" : \"int\"},{ \"name\" : \"route\" , \"type\" : \"string\"},{ \"name\" : \"eventType\" , \"type\" : \"string\"},{ \"name\" : \"latitude\" , \"type\" : \"double\"},{ \"name\" : \"longitude\" , \"type\" : \"double\"},{ \"name\" : \"correlationId\" , \"type\" : \"long\"},{ \"name\" : \"geoAddress\", \"type\" : \"string\"}]},\"description\":\"truck_events_log\"}"
 	
-	curl -u admin:admin -i -d "$PAYLOAD" -X POST http://$AMBARI_HOST:7788/api/v1/schemaregistry/schemas/truck_events_avro%3Av/versions
+	curl -u admin:admin -i -H "content-type: application/json" -d "$PAYLOAD" -X POST http://$AMBARI_HOST:7788/api/v1/schemaregistry/schemas/truck_events_avro%3Av/versions
 	
 PAYLOAD="{\"name\":\"truck_speed_events_avro:v\",\"type\":\"avro\",\"schemaGroup\":\"truck-sensors-log\",\"description\":\"truck_speed_events_avro\",\"evolve\":true,\"compatibility\":\"BACKWARD\"}"
 	
-	curl -u admin:admin -i -d "$PAYLOAD" -X POST http://$AMBARI_HOST:7788/api/v1/schemaregistry/schemas
+	curl -u admin:admin -i -H "content-type: application/json" -d "$PAYLOAD" -X POST http://$AMBARI_HOST:7788/api/v1/schemaregistry/schemas
 	
 	PAYLOAD="{\"schemaText\":\"{\"type\" : \"record\",\"namespace\" : \"hortonworks.hdp.refapp.trucking\",\"name\" : \"truckspeedevent\",\"fields\" : [{ \"name\" : \"eventTime\" , \"type\" : \"string\" },{ \"name\" : \"eventSource\" , \"type\" : \"string\" },{ \"name\" : \"truckId\" , \"type\" : \"int\" },{ \"name\" : \"driverId\" , \"type\" : \"int\"},{ \"name\" : \"driverName\" , \"type\" : \"string\"},{ \"name\" : \"routeId\" , \"type\" : \"int\"},{ \"name\" : \"route\" , \"type\" : \"string\"},{ \"name\" : \"speed\" , \"type\" : \"int\"}\n   ]},\"description\":\"truck_speed_events_avro\"}"
 	
-	curl -u admin:admin -i -d "$PAYLOAD" -X POST http://$AMBARI_HOST:7788/api/v1/schemaregistry/schemas/truck_speed_events_avro%3Av/versions
+	curl -u admin:admin -i -H "content-type: application/json" -d "$PAYLOAD" -X POST http://$AMBARI_HOST:7788/api/v1/schemaregistry/schemas/truck_speed_events_avro%3Av/versions
 	
 }
 	pushSchemasToRegistry
