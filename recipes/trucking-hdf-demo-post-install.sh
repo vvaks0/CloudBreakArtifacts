@@ -1,6 +1,6 @@
 #!/bin/bash
 
-exec > >(tee -i $ROOT_PATH/demo-install.log)
+exec > >(tee -i /root/demo-install.log)
 exec 2>&1
 
 echo "*********************************Install Maven..."		
@@ -203,6 +203,7 @@ PAYLOAD="{\"name\":\"truck_speed_events_avro:v\",\"type\":\"avro\",\"schemaGroup
 	curl -u admin:admin -i -d "$PAYLOAD" -X POST http://$AMBARI_HOST:7788/api/v1/schemaregistry/schemas/truck_speed_events_avro%3Av/versions
 	
 }
+	pushSchemasToRegistry
 
 	deployTemplateToNifi
 	

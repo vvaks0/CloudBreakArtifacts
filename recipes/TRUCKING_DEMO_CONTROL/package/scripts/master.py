@@ -21,7 +21,7 @@ class DemoControl(Script):
     self.configure(env)
     import params
     Execute('echo Start Simulation')
-    Execute('nohup java -cp '+params.install_dir+'/java -cp data-loader-jar-with-dependencies.jar hortonworks.hdp.refapp.trucking.simulator.SimulationRunnerApp 20000 hortonworks.hdp.refapp.trucking.simulator.impl.domain.transport.Truck hortonworks.hdp.refapp.trucking.simulator.impl.collectors.FileEventCollector 1 '+params.install_dir+'/Data-Loader/routes/midwest/ 10000 /tmp/telemetry-device-4.txt ALL_STREAMS & 2>&1 & echo $! > /var/run/TruckSim.pid')
+    Execute('nohup java -cp java -cp '+params.install_dir+'/data-loader-jar-with-dependencies.jar hortonworks.hdp.refapp.trucking.simulator.SimulationRunnerApp 20000 hortonworks.hdp.refapp.trucking.simulator.impl.domain.transport.Truck hortonworks.hdp.refapp.trucking.simulator.impl.collectors.FileEventCollector 1 '+params.install_dir+'/Data-Loader/routes/midwest/ 10000 /tmp/telemetry-device-4.txt ALL_STREAMS & 2>&1 & echo $! > /var/run/TruckSim.pid')
     
   def stop(self, env):
     self.configure(env)
