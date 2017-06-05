@@ -1,10 +1,5 @@
 #!/bin/bash
 
-#http://s3.amazonaws.com/dev.hortonworks.com/ambari/centos7/2.x/BUILDS/2.5.1.0-106
-#http://s3.amazonaws.com/dev.hortonworks.com/ambari/centos7/2.x/BUILDS/2.5.1.0-106/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
-#http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos7/2.x/BUILDS/2.6.1.0-34
-#http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.21/repos/centos7
-
 #echo "*********************************Download Configurations"
 #git clone https://github.com/vakshorton/CloudBreakArtifacts
 #cd CloudBreakArtifacts
@@ -40,7 +35,12 @@ sed -r -i 's;\{\{mysql_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/
 
 kill -9 $(netstat -nlp|grep 9090|grep -Po '[0-9]+/[a-zA-Z]+'|grep -Po '[0-9]+')
 
-cp -Rf $ROOT_PATH/CloudBreakArtifacts/recipes/TRUCKING_DEMO_CONTROL /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/
+installUtils () {
+	yum install -y wget
+	wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O 	/etc/yum.repos.d/epel-apache-maven.repo
+	yum install -y apache-maven
+	yum install -y git
+}
 
 waitForAmbari () {
        	# Wait for Ambari
@@ -233,11 +233,11 @@ installStreamlineService () {
        	echo "*********************************Creating STREAMLINE configuration..."
 
        	# Create and apply configuration
-		/var/lib/ambari-server/resources/scripts/configs.sh set localhost $CLUSTER_NAME streamline-common $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline-common.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME streamline-common $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline-common.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set localhost $CLUSTER_NAME streamline-env $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline-env.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME streamline-env $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline-env.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set localhost $CLUSTER_NAME streamline_jaas_conf $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline_jaas_conf.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME streamline_jaas_conf $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline_jaas_conf.json
 		
        	echo "*********************************Adding STREAMLINE SERVER role to Host..."
        	# Add STREAMLINE SERVER role to Ambari Host
@@ -414,6 +414,7 @@ installDruidService () {
        	echo "*********************************Adding DRUID BROKER role to Host..."
        	# Add DRUID BROKER role to Host
        	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/hosts/$HOST1/host_components/DRUID_BROKER
+       	export DRUID_BROKER=$HOST1
        	
        	echo "*********************************Adding DRUID SUPERSET role to Host..."
        	# Add DRUID SUPERSET role to Host
@@ -482,8 +483,8 @@ installDruidService () {
 }
 
 instalHDFManagementPack () {
-	wget http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.0.0.0-264/tars/hdf_ambari_mp/hdf-ambari-mpack-3.0.0.0-264.tar.gz
-ambari-server install-mpack --mpack=hdf-ambari-mpack-3.0.0.0-264.tar.gz --verbose
+	wget http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.0.0.0-441/tars/hdf_ambari_mp/hdf-ambari-mpack-3.0.0.0-441.tar.gz
+ambari-server install-mpack --mpack=hdf-ambari-mpack-3.0.0.0-441.tar.gz --verbose
 
 	sleep 2
 	ambari-server restart
@@ -498,16 +499,7 @@ getHostByPosition (){
 	echo $HOST_NAME
 }
 
-configureAmbariRepos (){
-	tee /etc/yum.repos.d/docker.repo <<-'EOF'
-	[HDF-3.0]
-	name=HDF-3.0
-	baseurl=http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.0.0.0-264
-	path=/
-	enabled=1
-	gpgcheck=0
-	EOF
-	
+configureAmbariRepos (){	
 	curl -u admin:admin -d @$ROOT_PATH/CloudBreakArtifacts/hdf-config/api-payload/repo_update.json -H "X-Requested-By: ambari" -X PUT http://$AMBARI_HOST:8080/api/v1/stacks/HDP/versions/2.6/repository_versions/1
 }
 
@@ -554,6 +546,70 @@ setupHDFDataStores (){
 	mysql --execute="COMMIT"
 }
 
+configureHive () {
+echo "*********************************Configuring Hive..."
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hiveserver2-interactive-site hive.druid.broker.address.default $DRUID_BROKER:8082
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hiveserver2-interactive-site hive.exec.post.hooks org.apache.hadoop.hive.ql.hooks.ATSHook,org.apache.atlas.hive.hook.HiveHook
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hiveserver2-interactive-site hive.exec.pre.hooks org.apache.hadoop.hive.ql.hooks.ATSHook
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hiveserver2-interactive-site hive.service.metrics.file.location /var/log/hive/hiveserver2Interactive-report.json
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hiveserver2-interactive-site hive.llap.daemon.num.executors 4
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hiveserver2-interactive-sitehive.llap.daemon.queue.name llap
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hiveserver2-interactive-site hive.server2.tez.default.queues llap
+sleep 1
+
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.default.minimum-user-limit-percent 100
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.maximum-am-resource-percent 0.2
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.maximum-applications 10000
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME /var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.node-locality-delay 40
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.accessible-node-labels *
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.acl_administer_queue *
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.capacity 100
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.default.acl_administer_jobs *
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.default.acl_submit_applications *
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.default.capacity 66.0
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.default.maximum-capacity 66.0
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.default.state RUNNING
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.default.user-limit-factor 1
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.llap.acl_administer_queue hive
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.llap.acl_submit_applications hive
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.llap.capacity 34.0
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.llap.maximum-am-resource-percent 1
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.llap.maximum-capacity 34.0
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.llap.minimum-user-limit-percent 100
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.llap.ordering-policy fifo
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.llap.priority 10
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.llap.state RUNNING
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.llap.user-limit-factor 1
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.ordering-policy priority-utilization
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.queues "default,llap"
+sleep 1
+
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME core-site hadoop.proxyuser.hive.hosts *
+sleep 1
+
+#Add symbolic links to Atlas Hooks
+ln -s /usr/hdp/current/atlas-client/hook/storm/atlas-plugin-classloader-0.8.0.2.6.1.0-34.jar /usr/hdf/current/storm-client/lib/atlas-plugin-classloader.jar
+
+ln -s /usr/hdp/current/atlas-client/hook/storm/storm-bridge-shim-0.8.0.2.6.1.0-34.jar /usr/hdf/current/storm-client/lib/storm-bridge-shim.jar
+}
+
+installNifiNars () {
+	git clone https://github.com/vakshorton/NifiLivyIntegration
+	git clone https://github.com/vakshorton/NifiDruidIntegration
+	git clone https://github.com/vakshorton/NifiHistorianDean
+	cd $ROOT_PATH/NifiDruidIntegration/
+	mvn clean package
+	cp $ROOT_PATH/NifiDruidIntegration/nifi-druid-bundle-nar/target/nifi-druid-bundle-nar-0.0.1-SNAPSHOT.nar /usr/hdf/current/nifi/lib/
+
+	cd $ROOT_PATH/NifiLivyIntegration/
+	mvn clean package
+	cp $ROOT_PATH/NifiLivyIntegration/nifi-livy-bundle-nar/target/nifi-livy-bundle-nar-0.0.1-SNAPSHOT.nar /usr/hdf/current/nifi/lib/
+
+	cd $ROOT_PATH/NifiHistorianDean/
+	mvn clean package
+	cp $ROOT_PATH/NifiHistorianDean/target/HistorianDeanReporter-0.0.1-SNAPSHOT.nar /usr/hdf/current/nifi/lib/
+}
+
 echo "*********************************Waiting for cluster install to complete..."
 waitForServiceToStart YARN
 
@@ -571,16 +627,24 @@ sleep 2
 configureAmbariRepos
 sleep 2
 
+installUtils
+sleep 2
+
+installNifiNars
+sleep 2
+
+configureHive
+sleep 2
+
 installMySQL
 sleep 2
 
 setupHDFDataStores
 sleep 2
 
-sleep 2
 installDruidService
-
 sleep 2
+
 DRUID_STATUS=$(getServiceStatus DRUID)
 echo "*********************************Checking DRUID status..."
 if ! [[ $DRUID_STATUS == STARTED || $DRUID_STATUS == INSTALLED ]]; then
@@ -614,7 +678,7 @@ else
 fi
 
 sleep 2
-installStreamlineService
+#installStreamlineService
 
 sleep 2
 STREAMLINE_STATUS=$(getServiceStatus STREAMLINE)
@@ -648,11 +712,6 @@ if [[ $NIFI_STATUS == INSTALLED ]]; then
 else
        	echo "*********************************NIFI Service Started..."
 fi
-
-#Add symbolic links to Atlas Hooks
-ln -s /usr/hdp/current/atlas-client/hook/storm/atlas-plugin-classloader-0.8.0.2.6.1.0-34.jar /usr/hdf/current/storm-client/lib/atlas-plugin-classloader.jar
-
-ln -s /usr/hdp/current/atlas-client/hook/storm/storm-bridge-shim-0.8.0.2.6.1.0-34.jar /usr/hdf/current/storm-client/lib/storm-bridge-shim.jar
 
 #export MYSQL_TEMP_PASSWORD=$(grep 'A temporary password' /var/log/mysqld.log |grep -Po ': .+'|grep -Po '[^: ].+')
 #mysqladmin -u root --password=$MYSQL_TEMP_PASSWORD password "Password!1"

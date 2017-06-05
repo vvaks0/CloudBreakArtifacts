@@ -1,10 +1,10 @@
 {
   "RepositoryVersions": {
-    "display_name": "HDP-2.6.1.0-34",
+    "display_name": "HDP-2.6.1.0-129",
     "has_children": false,
     "id": 1,
     "parent_id": null,
-    "repository_version": "2.6.1.0-34",
+    "repository_version": "2.6.1.0-129",
     "stack_name": "HDP",
     "stack_services": [
       {
@@ -44,7 +44,7 @@
         "display_name": "SmartSense",
         "comment": "SmartSense - Hortonworks SmartSense Tool (HST) helps quickly gather configuration, metrics, logs from common HDP\n                services that aids to quickly troubleshoot support cases and receive cluster-specific recommendations.\n            ",
         "versions": [
-          "1.4.0.2.5.1.0-106"
+          "1.4.0.2.5.1.0-159"
         ]
       },
       {
@@ -271,7 +271,7 @@
       "repositories": [
         {
           "Repositories" : {
-			"base_url":"http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.0.0.0-264",
+			"base_url":"http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.0.0.0-441",
     		"default_base_url" : "",
 			"latest_base_url" : "",
 			"mirrors_list" : "",
@@ -282,12 +282,12 @@
 			"stack_name" : "HDP",
 			"stack_version" : "2.6",
 			"unique" : false,
-            "initial_base_url":"http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.0.0.0-264"
+            "initial_base_url":"http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.0.0.0-441"
   		  }
 		},
         {
           "Repositories": {
-            "base_url": "http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos7/2.x/BUILDS/2.6.1.0-34",
+            "base_url": "http://public-repo-1.hortonworks.com/HDP/centos7/2.x/updates/2.6.1.0",
             "default_base_url": "",
             "latest_base_url": "",
             "mirrors_list": "",
@@ -298,7 +298,7 @@
             "stack_name": "HDP",
             "stack_version": "2.6",
             "unique": false,
-            "initial_base_url": "http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos7/2.x/BUILDS/2.6.1.0-34"
+            "initial_base_url": "http://public-repo-1.hortonworks.com/HDP/centos7/2.x/updates/2.6.1.0"
           }
         },
         {
