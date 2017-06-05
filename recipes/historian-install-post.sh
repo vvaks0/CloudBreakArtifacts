@@ -188,6 +188,8 @@ installSchemaRegistryService () {
 
 		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME registry-env $ROOT_PATH/CloudBreakArtifacts/hdf-config/registry-config/registry-env.json
 		
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME registry-env $ROOT_PATH/CloudBreakArtifacts/hdf-config/registry-config/registry-log4j.json
+		
        	echo "*********************************Adding REGISTRY SERVER role to Host..."
        	# Add REGISTRY_SERVER role to Ambari Host
        	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/hosts/$AMBARI_HOST/host_components/REGISTRY_SERVER
@@ -596,7 +598,7 @@ sleep 1
 /var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.queues "default,llap"
 sleep 1
 
-/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME core-site hadoop.proxyuser.hive.hosts "$HOST1,$HOST2,$HOST3"
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME core-site hadoop.proxyuser.hive.hosts "*"
 sleep 1
 
 #Add symbolic links to Atlas Hooks
@@ -607,13 +609,18 @@ sleep 1
 	sleep 2
     echo "*********************************Adding HIVE INTERACTIVE SERVER component..."
     # Add HIVE INTERACTIVE SERVER component to service
-    curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/REGISTRY/components/HIVE_SERVER_INTERACTIVE
+    curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/HIVE/components/HIVE_SERVER_INTERACTIVE
 
     sleep 2	
 	echo "*********************************Adding HIVE INTERACTIVE SERVER role to Host..."
     # Add HIVE INTERACTIVE SERVER role to Ambari Host
     curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/hosts/$AMBARI_HOST/host_components/HIVE_SERVER_INTERACTIVE
-
+	
+	sleep 2	
+	echo "*********************************Install HIVE INTERACTIVE SERVER..."
+    # Install HIVE INTERACTIVE SERVER
+    curl -u admin:admin -H "X-Requested-By:ambari" -i -X PUT -d '{"HostRoles": {"state": "INSTALLED"}}' http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/hosts/$AMBARI_HOST/host_components/HIVE_SERVER_INTERACTIVE
+	
     sleep 2
     stopService YARN
     startService YARN

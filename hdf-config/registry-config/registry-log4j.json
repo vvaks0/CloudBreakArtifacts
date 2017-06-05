@@ -1,0 +1,5 @@
+"properties" : {
+"content" : "\n # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.\n level: INFO\n # Logger-specific levels.\n loggers:\n  # Sets the level for 'com.example.app' to DEBUG.\n  com.hortonworks.registry: INFO\n appenders:\n   - type: file\n     threshold: DEBUG\n     logFormat: \"%-6level [%d{HH:mm:ss.SSS}] [%t] %logger{5} - %X{code} %msg %n\"\n     currentLogFilename: {{registry_log_dir}}/registry.log\n     archivedLogFilenamePattern: {{registry_log_dir}}/registry-%d{yyyy-MM-dd}-%i.log.gz\n     archivedFileCount: {{registry_log_maxbackupindex}}\n     timeZone: UTC\n     maxFileSize: {{registry_log_maxfilesize}}",
+"registry_log_maxbackupindex" : "20",
+"registry_log_maxfilesize" : "256"
+}
