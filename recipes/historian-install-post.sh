@@ -815,7 +815,7 @@ fi
 #echo "*********************************Checking STREAMLINE status..."
 #if ! [[ $STREAMLINE_STATUS == STARTED || $STREAMLINE_STATUS == INSTALLED ]]; then
 #       	echo "*********************************STREAMLINE is in a transitional state, waiting..."
-       	waitForService STREAMLINE
+       	#waitForService STREAMLINE
 #       	echo "*********************************STREAMLINE has entered a ready state..."
 #fi
 #if [[ $STREAMLINE_STATUS == INSTALLED ]]; then
