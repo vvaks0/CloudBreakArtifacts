@@ -407,9 +407,9 @@ installDruidService () {
 		
 		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME druid-superset $ROOT_PATH/CloudBreakArtifacts/hdf-config/druid-config/druid-superset.json
 		
-		HOST1=$(getHostByPosition 1)
-		HOST2=$(getHostByPosition 2)
-		HOST3=$(getHostByPosition 3)			
+		export HOST1=$(getHostByPosition 1)
+		export HOST2=$(getHostByPosition 2)
+		export HOST3=$(getHostByPosition 3)			
 		
        	echo "*********************************Adding DRUID BROKER role to Host..."
        	# Add DRUID BROKER role to Host
@@ -534,14 +534,14 @@ setupHDFDataStores (){
 	mysql --execute="CREATE DATABASE streamline"
 	mysql --execute="CREATE DATABASE druid DEFAULT CHARACTER SET utf8"
 	mysql --execute="CREATE DATABASE superset DEFAULT CHARACTER SET utf8"
-	mysql --execute="CREATE USER 'registry'@'$AMBARI_HOST' IDENTIFIED BY 'registry'"
-	mysql --execute="CREATE USER 'streamline'$AMBARI_HOST'%' IDENTIFIED BY 'streamline'"
-	mysql --execute="CREATE USER 'druid'$AMBARI_HOST'%' IDENTIFIED BY 'druid'"
-	mysql --execute="CREATE USER 'superset'$AMBARI_HOST'%' IDENTIFIED BY 'superset'"
-	mysql --execute="GRANT ALL PRIVILEGES ON registry.* TO 'registry'@'$AMBARI_HOST' WITH GRANT OPTION"
-	mysql --execute="GRANT ALL PRIVILEGES ON streamline.* TO 'streamline'@'$AMBARI_HOST' WITH GRANT OPTION"
-	mysql --execute="GRANT ALL PRIVILEGES ON druid.* TO 'druid'@'$AMBARI_HOST' WITH GRANT OPTION"
-	mysql --execute="GRANT ALL PRIVILEGES ON superset.* TO 'superset'$AMBARI_HOST'%' WITH GRANT OPTION"
+	mysql --execute="CREATE USER 'registry'@'%' IDENTIFIED BY 'registry'"
+	mysql --execute="CREATE USER 'streamline'@'%' IDENTIFIED BY 'streamline'"
+	mysql --execute="CREATE USER 'druid'@'%' IDENTIFIED BY 'druid'"
+	mysql --execute="CREATE USER 'superset'@'%' IDENTIFIED BY 'superset'"
+	mysql --execute="GRANT ALL PRIVILEGES ON registry.* TO 'registry'@'%' WITH GRANT OPTION"
+	mysql --execute="GRANT ALL PRIVILEGES ON streamline.* TO 'streamline'@'%' WITH GRANT OPTION"
+	mysql --execute="GRANT ALL PRIVILEGES ON druid.* TO 'druid'@'%' WITH GRANT OPTION"
+	mysql --execute="GRANT ALL PRIVILEGES ON superset.* TO 'superset'@'%' WITH GRANT OPTION"
 	mysql --execute="FLUSH PRIVILEGES"
 	mysql --execute="COMMIT"
 }
@@ -552,20 +552,32 @@ echo "*********************************Configuring Hive..."
 /var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hiveserver2-interactive-site hive.exec.post.hooks org.apache.hadoop.hive.ql.hooks.ATSHook,org.apache.atlas.hive.hook.HiveHook
 /var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hiveserver2-interactive-site hive.exec.pre.hooks org.apache.hadoop.hive.ql.hooks.ATSHook
 /var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hiveserver2-interactive-site hive.service.metrics.file.location /var/log/hive/hiveserver2Interactive-report.json
-/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hiveserver2-interactive-site hive.llap.daemon.num.executors 4
-/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hiveserver2-interactive-sitehive.llap.daemon.queue.name llap
-/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hiveserver2-interactive-site hive.server2.tez.default.queues llap
+sleep 1
+
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hive-interactive-site hive.auto.convert.join.noconditionaltask.size 858783744
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hive-interactive-site hive.llap.daemon.num.executors 4
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hive-interactive-site hive.llap.daemon.queue.name llap
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hive-interactive-site hive.llap.daemon.yarn.container.mb 13312
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hive-interactive-site hive.llap.io.memory.size 1024
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hive-interactive-site hive.llap.io.threadpool.size 4
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hive-interactive-site hive.server2.tez.default.queues llap
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hive-interactive-site hive.tez.container.size 3072
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hive-interactive-env llap_heap_size 9830
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hive-interactive-env slider_am_container_mb 1024
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME tez-interactive-site tez.am.resource.memory.mb 1024
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME tez-interactive-site tez.runtime.io.sort.mb 819
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME tez-interactive-site tez.runtime.unordered.output.buffer.size-mb 184
 sleep 1
 
 /var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.default.minimum-user-limit-percent 100
 /var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.maximum-am-resource-percent 0.2
 /var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.maximum-applications 10000
-/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME /var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.node-locality-delay 40
-/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.accessible-node-labels *
-/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.acl_administer_queue *
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME  capacity-scheduler yarn.scheduler.capacity.node-locality-delay 40
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.accessible-node-labels "*"
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.acl_administer_queue "*"
 /var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.capacity 100
-/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.default.acl_administer_jobs *
-/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.default.acl_submit_applications *
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.default.acl_administer_jobs "*"
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.default.acl_submit_applications "*"
 /var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.default.capacity 66.0
 /var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.default.maximum-capacity 66.0
 /var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.default.state RUNNING
@@ -584,13 +596,28 @@ sleep 1
 /var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.queues "default,llap"
 sleep 1
 
-/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME core-site hadoop.proxyuser.hive.hosts *
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME core-site hadoop.proxyuser.hive.hosts "$HOST1,$HOST2,$HOST3"
 sleep 1
 
 #Add symbolic links to Atlas Hooks
-ln -s /usr/hdp/current/atlas-client/hook/storm/atlas-plugin-classloader-0.8.0.2.6.1.0-34.jar /usr/hdf/current/storm-client/lib/atlas-plugin-classloader.jar
+	ln -s /usr/hdp/current/atlas-client/hook/hive/atlas-plugin-classloader-0.8.0.2.6.1.0-129.jar /usr/hdp/current/hive-client/lib/atlas-plugin-classloader.jar
 
-ln -s /usr/hdp/current/atlas-client/hook/storm/storm-bridge-shim-0.8.0.2.6.1.0-34.jar /usr/hdf/current/storm-client/lib/storm-bridge-shim.jar
+	ln -s /usr/hdp/current/atlas-client/hook/hive/hive-bridge-shim-0.8.0.2.6.1.0-129.jar /usr/hdp/current/hive-client/lib/hive-bridge-shim.jar
+
+	sleep 2
+    echo "*********************************Adding HIVE INTERACTIVE SERVER component..."
+    # Add HIVE INTERACTIVE SERVER component to service
+    curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/REGISTRY/components/HIVE_SERVER_INTERACTIVE
+
+    sleep 2	
+	echo "*********************************Adding HIVE INTERACTIVE SERVER role to Host..."
+    # Add HIVE INTERACTIVE SERVER role to Ambari Host
+    curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/hosts/$AMBARI_HOST/host_components/HIVE_SERVER_INTERACTIVE
+
+    sleep 2
+    stopService YARN
+    startService YARN
+   	startService HIVE
 }
 
 installNifiNars () {
@@ -608,6 +635,113 @@ installNifiNars () {
 	cd $ROOT_PATH/NifiHistorianDean/
 	mvn clean package
 	cp $ROOT_PATH/NifiHistorianDean/target/HistorianDeanReporter-0.0.1-SNAPSHOT.nar /usr/hdf/current/nifi/lib/
+}
+
+deployTemplateToNifi () {
+	echo "*********************************Importing NIFI Template..."		
+       	# Import NIFI Template HDF 2.x
+       	TEMPLATEID=$(curl -v -F template=@"$ROOT_PATH/CloudBreakArtifacts/hdf-config/nifi-template/historian-orchestrator.xml" -X POST http://$AMBARI_HOST:9090/nifi-api/process-groups/root/templates/upload | grep -Po '<id>([a-z0-9-]+)' | grep -Po '>([a-z0-9-]+)' | grep -Po '([a-z0-9-]+)')
+		sleep 1
+		
+		# Instantiate NIFI Template 2.x
+		echo "*********************************Instantiating NIFI Flow..."
+       	curl -u admin:admin -i -H "Content-Type:application/json" -d "{\"templateId\":\"$TEMPLATEID\",\"originX\":100,\"originY\":100}" -X POST http://$AMBARI_HOST:9090/nifi-api/process-groups/root/template-instance
+       	sleep 1
+       	
+       	# Rename NIFI Root Group HDF 2.x
+		echo "*********************************Renaming Nifi Root Group..."
+		ROOT_GROUP_REVISION=$(curl -X GET http://$AMBARI_HOST:9090/nifi-api/process-groups/root |grep -Po '\"version\":([0-9]+)'|grep -Po '([0-9]+)')
+		
+		sleep 1
+		ROOT_GROUP_ID=$(curl -X GET http://$AMBARI_HOST:9090/nifi-api/process-groups/root|grep -Po '("component":{"id":")([0-9a-zA-z\-]+)'| grep -Po '(:"[0-9a-zA-z\-]+)'| grep -Po '([0-9a-zA-z\-]+)')
+
+		PAYLOAD=$(echo "{\"id\":\"$ROOT_GROUP_ID\",\"revision\":{\"version\":$ROOT_GROUP_REVISION},\"component\":{\"id\":\"$ROOT_GROUP_ID\",\"name\":\"Historian-Orchestrator\"}}")
+		
+		sleep 1
+		curl -d $PAYLOAD  -H "Content-Type: application/json" -X PUT http://$AMBARI_HOST:9090/nifi-api/process-groups/$ROOT_GROUP_ID
+	
+}
+
+handleGroupProcessors (){
+       	TARGET_GROUP=$1
+
+       	TARGETS=($(curl -u admin:admin -i -X GET $TARGET_GROUP/processors | grep -Po '\"uri\":\"([a-z0-9-://.]+)' | grep -Po '(?!.*\")([a-z0-9-://.]+)'))
+       	length=${#TARGETS[@]}
+       	echo $length
+       	echo ${TARGETS[0]}
+
+       	for ((i = 0; i < $length; i++))
+       	do
+       		ID=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '"id":"([a-zA-z0-9\-]+)'|grep -Po ':"([a-zA-z0-9\-]+)'|grep -Po '([a-zA-z0-9\-]+)'|head -1)
+       		REVISION=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '\"version\":([0-9]+)'|grep -Po '([0-9]+)')
+       		TYPE=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '"type":"([a-zA-Z0-9\-.]+)' |grep -Po ':"([a-zA-Z0-9\-.]+)' |grep -Po '([a-zA-Z0-9\-.]+)' |head -1)
+       		echo "Current Processor Path: ${TARGETS[i]}"
+       		echo "Current Processor Revision: $REVISION"
+       		echo "Current Processor ID: $ID"
+       		echo "Current Processor TYPE: $TYPE"
+
+       			if ! [ -z $(echo $TYPE|grep "Record") ]; then
+       				echo "***************************This is a Record Processor"
+
+       				RECORD_READER=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '"record-reader":"[a-zA-Z0-9-]+'|grep -Po ':"[a-zA-Z0-9-]+'|grep -Po '[a-zA-Z0-9-]+'|head -1)
+                RECORD_WRITER=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '"record-writer":"[a-zA-Z0-9-]+'|grep -Po ':"[a-zA-Z0-9-]+'|grep -Po '[a-zA-Z0-9-]+'|head -1)
+
+                echo "Record Reader: $RECORD_READER"
+                echo "Record Writer: $RECORD_WRITER"
+
+       				SCHEMA_REGISTRY=$(curl -u admin:admin -i -X GET http://$AMBARI_HOST:9090/nifi-api/controller-services/$RECORD_READER |grep -Po '"schema-registry":"[a-zA-Z0-9-]+'|grep -Po ':"[a-zA-Z0-9-]+'|grep -Po '[a-zA-Z0-9-]+'|head -1)
+
+       				echo "Schema Registry: $SCHEMA_REGISTRY"
+
+       				curl -u admin:admin -i -H "Content-Type:application/json" -X PUT -d "{\"id\":\"$SCHEMA_REGISTRY\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$SCHEMA_REGISTRY\",\"state\":\"ENABLED\",\"properties\":{\"url\":\"http:\/\/$AMBARI_HOST:7788\/api\/v1\"}}}" http://$AMBARI_HOST:9090/nifi-api/controller-services/$SCHEMA_REGISTRY
+
+       				curl -u admin:admin -i -H "Content-Type:application/json" -X PUT -d "{\"id\":\"$RECORD_READER\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$RECORD_READER\",\"state\":\"ENABLED\"}}" http://$AMBARI_HOST:9090/nifi-api/controller-services/$RECORD_READER
+
+       				curl -u admin:admin -i -H "Content-Type:application/json" -X PUT -d "{\"id\":\"$RECORD_WRITER\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$RECORD_WRITER\",\"state\":\"ENABLED\"}}" http://$AMBARI_HOST:9090/nifi-api/controller-services/$RECORD_WRITER
+
+       			fi
+       		if ! [ -z $(echo $TYPE|grep "PutKafka") ] || ! [ -z $(echo $TYPE|grep "PublishKafka") ]; then
+       			echo "***************************This is a PutKafka Processor"
+       			echo "***************************Updating Kafka Broker Porperty and Activating Processor..."
+       			if ! [ -z $(echo $TYPE|grep "PutKafka") ]; then
+                    PAYLOAD=$(echo "{\"id\":\"$ID\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$ID\",\"config\":{\"properties\":{\"Known Brokers\":\"$AMBARI_HOST:6667\"}},\"state\":\"RUNNING\"}}")
+                else
+                    PAYLOAD=$(echo "{\"id\":\"$ID\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$ID\",\"config\":{\"properties\":{\"bootstrap.servers\":\"$AMBARI_HOST:6667\"}},\"state\":\"RUNNING\"}}")
+                fi
+       		else
+       			echo "***************************Activating Processor..."
+       				PAYLOAD=$(echo "{\"id\":\"$ID\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$ID\",\"state\":\"RUNNING\"}}")
+       			fi
+       		echo "$PAYLOAD"
+
+       		curl -u admin:admin -i -H "Content-Type:application/json" -d "${PAYLOAD}" -X PUT ${TARGETS[i]}
+       	done
+}
+
+handleGroupPorts (){
+       	TARGET_GROUP=$1
+
+       	TARGETS=($(curl -u admin:admin -i -X GET $TARGET_GROUP/output-ports | grep -Po '\"uri\":\"([a-z0-9-://.]+)' | grep -Po '(?!.*\")([a-z0-9-://.]+)'))
+       	length=${#TARGETS[@]}
+       	echo $length
+       	echo ${TARGETS[0]}
+
+       	for ((i = 0; i < $length; i++))
+       	do
+       		ID=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '"id":"([a-zA-z0-9\-]+)'|grep -Po ':"([a-zA-z0-9\-]+)'|grep -Po '([a-zA-z0-9\-]+)'|head -1)
+       		REVISION=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '\"version\":([0-9]+)'|grep -Po '([0-9]+)')
+       		TYPE=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '"type":"([a-zA-Z0-9\-.]+)' |grep -Po ':"([a-zA-Z0-9\-.]+)' |grep -Po '([a-zA-Z0-9\-.]+)' |head -1)
+       		echo "Current Processor Path: ${TARGETS[i]}"
+       		echo "Current Processor Revision: $REVISION"
+       		echo "Current Processor ID: $ID"
+
+       		echo "***************************Activating Port ${TARGETS[i]}..."
+
+       		PAYLOAD=$(echo "{\"id\":\"$ID\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$ID\",\"state\": \"RUNNING\"}}")
+
+       		echo "PAYLOAD"
+       		curl -u admin:admin -i -H "Content-Type:application/json" -d "${PAYLOAD}" -X PUT ${TARGETS[i]}
+       	done
 }
 
 echo "*********************************Waiting for cluster install to complete..."
@@ -628,9 +762,6 @@ configureAmbariRepos
 sleep 2
 
 installUtils
-sleep 2
-
-installNifiNars
 sleep 2
 
 configureHive
@@ -677,23 +808,21 @@ else
        	echo "*********************************REGISTRY Service Started..."
 fi
 
-sleep 2
+#sleep 2
 #installStreamlineService
-
-sleep 2
-STREAMLINE_STATUS=$(getServiceStatus STREAMLINE)
-echo "*********************************Checking STREAMLINE status..."
-if ! [[ $STREAMLINE_STATUS == STARTED || $STREAMLINE_STATUS == INSTALLED ]]; then
-       	echo "*********************************STREAMLINE is in a transitional state, waiting..."
+#sleep 2
+#STREAMLINE_STATUS=$(getServiceStatus STREAMLINE)
+#echo "*********************************Checking STREAMLINE status..."
+#if ! [[ $STREAMLINE_STATUS == STARTED || $STREAMLINE_STATUS == INSTALLED ]]; then
+#       	echo "*********************************STREAMLINE is in a transitional state, waiting..."
        	waitForService STREAMLINE
-       	echo "*********************************STREAMLINE has entered a ready state..."
-fi
-
-if [[ $STREAMLINE_STATUS == INSTALLED ]]; then
-       	startService STREAMLINE
-else
-       	echo "*********************************STREAMLINE Service Started..."
-fi
+#       	echo "*********************************STREAMLINE has entered a ready state..."
+#fi
+#if [[ $STREAMLINE_STATUS == INSTALLED ]]; then
+#       	startService STREAMLINE
+#else
+#       	echo "*********************************STREAMLINE Service Started..."
+#fi
 
 sleep 2
 installNifiService
@@ -712,6 +841,10 @@ if [[ $NIFI_STATUS == INSTALLED ]]; then
 else
        	echo "*********************************NIFI Service Started..."
 fi
+
+sleep 2
+installNifiNars
+
 
 #export MYSQL_TEMP_PASSWORD=$(grep 'A temporary password' /var/log/mysqld.log |grep -Po ': .+'|grep -Po '[^: ].+')
 #mysqladmin -u root --password=$MYSQL_TEMP_PASSWORD password "Password!1"
