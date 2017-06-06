@@ -9,5 +9,7 @@
 "registry.storage.connector.password" : "registry",
 "registry.storage.connector.user" : "registry",
 "registry.storage.query.timeout" : "30",
-"registry.storage.type" : "mysql"
+"registry.storage.type" : "mysql",
+"jar.storage.type" : "local",
+"jar.storage.hdfs.url" : "hdfs://localhost:8020/user"
 }

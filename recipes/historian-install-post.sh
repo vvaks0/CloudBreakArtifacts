@@ -84,6 +84,14 @@ getServiceStatus () {
        	echo $SERVICE_STATUS
 }
 
+getComponentStatus () {
+       	SERVICE=$1
+       	COMPONENT=$2
+       	COMPONENT_STATUS=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/$SERVICE/components/$COMPONENT | grep '"state" :' | grep -Po '([A-Z]+)')
+
+       	echo $COMPONENT_STATUS
+}
+
 waitForService () {
        	# Ensure that Service is not in a transitional state
        	SERVICE=$1
@@ -549,6 +557,11 @@ setupHDFDataStores (){
 }
 
 configureHive () {
+
+export HOST1=$(getHostByPosition 1)
+export HOST2=$(getHostByPosition 2)
+export HOST3=$(getHostByPosition 3)
+
 echo "*********************************Configuring Hive..."
 /var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hiveserver2-interactive-site hive.druid.broker.address.default $DRUID_BROKER:8082
 /var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hiveserver2-interactive-site hive.exec.post.hooks org.apache.hadoop.hive.ql.hooks.ATSHook,org.apache.atlas.hive.hook.HiveHook
@@ -556,6 +569,7 @@ echo "*********************************Configuring Hive..."
 /var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hiveserver2-interactive-site hive.service.metrics.file.location /var/log/hive/hiveserver2Interactive-report.json
 sleep 1
 
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hive-interactive-site hive_heapsize 2048
 /var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hive-interactive-site hive.auto.convert.join.noconditionaltask.size 858783744
 /var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hive-interactive-site hive.llap.daemon.num.executors 4
 /var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hive-interactive-site hive.llap.daemon.queue.name llap
@@ -598,7 +612,7 @@ sleep 1
 /var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.queues "default,llap"
 sleep 1
 
-/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME core-site hadoop.proxyuser.hive.hosts "*"
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME core-site hadoop.proxyuser.hive.hosts "$HOST1,$HOST2,$HOST3"
 sleep 1
 
 #Add symbolic links to Atlas Hooks
@@ -624,7 +638,20 @@ sleep 1
     sleep 2
     stopService YARN
     startService YARN
-   	startService HIVE
+
+	TASKID=$(curl -u admin:admin -H "X-Requested-By:ambari" -i -X PUT -d "{\"HostRoles\": {\"state\": \"STARTED\"}}" http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/hosts/$AMBARI_HOST/host_components/HIVE_SERVER_INTERACTIVE | grep "id" | grep -Po '([0-9]+)')
+
+	echo "*********************************Start HIVE INTERACTIVE SERVER..."
+	sleep 2
+	LOOPESCAPE="false"
+	until [ "$LOOPESCAPE" == true ]; do
+		TASKSTATUS=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/requests/$TASKID | grep "request_status" | grep -Po '([A-Z]+)')
+		if [[ "$TASKSTATUS" == COMPLETED || "$TASKSTATUS" == FAILED ]]; then
+			LOOPESCAPE="true"
+		fi
+		echo "*********************************Start HIVE INTERACTIVE SERVER Task Status $TASKSTATUS"
+        sleep 2
+	done
 }
 
 installNifiNars () {
