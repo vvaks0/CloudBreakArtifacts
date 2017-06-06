@@ -862,6 +862,9 @@ sleep 2
 installNifiService
 
 sleep 2
+installNifiNars
+
+sleep 2
 NIFI_STATUS=$(getServiceStatus NIFI)
 echo "*********************************Checking NIFI status..."
 if ! [[ $NIFI_STATUS == STARTED || $NIFI_STATUS == INSTALLED ]]; then
@@ -875,9 +878,6 @@ if [[ $NIFI_STATUS == INSTALLED ]]; then
 else
        	echo "*********************************NIFI Service Started..."
 fi
-
-sleep 2
-installNifiNars
 
 
 #export MYSQL_TEMP_PASSWORD=$(grep 'A temporary password' /var/log/mysqld.log |grep -Po ': .+'|grep -Po '[^: ].+')
