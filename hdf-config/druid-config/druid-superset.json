@@ -3,7 +3,7 @@
 "MAPBOX_API_KEY" : "",
 "ROW_LIMIT" : "5000",
 "SECRET_KEY" : "abcdefg12345",
-"SUPERSET_DATABASE_HOSTNAME" : "{{mysql_host}}",
+"SUPERSET_DATABASE_HOSTNAME" : "hdf01-481-1-0.field.hortonworks.com",
 "SUPERSET_DATABASE_NAME" : "superset",
 "SUPERSET_DATABASE_PASSWORD" : "superset",
 "SUPERSET_DATABASE_PORT" : "3306",
