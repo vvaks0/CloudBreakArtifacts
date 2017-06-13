@@ -271,7 +271,7 @@
       "repositories": [
         {
           "Repositories" : {
-			"base_url":"http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.0.0.0-441",
+			"base_url":"	http://public-repo-1.hortonworks.com/HDF/centos7/3.x/updates/3.0.0.0",
     		"default_base_url" : "",
 			"latest_base_url" : "",
 			"mirrors_list" : "",
@@ -282,7 +282,7 @@
 			"stack_name" : "HDP",
 			"stack_version" : "2.6",
 			"unique" : false,
-            "initial_base_url":"http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.0.0.0-441"
+            "initial_base_url":"	http://public-repo-1.hortonworks.com/HDF/centos7/3.x/updates/3.0.0.0"
   		  }
 		},
         {

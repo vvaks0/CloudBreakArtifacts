@@ -1,10 +1,5 @@
 #!/bin/bash
 
-#http://s3.amazonaws.com/dev.hortonworks.com/ambari/centos7/2.x/BUILDS/2.5.1.0-106
-#http://s3.amazonaws.com/dev.hortonworks.com/ambari/centos7/2.x/BUILDS/2.5.1.0-106/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
-#http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos7/2.x/BUILDS/2.6.1.0-34
-#http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.21/repos/centos7
-
 #echo "*********************************Download Configurations"
 #git clone https://github.com/vakshorton/CloudBreakArtifacts
 #cd CloudBreakArtifacts
@@ -482,8 +477,8 @@ installDruidService () {
 }
 
 instalHDFManagementPack () {
-	wget http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.0.0.0-264/tars/hdf_ambari_mp/hdf-ambari-mpack-3.0.0.0-264.tar.gz
-ambari-server install-mpack --mpack=hdf-ambari-mpack-3.0.0.0-264.tar.gz --verbose
+	wget http://public-repo-1.hortonworks.com/HDF/centos7/3.x/updates/3.0.0.0/tars/hdf_ambari_mp/hdf-ambari-mpack-3.0.0.0-453.tar.gz
+ambari-server install-mpack --mpack=hdf-ambari-mpack-3.0.0.0-453.tar.gz --verbose
 
 	sleep 2
 	ambari-server restart
@@ -502,7 +497,7 @@ configureAmbariRepos (){
 	tee /etc/yum.repos.d/docker.repo <<-'EOF'
 	[HDF-3.0]
 	name=HDF-3.0
-	baseurl=http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.0.0.0-264
+	baseurl=http://public-repo-1.hortonworks.com/HDF/centos7/3.x/updates/3.0.0.0
 	path=/
 	enabled=1
 	gpgcheck=0

@@ -778,6 +778,10 @@ handleGroupPorts (){
        	done
 }
 
+createHistorianTagCacheTable () {
+	echo "create 'historian_tag_cache','f'" | hbase shell
+}
+
 echo "*********************************Waiting for cluster install to complete..."
 waitForServiceToStart YARN
 
@@ -799,6 +803,9 @@ installUtils
 sleep 2
 
 configureHive
+sleep 2
+
+createHistorianTagCacheTable
 sleep 2
 
 installMySQL
