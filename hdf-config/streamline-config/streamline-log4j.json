@@ -1,0 +1,5 @@
+"properties" : {
+"content" : "\n # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.\n level: INFO\n # Logger-specific levels.\n loggers:\n  # Sets the level for 'com.example.app' to DEBUG.\n  com.hortonworks.streamline: INFO\n appenders:\n   - type: file\n     threshold: DEBUG\n     logFormat: \"%-6level [%d{HH:mm:ss.SSS}] [%t] %logger{5} - %X{code} %msg %n\"\n     currentLogFilename: {{streamline_log_dir}}/streamline.log\n     archivedLogFilenamePattern: {{streamline_log_dir}}/streamline-%d{yyyy-MM-dd}-%i.log.gz\n     archivedFileCount: {{streamline_log_maxbackupindex}}\n     timeZone: UTC\n     maxFileSize: {{streamline_log_maxfilesize}}",
+"streamline_log_maxbackupindex" : "20",
+"streamline_log_maxfilesize" : "256"
+}
