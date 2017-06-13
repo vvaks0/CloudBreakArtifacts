@@ -19,23 +19,8 @@ else
        	echo "*********************************CLUSTER NAME IS: $CLUSTER_NAME"
 fi
 
-export VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
-export INTVERSION=$(echo $VERSION*10 | bc | grep -Po '([0-9][0-9])')
-echo "*********************************HDP VERSION IS: $VERSION"
-
 export HADOOP_USER_NAME=hdfs
 echo "*********************************HADOOP_USER_NAME set to HDFS"
-
-sed -r -i 's;\{\{mysql_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/registry-config/registry-common.json
-sed -r -i 's;\{\{mysql_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline-common.json
-sed -r -i 's;\{\{registry_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline-common.json
-sed -r -i 's;\{\{superset_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline-common.json
-sed -r -i 's;\{\{mysql_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/druid-config/druid-common.json
-sed -r -i 's;\{\{mysql_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/druid-config/druid-superset.json
-
-kill -9 $(netstat -nlp|grep 9090|grep -Po '[0-9]+/[a-zA-Z]+'|grep -Po '[0-9]+')
-
-cp -Rf $ROOT_PATH/CloudBreakArtifacts/recipes/TRUCKING_DEMO_CONTROL /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/
 
 waitForAmbari () {
        	# Wait for Ambari
@@ -183,6 +168,8 @@ installSchemaRegistryService () {
 
 		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME registry-env $ROOT_PATH/CloudBreakArtifacts/hdf-config/registry-config/registry-env.json
 		
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME registry-log4j $ROOT_PATH/CloudBreakArtifacts/hdf-config/registry-config/registry-log4j.json
+		
        	echo "*********************************Adding REGISTRY SERVER role to Host..."
        	# Add REGISTRY_SERVER role to Ambari Host
        	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/hosts/$AMBARI_HOST/host_components/REGISTRY_SERVER
@@ -228,11 +215,11 @@ installStreamlineService () {
        	echo "*********************************Creating STREAMLINE configuration..."
 
        	# Create and apply configuration
-		/var/lib/ambari-server/resources/scripts/configs.sh set localhost $CLUSTER_NAME streamline-common $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline-common.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME streamline-common $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline-common.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set localhost $CLUSTER_NAME streamline-env $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline-env.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME streamline-env $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline-env.json
 
-		/var/lib/ambari-server/resources/scripts/configs.sh set localhost $CLUSTER_NAME streamline_jaas_conf $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline_jaas_conf.json
+		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME streamline_jaas_conf $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline_jaas_conf.json
 		
        	echo "*********************************Adding STREAMLINE SERVER role to Host..."
        	# Add STREAMLINE SERVER role to Ambari Host
@@ -537,14 +524,14 @@ setupHDFDataStores (){
 	mysql --execute="CREATE DATABASE streamline"
 	mysql --execute="CREATE DATABASE druid DEFAULT CHARACTER SET utf8"
 	mysql --execute="CREATE DATABASE superset DEFAULT CHARACTER SET utf8"
-	mysql --execute="CREATE USER 'registry'@'$AMBARI_HOST' IDENTIFIED BY 'registry'"
-	mysql --execute="CREATE USER 'streamline'$AMBARI_HOST'%' IDENTIFIED BY 'streamline'"
-	mysql --execute="CREATE USER 'druid'$AMBARI_HOST'%' IDENTIFIED BY 'druid'"
-	mysql --execute="CREATE USER 'superset'$AMBARI_HOST'%' IDENTIFIED BY 'superset'"
-	mysql --execute="GRANT ALL PRIVILEGES ON registry.* TO 'registry'@'$AMBARI_HOST' WITH GRANT OPTION"
-	mysql --execute="GRANT ALL PRIVILEGES ON streamline.* TO 'streamline'@'$AMBARI_HOST' WITH GRANT OPTION"
-	mysql --execute="GRANT ALL PRIVILEGES ON druid.* TO 'druid'@'$AMBARI_HOST' WITH GRANT OPTION"
-	mysql --execute="GRANT ALL PRIVILEGES ON superset.* TO 'superset'$AMBARI_HOST'%' WITH GRANT OPTION"
+	mysql --execute="CREATE USER 'registry'@'%' IDENTIFIED BY 'registry'"
+	mysql --execute="CREATE USER 'streamline'@'%' IDENTIFIED BY 'streamline'"
+	mysql --execute="CREATE USER 'druid'@'%' IDENTIFIED BY 'druid'"
+	mysql --execute="CREATE USER 'superset'@'%' IDENTIFIED BY 'superset'"
+	mysql --execute="GRANT ALL PRIVILEGES ON registry.* TO 'registry'@'%' WITH GRANT OPTION"
+	mysql --execute="GRANT ALL PRIVILEGES ON streamline.* TO 'streamline'@'%' WITH GRANT OPTION"
+	mysql --execute="GRANT ALL PRIVILEGES ON druid.* TO 'druid'@'%' WITH GRANT OPTION"
+	mysql --execute="GRANT ALL PRIVILEGES ON superset.* TO 'superset'@'%' WITH GRANT OPTION"
 	mysql --execute="FLUSH PRIVILEGES"
 	mysql --execute="COMMIT"
 }
@@ -560,15 +547,36 @@ waitForServiceToStart ZOOKEEPER
 
 sleep 10
 
+export VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
+export INTVERSION=$(echo $VERSION*10 | bc | grep -Po '([0-9][0-9])')
+echo "*********************************HDP VERSION IS: $VERSION"
+
+sed -r -i 's;\{\{mysql_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/registry-config/registry-common.json
+sed -r -i 's;\{\{mysql_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline-common.json
+sed -r -i 's;\{\{registry_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline-common.json
+sed -r -i 's;\{\{superset_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline-common.json
+sed -r -i 's;\{\{mysql_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/druid-config/druid-common.json
+sed -r -i 's;\{\{mysql_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/druid-config/druid-superset.json
+
+echo "*********************************Stopping Prometheous..."
+kill -9 $(netstat -nlp|grep 9090|grep -Po '[0-9]+/[a-zA-Z]+'|grep -Po '[0-9]+')
+
+echo "*********************************Install TRUCKING_DEMO_CONTROL service..."
+cp -Rf $ROOT_PATH/CloudBreakArtifacts/recipes/TRUCKING_DEMO_CONTROL /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/
+
+echo "*********************************Install HDF Management Pack..."
 instalHDFManagementPack 
 sleep 2
 
+echo "*********************************Configure Ambari Repos"
 configureAmbariRepos
 sleep 2
 
+echo "*********************************Install MySQL..."
 installMySQL
 sleep 2
 
+echo "*********************************Setup DBs for HDF Services..."
 setupHDFDataStores
 sleep 2
 
