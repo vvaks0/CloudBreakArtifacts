@@ -21,13 +21,14 @@ class DemoControl(Script):
     self.configure(env)
     import params
     Execute('echo Start Simulation')
-    Execute('nohup java -cp '+params.install_dir+'/Data-Loader/data-loader-jar-with-dependencies.jar hortonworks.hdp.refapp.trucking.simulator.SimulationRegistrySerializerRunnerApp 20000 hortonworks.hdp.refapp.trucking.simulator.impl.domain.transport.Truck hortonworks.hdp.refapp.trucking.simulator.impl.collectors.FileEventWithSchemaIdCollector 1 '+params.install_dir+'/Data-Loader/routes/midwest/ 10000 /tmp/truck-sensor-data/telemetry-device-4.txt http://localhost:7788/api/v1 ALL_STREAMS & 2>&1 & echo $! > /var/run/TruckSim.pid')
+    Execute('nohup java -cp '+params.install_dir+'/Data-Loader/data-loader-jar-with-dependencies.jar hortonworks.hdp.refapp.trucking.simulator.SimulationRegistrySerializerRunnerApp 20000 hortonworks.hdp.refapp.trucking.simulator.impl.domain.transport.Truck hortonworks.hdp.refapp.trucking.simulator.impl.collectors.FileEventWithSchemaIdCollector 1 '+params.install_dir+'/Data-Loader/routes/midwest/ 10000 /tmp/truck-sensor-data/telemetry-device-4.txt http://localhost:7788/api/v1 ALL_STREAMS & 2>&1 & ')
+    Execute('ps -ef|grep "Data-Loader/data-loader-jar-with-dependencies.jar"| grep -v grep| awk \'{print $2}\' > /var/run/TruckSim.pid')
     
   def stop(self, env):
     self.configure(env)
     import params
     Execute('echo Stop Simulation')
-    Execute (format('kill -9 $(cat /var/run/TruckSim.pid) >/dev/null 2>&1')) 
+    Execute ('kill -9 $(ps -ef|grep "Data-Loader/data-loader-jar-with-dependencies.jar"| grep -v grep| awk \'{print $2}\') >/dev/null 2>&1') 
     Execute ('rm -f /var/run/TruckSim.pid')
     
   def status(self, env):
