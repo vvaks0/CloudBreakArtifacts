@@ -30,6 +30,7 @@ class DemoControl(Script):
     Execute('echo Stop Simulation')
     Execute ('kill -9 `ps -ef|grep "Data-Loader/data-loader-jar-with-dependencies.jar"| grep -v grep| awk \'{print $2}\'` >/dev/null 2>&1') 
     Execute ('rm -f /var/run/TruckSim.pid')
+    Execute ('touch /var/run/TruckSim.pid')
     
   def status(self, env):
     import params
