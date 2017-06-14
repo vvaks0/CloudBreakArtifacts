@@ -570,9 +570,9 @@ echo "*********************************Install HDF Management Pack..."
 instalHDFManagementPack 
 sleep 2
 
-echo "*********************************Configure Ambari Repos"
-configureAmbariRepos
-sleep 2
+#echo "*********************************Configure Ambari Repos"
+#configureAmbariRepos
+#sleep 2
 
 echo "*********************************Install MySQL..."
 installMySQL

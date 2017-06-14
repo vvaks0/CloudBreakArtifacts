@@ -27,7 +27,7 @@ class DemoControl(Script):
     self.configure(env)
     import params
     Execute('echo Stop Simulation')
-    Execute (format('kill -9 `cat /var/run/TruckSim.pid` >/dev/null 2>&1')) 
+    Execute (format('kill -9 $(cat /var/run/TruckSim.pid) >/dev/null 2>&1')) 
     Execute ('rm -f /var/run/TruckSim.pid')
     
   def status(self, env):
