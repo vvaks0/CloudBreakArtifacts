@@ -33,7 +33,7 @@ class DemoControl(Script):
   def status(self, env):
     import params
     env.set_params(params)
-    check_process_status('/var/run/TruckSim.pid')
+    Execute(format('cat /var/run/TruckSim.pid'))
     
   def configure(self, env):
     import params

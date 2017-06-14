@@ -10,7 +10,7 @@
             <components>
                 <component>
                     <name>TRUCKING_DEMO_CONTROL</name>
-                    <displayName>Credit Fraud Demo Control</displayName>
+                    <displayName>Trucking Demo Control</displayName>
                     <category>MASTER</category>
                     <cardinality>1</cardinality>
                     <commandScript>
