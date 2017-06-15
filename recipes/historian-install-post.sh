@@ -618,7 +618,7 @@ sleep 1
 sleep 1
 
 /var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.default.minimum-user-limit-percent 100
-/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.maximum-am-resource-percent 0.2
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.maximum-am-resource-percent 0.3
 /var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.maximum-applications 10000
 /var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME  capacity-scheduler yarn.scheduler.capacity.node-locality-delay 40
 /var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME capacity-scheduler yarn.scheduler.capacity.root.accessible-node-labels "*"
