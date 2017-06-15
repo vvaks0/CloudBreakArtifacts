@@ -886,6 +886,21 @@ configureNifiTempate () {
     ROOT_TARGET=$(curl -u admin:admin -i -X GET http://$NIFI_HOST:9090/nifi-api/process-groups/root| grep -Po '\"uri\":\"([a-z0-9-://.]+)' | grep -Po '(?!.*\")([a-z0-9-://.]+)')
 }
 
+startConductorReporter() {
+	sleep 1
+	echo "*********************************Instantiating Historian Conductor Reporting Task..."
+	PAYLOAD=$(echo "{\"revision\":{\"version\":0},\"component\":{\"name\":\"HistorianDeanReporter\",\"type\":\"com.hortonworks.historian.nifi.reporter.HistorianDeanReporter\",\"properties\": {\"Tag Dimension Name\": \"function\",\"Atlas URL\":\"http://$ATLAS_HOST:21000\",\"Nifi URL\": \"http://$NIFI_HOST:9090\",\"Hive Server Connection String\": \"jdbc:hive2://$HIVESERVER_INTERACTIVE_HOST:10500/default\",\"Druid Broker HTTP endpoint\": \"http://$DRUID_BROKER:8082\"}}}")
+
+	REPORTING_TASK_ID=$(curl -d "$PAYLOAD" -H "Content-Type: application/json" -X POST http://$NIFI_HOST:9090/nifi-api/controller/reporting-tasks|grep -Po '("component":{"id":")([0-9a-zA-z\-]+)'| grep -Po '(:"[0-9a-zA-z\-]+)'| grep -Po '([0-9a-zA-z\-]+)')
+	
+	sleep 1
+	echo "*********************************Starting Nifi Reporting Task..."
+PAYLOAD=$(echo "{\"id\":\"$REPORTING_TASK_ID\",\"revision\":{\"version\":1},\"component\":{\"id\":\"$REPORTING_TASK_ID\",\"state\":\"RUNNING\"}}")
+
+	curl -d "$PAYLOAD" -H "Content-Type: application/json" -X PUT http://$NIFI_HOST:9090/nifi-api/reporting-tasks/$REPORTING_TASK_ID
+	sleep 1
+}
+
 createHistorianTagCacheTable () {
 	echo "create 'historian_tag_cache','f'" | hbase shell
 }
@@ -908,15 +923,11 @@ sed -r -i 's;\{\{superset_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifac
 sed -r -i 's;\{\{mysql_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/druid-config/druid-common.json
 sed -r -i 's;\{\{mysql_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/druid-config/druid-superset.json
 
-HIVESERVER_INTERACTIVE_HOST=$(getHiveInteractiveServerHost)
-export HIVESERVER_INTERACTIVE_HOST=$HIVESERVER_INTERACTIVE_HOST
-ZK_HOST=$AMBARI_HOST
-export ZK_HOST=$ZK_HOST
-KAFKA_BROKER=$(getKafkaBroker)
-export KAFKA_BROKER=$KAFKA_BROKER
-ATLAS_HOST=$(getAtlasHost)
-export ATLAS_HOST=$ATLAS_HOST
-LIVY_HOST=$(getLivyHost)
+export HIVESERVER_INTERACTIVE_HOST=$(getHiveInteractiveServerHost)
+export ZK_HOST=$AMBARI_HOST
+export KAFKA_BROKER=$(getKafkaBroker)
+export ATLAS_HOST=$(getAtlasHost)
+export LIVY_HOST=$(getLivyHost)
 
 export VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
 export INTVERSION=$(echo $VERSION*10 | bc | grep -Po '([0-9][0-9])')
@@ -1019,11 +1030,9 @@ fi
 
 sleep 2
 
-export LIVY_HOST=$LIVY_HOST
-REGISTRY_HOST=$(getRegistryHost)
-export REGISTRY_HOST=$REGISTRY_HOST
-NIFI_HOST=$(getNifiHost)
-export NIFI_HOST=$NIFI_HOST
+export DRUID_BROKER=$(getDruidBroker)
+export REGISTRY_HOST=$(getRegistryHost)
+export NIFI_HOST=$(getNifiHost)
 
 sleep 2
 waitForNifiServlet
@@ -1034,6 +1043,10 @@ sleep 2
 
 echo "*********************************Configure Historian Orchestrator Template..."
 configureNifiTempate
+sleep 2
+
+echo "*********************************Start Historian Conductor Reporting Task..."
+startConductorReporter
 
 #export MYSQL_TEMP_PASSWORD=$(grep 'A temporary password' /var/log/mysqld.log |grep -Po ': .+'|grep -Po '[^: ].+')
 #mysqladmin -u root --password=$MYSQL_TEMP_PASSWORD password "Password!1"

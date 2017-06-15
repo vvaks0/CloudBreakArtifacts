@@ -2,7 +2,7 @@
 <template encoding-version="1.1">
   <description></description>
   <groupId>6b17c043-015c-1000-0677-ade129f83d42</groupId>
-  <name>historian_orchestrator_v0.12</name>
+  <name>historian_orchestrator_v0.13</name>
   <snippet>
     <connections>
       <id>8125a4df-061a-3864-0000-000000000000</id>
@@ -11,11 +11,11 @@
       <backPressureObjectThreshold>10000</backPressureObjectThreshold>
       <bends>
         <x>2305.9993896484375</x>
-        <y>2312.5613398600017</y>
+        <y>2313.945846674582</y>
       </bends>
       <bends>
         <x>2466.6488037109375</x>
-        <y>2361.9751582193767</y>
+        <y>2363.359665033957</y>
       </bends>
       <destination>
         <groupId>c69442f7-254f-3b39-0000-000000000000</groupId>
@@ -229,7 +229,7 @@
       <backPressureObjectThreshold>10000</backPressureObjectThreshold>
       <bends>
         <x>2910.3587646484375</x>
-        <y>2303.4832148600017</y>
+        <y>2304.867721674582</y>
       </bends>
       <destination>
         <groupId>c69442f7-254f-3b39-0000-000000000000</groupId>
@@ -422,11 +422,11 @@
       <backPressureObjectThreshold>10000</backPressureObjectThreshold>
       <bends>
         <x>1933.013671875</x>
-        <y>1822.702453141252</y>
+        <y>1824.086959955832</y>
       </bends>
       <bends>
         <x>1931.7303466796875</x>
-        <y>2395.0513300943767</y>
+        <y>2396.435836908957</y>
       </bends>
       <destination>
         <groupId>c69442f7-254f-3b39-0000-000000000000</groupId>
@@ -493,11 +493,11 @@
       <backPressureObjectThreshold>10000</backPressureObjectThreshold>
       <bends>
         <x>2339.5096435546875</x>
-        <y>2295.9287715006267</y>
+        <y>2297.313278315207</y>
       </bends>
       <bends>
         <x>2418.358642578125</x>
-        <y>2305.4832148600017</y>
+        <y>2306.867721674582</y>
       </bends>
       <destination>
         <groupId>c69442f7-254f-3b39-0000-000000000000</groupId>
@@ -648,11 +648,11 @@
       <backPressureObjectThreshold>10000</backPressureObjectThreshold>
       <bends>
         <x>3850.0811767578125</x>
-        <y>656.6883540201582</y>
+        <y>658.0728608347383</y>
       </bends>
       <bends>
         <x>3850.9913330078125</x>
-        <y>2399.9514765787517</y>
+        <y>2401.335983393332</y>
       </bends>
       <destination>
         <groupId>c69442f7-254f-3b39-0000-000000000000</groupId>
@@ -700,11 +700,11 @@
       <backPressureObjectThreshold>10000</backPressureObjectThreshold>
       <bends>
         <x>3848.4185791015625</x>
-        <y>857.8623652506269</y>
+        <y>859.2468720652071</y>
       </bends>
       <bends>
         <x>3850.9913330078125</x>
-        <y>2353.7830195475017</y>
+        <y>2355.167526362082</y>
       </bends>
       <destination>
         <groupId>c69442f7-254f-3b39-0000-000000000000</groupId>
@@ -793,11 +793,11 @@
       <backPressureObjectThreshold>10000</backPressureObjectThreshold>
       <bends>
         <x>2576.358642578125</x>
-        <y>2300.4832148600017</y>
+        <y>2301.867721674582</y>
       </bends>
       <bends>
         <x>2685.3587646484375</x>
-        <y>2304.4832148600017</y>
+        <y>2305.867721674582</y>
       </bends>
       <destination>
         <groupId>c69442f7-254f-3b39-0000-000000000000</groupId>
@@ -843,11 +843,11 @@
       <backPressureObjectThreshold>10000</backPressureObjectThreshold>
       <bends>
         <x>2935.5777587890625</x>
-        <y>2314.0916132975017</y>
+        <y>2315.476120112082</y>
       </bends>
       <bends>
         <x>2968.6009521484375</x>
-        <y>2361.9751582193767</y>
+        <y>2363.359665033957</y>
       </bends>
       <destination>
         <groupId>c69442f7-254f-3b39-0000-000000000000</groupId>
@@ -903,6 +903,27 @@
       <source>
         <groupId>c69442f7-254f-3b39-0000-000000000000</groupId>
         <id>e036e22e-2134-3e4b-0000-000000000000</id>
+        <type>PROCESSOR</type>
+      </source>
+      <zIndex>0</zIndex>
+    </connections>
+    <connections>
+      <id>1525dd52-2e72-3a29-0000-000000000000</id>
+      <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
+      <backPressureDataSizeThreshold>1 GB</backPressureDataSizeThreshold>
+      <backPressureObjectThreshold>10000</backPressureObjectThreshold>
+      <destination>
+        <groupId>c69442f7-254f-3b39-0000-000000000000</groupId>
+        <id>7f86231f-c6a1-30db-0000-000000000000</id>
+        <type>PROCESSOR</type>
+      </destination>
+      <flowFileExpiration>0 sec</flowFileExpiration>
+      <labelIndex>1</labelIndex>
+      <name></name>
+      <selectedRelationships>metric</selectedRelationships>
+      <source>
+        <groupId>c69442f7-254f-3b39-0000-000000000000</groupId>
+        <id>fc617e1c-457f-3ddf-0000-000000000000</id>
         <type>PROCESSOR</type>
       </source>
       <zIndex>0</zIndex>
@@ -1167,11 +1188,11 @@
       <backPressureObjectThreshold>10000</backPressureObjectThreshold>
       <bends>
         <x>2630.8270263671875</x>
-        <y>2312.5613398600017</y>
+        <y>2313.945846674582</y>
       </bends>
       <bends>
         <x>2727.5318603515625</x>
-        <y>2363.6262812662517</y>
+        <y>2365.010788080832</y>
       </bends>
       <destination>
         <groupId>c69442f7-254f-3b39-0000-000000000000</groupId>
@@ -2011,7 +2032,7 @@
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>0.0</x>
-        <y>1.6776984492605607</y>
+        <y>3.062205263840724</y>
       </position>
       <height>2491.186279296875</height>
       <label></label>
@@ -2028,7 +2049,7 @@
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>1863.7602508254704</x>
-        <y>0.0</y>
+        <y>1.3845068145801633</y>
       </position>
       <height>2496.052490234375</height>
       <label></label>
@@ -2039,8 +2060,8 @@
       <id>d96d0e81-9cfd-37aa-0000-000000000000</id>
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
-        <x>3928.8235655977724</x>
-        <y>8.615493185419837</y>
+        <x>3943.8235655977724</x>
+        <y>0.0</y>
       </position>
       <height>2493.814208984375</height>
       <label></label>
@@ -2057,7 +2078,7 @@
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>87.16928875994518</x>
-        <y>1439.2968204038523</y>
+        <y>1440.6813272184324</y>
       </position>
       <bundle>
         <artifact>nifi-standard-nar</artifact>
@@ -2138,7 +2159,7 @@
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>636.6298297884443</x>
-        <y>1240.995058476283</y>
+        <y>1242.3795652908632</y>
       </position>
       <bundle>
         <artifact>nifi-standard-nar</artifact>
@@ -2238,7 +2259,7 @@
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>3082.8309986037975</x>
-        <y>591.7744753151426</y>
+        <y>593.1589821297227</y>
       </position>
       <bundle>
         <artifact>nifi-standard-nar</artifact>
@@ -2333,7 +2354,7 @@
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>4211.074819541864</x>
-        <y>219.06577062738802</y>
+        <y>220.45027744196818</y>
       </position>
       <bundle>
         <artifact>nifi-standard-nar</artifact>
@@ -2437,7 +2458,7 @@
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>3482.0219570314785</x>
-        <y>2133.7857017791475</y>
+        <y>2135.1702085937277</y>
       </position>
       <bundle>
         <artifact>nifi-standard-nar</artifact>
@@ -2720,7 +2741,7 @@
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>1212.6787626345388</x>
-        <y>1044.2206543269</y>
+        <y>1045.6051611414803</y>
       </position>
       <bundle>
         <artifact>nifi-standard-nar</artifact>
@@ -2780,7 +2801,7 @@
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>2365.3586699906723</x>
-        <y>2134.48314507158</y>
+        <y>2135.8676518861603</y>
       </position>
       <bundle>
         <artifact>nifi-livy-bundle-nar</artifact>
@@ -2831,7 +2852,7 @@
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>1211.8493588230274</x>
-        <y>1245.147713612712</y>
+        <y>1246.5322204272923</y>
       </position>
       <bundle>
         <artifact>nifi-update-attribute-nar</artifact>
@@ -2941,7 +2962,7 @@
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>1210.7777734628078</x>
-        <y>652.6295884267658</y>
+        <y>654.014095241346</y>
       </position>
       <bundle>
         <artifact>nifi-standard-nar</artifact>
@@ -3005,7 +3026,7 @@
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>85.47392008694487</x>
-        <y>643.0968628730996</y>
+        <y>644.4813696876797</y>
       </position>
       <bundle>
         <artifact>nifi-standard-nar</artifact>
@@ -3139,7 +3160,7 @@
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>2364.6150106217788</x>
-        <y>1759.1919250512444</y>
+        <y>1760.5764318658246</y>
       </position>
       <bundle>
         <artifact>nifi-standard-nar</artifact>
@@ -3227,7 +3248,7 @@
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>2005.375038597236</x>
-        <y>1947.2321437449893</y>
+        <y>1948.6166505595695</y>
       </position>
       <bundle>
         <artifact>nifi-update-attribute-nar</artifact>
@@ -3310,7 +3331,7 @@ print 'Python Script Success'
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>3481.6337915668846</x>
-        <y>1571.6550717227453</y>
+        <y>1573.0395785373255</y>
       </position>
       <bundle>
         <artifact>nifi-standard-nar</artifact>
@@ -3410,7 +3431,7 @@ print 'Python Script Success'
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>4466.605923315836</x>
-        <y>1276.1190389187243</y>
+        <y>1277.5035457333045</y>
       </position>
       <bundle>
         <artifact>nifi-standard-nar</artifact>
@@ -3608,7 +3629,7 @@ print 'Python Script Success'
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>2724.07794373464</x>
-        <y>2133.9632633056463</y>
+        <y>2135.3477701202264</y>
       </position>
       <bundle>
         <artifact>nifi-livy-bundle-nar</artifact>
@@ -3659,7 +3680,7 @@ print 'Python Script Success'
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>2366.476373127067</x>
-        <y>1372.677470642633</y>
+        <y>1374.061977457213</y>
       </position>
       <bundle>
         <artifact>nifi-update-attribute-nar</artifact>
@@ -3793,7 +3814,7 @@ print 'Python Script Success'
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>636.9068993577887</x>
-        <y>1442.0126920818927</y>
+        <y>1443.397198896473</y>
       </position>
       <bundle>
         <artifact>nifi-standard-nar</artifact>
@@ -3874,7 +3895,7 @@ print 'Python Script Success'
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>3081.256942252776</x>
-        <y>1373.3515180332795</y>
+        <y>1374.7360248478597</y>
       </position>
       <bundle>
         <artifact>nifi-update-attribute-nar</artifact>
@@ -4009,7 +4030,7 @@ print 'Python Script Success'
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>635.8572563129794</x>
-        <y>235.43773280048867</y>
+        <y>236.82223961506884</y>
       </position>
       <bundle>
         <artifact>nifi-standard-nar</artifact>
@@ -4133,7 +4154,7 @@ print 'Python Script Success'
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>4208.191128640668</x>
-        <y>820.869308774387</y>
+        <y>822.2538155889672</y>
       </position>
       <bundle>
         <artifact>nifi-standard-nar</artifact>
@@ -4213,7 +4234,7 @@ print 'Python Script Success'
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>1212.758760785339</x>
-        <y>857.2243596107544</y>
+        <y>858.6088664253346</y>
       </position>
       <bundle>
         <artifact>nifi-standard-nar</artifact>
@@ -4327,7 +4348,7 @@ print 'Python Script Success'
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>3077.1425049426807</x>
-        <y>207.05104992720635</y>
+        <y>208.4355567417865</y>
       </position>
       <bundle>
         <artifact>nifi-update-attribute-nar</artifact>
@@ -4494,7 +4515,7 @@ print 'Python Script Success'
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>633.7820642796999</x>
-        <y>432.1516455574499</y>
+        <y>433.5361523720301</y>
       </position>
       <bundle>
         <artifact>nifi-standard-nar</artifact>
@@ -4596,7 +4617,7 @@ print 'Python Script Success'
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>3079.8945086328213</x>
-        <y>394.7418579956295</y>
+        <y>396.1263648102097</y>
       </position>
       <bundle>
         <artifact>nifi-update-attribute-nar</artifact>
@@ -4681,7 +4702,7 @@ print 'Python Script Success'
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>3484.1549531792616</x>
-        <y>1373.7290175584922</y>
+        <y>1375.1135243730723</y>
       </position>
       <bundle>
         <artifact>nifi-update-attribute-nar</artifact>
@@ -4815,7 +4836,7 @@ print 'Python Script Success'
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>3968.938851658373</x>
-        <y>1047.4074036708137</y>
+        <y>1048.7919104853938</y>
       </position>
       <bundle>
         <artifact>nifi-druid-bundle-nar</artifact>
@@ -4870,7 +4891,7 @@ print 'Python Script Success'
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>85.4738063339388</x>
-        <y>853.1138366903151</y>
+        <y>854.4983435048953</y>
       </position>
       <bundle>
         <artifact>nifi-standard-nar</artifact>
@@ -4944,7 +4965,7 @@ print 'Python Script Success'
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>1216.5748574509826</x>
-        <y>1442.977879986389</y>
+        <y>1444.3623868009693</y>
       </position>
       <bundle>
         <artifact>nifi-standard-nar</artifact>
@@ -5025,7 +5046,7 @@ print 'Python Script Success'
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>3083.2828194690137</x>
-        <y>789.4864643724634</y>
+        <y>790.8709711870436</y>
       </position>
       <bundle>
         <artifact>nifi-standard-nar</artifact>
@@ -5120,7 +5141,7 @@ print 'Python Script Success'
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>85.7056340892351</x>
-        <y>1235.858370433091</y>
+        <y>1237.2428772476712</y>
       </position>
       <bundle>
         <artifact>nifi-standard-nar</artifact>
@@ -5220,7 +5241,7 @@ print 'Python Script Success'
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>4468.256497646035</x>
-        <y>1050.0920794667707</y>
+        <y>1051.4765862813508</y>
       </position>
       <bundle>
         <artifact>nifi-druid-bundle-nar</artifact>
@@ -5275,7 +5296,7 @@ print 'Python Script Success'
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>2365.6052449967788</x>
-        <y>1947.1919250512444</y>
+        <y>1948.5764318658246</y>
       </position>
       <bundle>
         <artifact>nifi-update-attribute-nar</artifact>
@@ -5358,7 +5379,7 @@ print 'Python Script Success'
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>3084.5728763253064</x>
-        <y>2134.4824920141864</y>
+        <y>2135.8669988287666</y>
       </position>
       <bundle>
         <artifact>nifi-hive-nar</artifact>
@@ -5488,7 +5509,7 @@ print 'Python Script Success'
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>3084.0992626778043</x>
-        <y>979.2810427130646</y>
+        <y>980.6655495276448</y>
       </position>
       <bundle>
         <artifact>nifi-update-attribute-nar</artifact>
@@ -5592,7 +5613,7 @@ print 'Python Script Success'
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>3968.938728710288</x>
-        <y>1275.1013952959217</y>
+        <y>1276.485902110502</y>
       </position>
       <bundle>
         <artifact>nifi-standard-nar</artifact>
@@ -5790,7 +5811,7 @@ print 'Python Script Success'
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>632.4854620770845</x>
-        <y>30.505529254206294</y>
+        <y>31.890036068786458</y>
       </position>
       <bundle>
         <artifact>nifi-kafka-0-10-nar</artifact>
@@ -5962,7 +5983,7 @@ print 'Python Script Success'
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>2367.0080347985486</x>
-        <y>1571.5060551295712</y>
+        <y>1572.8905619441514</y>
       </position>
       <bundle>
         <artifact>nifi-update-attribute-nar</artifact>
@@ -6102,7 +6123,7 @@ dataDF = spark.read.json(contentRDD.map(lambda x: x['result']['events']).flatMap
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>2724.5028280045913</x>
-        <y>1947.1960754418694</y>
+        <y>1948.5805822564496</y>
       </position>
       <bundle>
         <artifact>nifi-update-attribute-nar</artifact>
@@ -6253,7 +6274,7 @@ print(\"],\"); }
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>3968.962861163287</x>
-        <y>1486.3350064704725</y>
+        <y>1487.7195132850527</y>
       </position>
       <bundle>
         <artifact>nifi-hadoop-nar</artifact>
@@ -6424,7 +6445,7 @@ print(\"],\"); }
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>3085.093615858239</x>
-        <y>2331.3155333980303</y>
+        <y>2332.7000402126105</y>
       </position>
       <bundle>
         <artifact>nifi-standard-nar</artifact>
@@ -6495,7 +6516,7 @@ print(\"],\"); }
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>4208.053743193808</x>
-        <y>424.4235034386363</y>
+        <y>425.8080102532165</y>
       </position>
       <bundle>
         <artifact>nifi-standard-nar</artifact>
@@ -6609,7 +6630,7 @@ print(\"],\"); }
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>3075.609372863277</x>
-        <y>25.859893326798783</y>
+        <y>27.244400141378947</y>
       </position>
       <bundle>
         <artifact>nifi-standard-nar</artifact>
@@ -6793,7 +6814,7 @@ print(\"],\"); }
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>4468.25627647196</x>
-        <y>1489.05162470265</y>
+        <y>1490.4361315172303</y>
       </position>
       <bundle>
         <artifact>nifi-hadoop-nar</artifact>
@@ -6964,7 +6985,7 @@ print(\"],\"); }
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>4206.458377619802</x>
-        <y>623.8288339253029</y>
+        <y>625.213340739883</y>
       </position>
       <bundle>
         <artifact>nifi-update-attribute-nar</artifact>
@@ -7038,7 +7059,7 @@ print(\"],\"); }
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>639.1047583534519</x>
-        <y>644.8304311660338</y>
+        <y>646.214937980614</y>
       </position>
       <bundle>
         <artifact>nifi-update-attribute-nar</artifact>
@@ -7112,7 +7133,7 @@ print(\"],\"); }
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>3081.3688656357</x>
-        <y>1170.3835150881866</y>
+        <y>1171.7680219027668</y>
       </position>
       <bundle>
         <artifact>nifi-standard-nar</artifact>
@@ -7200,7 +7221,7 @@ print(\"],\"); }
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>2006.2588255866951</x>
-        <y>2134.4832132086676</y>
+        <y>2135.867720023248</y>
       </position>
       <bundle>
         <artifact>nifi-livy-bundle-nar</artifact>
@@ -7251,7 +7272,7 @@ print(\"],\"); }
       <parentGroupId>c69442f7-254f-3b39-0000-000000000000</parentGroupId>
       <position>
         <x>87.36454046322478</x>
-        <y>1042.1493104364915</y>
+        <y>1043.5338172510717</y>
       </position>
       <bundle>
         <artifact>nifi-update-attribute-nar</artifact>
@@ -7331,5 +7352,5 @@ print(\"],\"); }
       <type>org.apache.nifi.processors.attributes.UpdateAttribute</type>
     </processors>
   </snippet>
-  <timestamp>06/13/2017 16:53:17 UTC</timestamp>
+  <timestamp>06/15/2017 13:44:00 UTC</timestamp>
 </template>
