@@ -79,6 +79,48 @@ getComponentStatus () {
        	echo $COMPONENT_STATUS
 }
 
+getRegistryHost () {
+       	REGISTRY_HOST=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/REGISTRY/components/REGISTRY_SERVER |grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
+       	
+       	echo $REGISTRY_HOST
+}
+
+getLivyHost () {
+       	LIVY_HOST=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/SPARK2/components/LIVY2_SERVER |grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
+       	
+       	echo $LIVY_HOST
+}
+
+getHiveInteractiveServerHost () {
+        HIVESERVER_INTERACTIVE_HOST=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/HIVE/components/HIVE_SERVER_INTERACTIVE|grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
+
+        echo $HIVESERVER_INTERACTIVE_HOST
+}
+
+getDruidBroker () {
+        DRUID_BROKER=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/DRUID/components/DRUID_BROKER|grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
+
+        echo $DRUID_BROKER
+}
+
+getKafkaBroker () {
+       	KAFKA_BROKER=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/KAFKA/components/KAFKA_BROKER |grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
+       	
+       	echo $KAFKA_BROKER
+}
+
+getAtlasHost () {
+       	ATLAS_HOST=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/ATLAS/components/ATLAS_SERVER |grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
+       	
+       	echo $ATLAS_HOST
+}
+
+getNifiHost () {
+       	NIFI_HOST=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/NIFI/components/NIFI_MASTER|grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
+
+       	echo $NIFI_HOST
+}
+
 waitForService () {
        	# Ensure that Service is not in a transitional state
        	SERVICE=$1
@@ -115,6 +157,21 @@ waitForServiceToStart () {
             sleep 2
         done
        	fi
+}
+
+waitForNifiServlet () {
+       	LOOPESCAPE="false"
+       	until [ "$LOOPESCAPE" == true ]; do
+       		TASKSTATUS=$(curl -u admin:admin -i -X GET http://$NIFI_HOST:9090/nifi-api/controller | grep -Po 'OK')
+       		if [ "$TASKSTATUS" == OK ]; then
+               		LOOPESCAPE="true"
+       		else
+               		TASKSTATUS="PENDING"
+       		fi
+       		echo "*********************************Waiting for NIFI Servlet..."
+       		echo "*********************************NIFI Servlet Status... " $TASKSTATUS
+       		sleep 2
+       	done
 }
 
 stopService () {
@@ -342,7 +399,7 @@ installNifiService () {
 waitForNifiServlet () {
        	LOOPESCAPE="false"
        	until [ "$LOOPESCAPE" == true ]; do
-       		TASKSTATUS=$(curl -u admin:admin -i -X GET http://$AMBARI_HOST:9090/nifi-api/controller | grep -Po 'OK')
+       		TASKSTATUS=$(curl -u admin:admin -i -X GET http://$NIFI_HOST:9090/nifi-api/controller | grep -Po 'OK')
        		if [ "$TASKSTATUS" == OK ]; then
                		LOOPESCAPE="true"
        		else
@@ -626,8 +683,10 @@ sleep 1
 	
     sleep 2
     stopService YARN
+    sleep 2
     startService YARN
-
+	sleep 2
+	
 	TASKID=$(curl -u admin:admin -H "X-Requested-By:ambari" -i -X PUT -d "{\"HostRoles\": {\"state\": \"STARTED\"}}" http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/hosts/$AMBARI_HOST/host_components/HIVE_SERVER_INTERACTIVE | grep "id" | grep -Po '([0-9]+)')
 
 	echo "*********************************Start HIVE INTERACTIVE SERVER..."
@@ -661,28 +720,28 @@ installNifiNars () {
 }
 
 deployTemplateToNifi () {
-	echo "*********************************Importing NIFI Template..."		
+       	echo "*********************************Importing NIFI Template..."
        	# Import NIFI Template HDF 3.x
-       	TEMPLATEID=$(curl -v -F template=@"$ROOT_PATH/CloudBreakArtifacts/hdf-config/nifi-template/orchestrator.xml" -X POST http://$AMBARI_HOST:9090/nifi-api/process-groups/root/templates/upload | grep -Po '<id>([a-z0-9-]+)' | grep -Po '>([a-z0-9-]+)' | grep -Po '([a-z0-9-]+)')
-		sleep 1
-		
-		# Instantiate NIFI Template 3.x
-		echo "*********************************Instantiating NIFI Flow..."
-       	curl -u admin:admin -i -H "Content-Type:application/json" -d "{\"templateId\":\"$TEMPLATEID\",\"originX\":100,\"originY\":100}" -X POST http://$AMBARI_HOST:9090/nifi-api/process-groups/root/template-instance
-       	sleep 1
-       	
-       	# Rename NIFI Root Group HDF 3.x
-		echo "*********************************Renaming Nifi Root Group..."
-		ROOT_GROUP_REVISION=$(curl -X GET http://$AMBARI_HOST:9090/nifi-api/process-groups/root |grep -Po '\"version\":([0-9]+)'|grep -Po '([0-9]+)')
-		
-		sleep 1
-		ROOT_GROUP_ID=$(curl -X GET http://$AMBARI_HOST:9090/nifi-api/process-groups/root|grep -Po '("component":{"id":")([0-9a-zA-z\-]+)'| grep -Po '(:"[0-9a-zA-z\-]+)'| grep -Po '([0-9a-zA-z\-]+)')
+       	TEMPLATEID=$(curl -v -F template=@"$ROOT_PATH/CloudBreakArtifacts/hdf-config/nifi-template/orchestrator.xml" -X POST http://$NIFI_HOST:9090/nifi-api/process-groups/root/templates/upload | grep -Po '<id>([a-z0-9-]+)' | grep -Po '>([a-z0-9-]+)' | grep -Po '([a-z0-9-]+)')
+       		sleep 1
 
-		PAYLOAD=$(echo "{\"id\":\"$ROOT_GROUP_ID\",\"revision\":{\"version\":$ROOT_GROUP_REVISION},\"component\":{\"id\":\"$ROOT_GROUP_ID\",\"name\":\"Historian-Orchestrator\"}}")
-		
-		sleep 1
-		curl -d $PAYLOAD  -H "Content-Type: application/json" -X PUT http://$AMBARI_HOST:9090/nifi-api/process-groups/$ROOT_GROUP_ID
-	
+       		# Instantiate NIFI Template 3.x
+       		echo "*********************************Instantiating NIFI Flow..."
+       	curl -u admin:admin -i -H "Content-Type:application/json" -d "{\"templateId\":\"$TEMPLATEID\",\"originX\":100,\"originY\":100}" -X POST http://$NIFI_HOST:9090/nifi-api/process-groups/root/template-instance
+       	sleep 1
+
+       	# Rename NIFI Root Group HDF 3.x
+       		echo "*********************************Renaming Nifi Root Group..."
+       		ROOT_GROUP_REVISION=$(curl -X GET http://$NIFI_HOST:9090/nifi-api/process-groups/root |grep -Po '\"version\":([0-9]+)'|grep -Po '([0-9]+)')
+
+       		sleep 1
+       		ROOT_GROUP_ID=$(curl -X GET http://$NIFI_HOST:9090/nifi-api/process-groups/root|grep -Po '("component":{"id":")([0-9a-zA-z\-]+)'| grep -Po '(:"[0-9a-zA-z\-]+)'| grep -Po '([0-9a-zA-z\-]+)')
+
+       		PAYLOAD=$(echo "{\"id\":\"$ROOT_GROUP_ID\",\"revision\":{\"version\":$ROOT_GROUP_REVISION},\"component\":{\"id\":\"$ROOT_GROUP_ID\",\"name\":\"Historian-Orchestrator\"}}")
+
+       		sleep 1
+       		curl -d $PAYLOAD  -H "Content-Type: application/json" -X PUT http://$NIFI_HOST:9090/nifi-api/process-groups/$ROOT_GROUP_ID
+
 }
 
 handleGroupProcessors (){
@@ -703,38 +762,93 @@ handleGroupProcessors (){
        		echo "Current Processor ID: $ID"
        		echo "Current Processor TYPE: $TYPE"
 
-       			if ! [ -z $(echo $TYPE|grep "Record") ]; then
-       				echo "***************************This is a Record Processor"
+       		if ! [ -z $(echo $TYPE|grep "Record") ]; then
+       			echo "***************************This is a Record Processor"
 
-       				RECORD_READER=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '"record-reader":"[a-zA-Z0-9-]+'|grep -Po ':"[a-zA-Z0-9-]+'|grep -Po '[a-zA-Z0-9-]+'|head -1)
-                RECORD_WRITER=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '"record-writer":"[a-zA-Z0-9-]+'|grep -Po ':"[a-zA-Z0-9-]+'|grep -Po '[a-zA-Z0-9-]+'|head -1)
+       			RECORD_READER=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '"record-reader":"[a-zA-Z0-9-]+'|grep -Po ':"[a-zA-Z0-9-]+'|grep -Po '[a-zA-Z0-9-]+'|head -1)
+                       	RECORD_WRITER=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '"record-writer":"[a-zA-Z0-9-]+'|grep -Po ':"[a-zA-Z0-9-]+'|grep -Po '[a-zA-Z0-9-]+'|head -1)
 
                 echo "Record Reader: $RECORD_READER"
-                echo "Record Writer: $RECORD_WRITER"
+				echo "Record Writer: $RECORD_WRITER"
 
-       				SCHEMA_REGISTRY=$(curl -u admin:admin -i -X GET http://$AMBARI_HOST:9090/nifi-api/controller-services/$RECORD_READER |grep -Po '"schema-registry":"[a-zA-Z0-9-]+'|grep -Po ':"[a-zA-Z0-9-]+'|grep -Po '[a-zA-Z0-9-]+'|head -1)
+       			SCHEMA_REGISTRY=$(curl -u admin:admin -i -X GET http://$NIFI_HOST:9090/nifi-api/controller-services/$RECORD_READER |grep -Po '"schema-registry":"[a-zA-Z0-9-]+'|grep -Po ':"[a-zA-Z0-9-]+'|grep -Po '[a-zA-Z0-9-]+'|head -1)
 
-       				echo "Schema Registry: $SCHEMA_REGISTRY"
+       			echo "Schema Registry: $SCHEMA_REGISTRY"
 
-       				curl -u admin:admin -i -H "Content-Type:application/json" -X PUT -d "{\"id\":\"$SCHEMA_REGISTRY\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$SCHEMA_REGISTRY\",\"state\":\"ENABLED\",\"properties\":{\"url\":\"http:\/\/$AMBARI_HOST:7788\/api\/v1\"}}}" http://$AMBARI_HOST:9090/nifi-api/controller-services/$SCHEMA_REGISTRY
+       			curl -u admin:admin -i -H "Content-Type:application/json" -X PUT -d "{\"id\":\"$SCHEMA_REGISTRY\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$SCHEMA_REGISTRY\",\"state\":\"ENABLED\",\"properties\":{\"url\":\"http://$REGISTRY_HOST:7788/api/v1\"}}}" http://$NIFI_HOST:9090/nifi-api/controller-services/$SCHEMA_REGISTRY
 
-       				curl -u admin:admin -i -H "Content-Type:application/json" -X PUT -d "{\"id\":\"$RECORD_READER\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$RECORD_READER\",\"state\":\"ENABLED\"}}" http://$AMBARI_HOST:9090/nifi-api/controller-services/$RECORD_READER
+       			curl -u admin:admin -i -H "Content-Type:application/json" -X PUT -d "{\"id\":\"$RECORD_READER\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$RECORD_READER\",\"state\":\"ENABLED\"}}" http://$NIFI_HOST:9090/nifi-api/controller-services/$RECORD_READER
 
-       				curl -u admin:admin -i -H "Content-Type:application/json" -X PUT -d "{\"id\":\"$RECORD_WRITER\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$RECORD_WRITER\",\"state\":\"ENABLED\"}}" http://$AMBARI_HOST:9090/nifi-api/controller-services/$RECORD_WRITER
+       			curl -u admin:admin -i -H "Content-Type:application/json" -X PUT -d "{\"id\":\"$RECORD_WRITER\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$RECORD_WRITER\",\"state\":\"ENABLED\"}}" http://$NIFI_HOST:9090/nifi-api/controller-services/$RECORD_WRITER
 
-       			fi
-       		if ! [ -z $(echo $TYPE|grep "PutKafka") ] || ! [ -z $(echo $TYPE|grep "PublishKafka") ]; then
-       			echo "***************************This is a PutKafka Processor"
+       		fi
+
+       		if ! [ -z $(echo $TYPE|grep "MapCache") ]; then
+       			echo "***************************This is a MapCache Processor"
+
+       			MAP_CACHE_CLIENT=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '"Distributed Cache Service":"[a-zA-Z0-9-]+'|grep -Po ':"[a-zA-Z0-9-]+'|grep -Po '[a-zA-Z0-9-]+'|head -1)
+
+                echo "Map Cache Client Service: $MAP_CACHE_CLIENT"
+
+       			HBASE_CLIENT_SERVICE=$(curl -u admin:admin -i -X GET http://$NIFI_HOST:9090/nifi-api/controller-services/$MAP_CACHE_CLIENT |grep -Po '"HBase Client Service":"[a-zA-Z0-9-]+'|grep -Po ':"[a-zA-Z0-9-]+'|grep -Po '[a-zA-Z0-9-]+'|head -1)
+
+       			echo "HBase Client Service: $HBASE_CLIENT_SERVICE"
+
+       			curl -u admin:admin -i -H "Content-Type:application/json" -X PUT -d "{\"id\":\"$HBASE_CLIENT_SERVICE\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$HBASE_CLIENT_SERVICE\",\"state\":\"ENABLED\"}}" http://$NIFI_HOST:9090/nifi-api/controller-services/$HBASE_CLIENT_SERVICE
+
+       			curl -u admin:admin -i -H "Content-Type:application/json" -X PUT -d "{\"id\":\"$MAP_CACHE_CLIENT\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$MAP_CACHE_CLIENT\",\"state\":\"ENABLED\"}}" http://$NIFI_HOST:9090/nifi-api/controller-services/$MAP_CACHE_CLIENT
+       		fi
+
+       		if ! [ -z $(echo $TYPE|grep "HandleHttpRequest") ]; then
+                        echo "***************************This is a HandleHttpRequest or HandleHttpResponse Processor"
+
+                        HTTP_CONTEXT=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '"HTTP Context Map":"[a-zA-Z0-9-]+'|grep -Po ':"[a-zA-Z0-9-]+'|grep -Po '[a-zA-Z0-9-]+'|head -1)
+
+                        echo "HTTP Context Service: $HTTP_CONTEXT"
+
+                        curl -u admin:admin -i -H "Content-Type:application/json" -X PUT -d "{\"id\":\"$HTTP_CONTEXT\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$HTTP_CONTEXT\",\"state\":\"ENABLED\"}}" http://$NIFI_HOST:9090/nifi-api/controller-services/$HTTP_CONTEXT
+                fi
+
+       		if ! [ -z $(echo $TYPE|grep "PutDruid") ]; then
+                        echo "***************************This is a PutDruid Processor"
+
+                        DRUID_CONTROLLER=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '"druid_tranquility_service":"[a-zA-Z0-9-]+'|grep -Po ':"[a-zA-Z0-9-]+'|grep -Po '[a-zA-Z0-9-]+'|head -1)
+
+                        echo "Druid Tranquility Service: $DRUID_CONTROLLER"
+
+                        curl -u admin:admin -i -H "Content-Type:application/json" -X PUT -d "{\"id\":\"$DRUID_CONTROLLER\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$DRUID_CONTROLLER\",\"state\":\"ENABLED\",\"properties\":{\"zk_connect_string\":\"$ZK_HOST:2181\"}}}" http://$NIFI_HOST:9090/nifi-api/controller-services/$DRUID_CONTROLLER
+                fi
+
+       		if ! [ -z $(echo $TYPE|grep "SelectHiveQL") ]; then
+                        echo "***************************This is a SelectHiveQL Processor"
+
+                        HIVE_CONNECTION_POOL=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '"Hive Database Connection Pooling Service":"[a-zA-Z0-9-]+'|grep -Po ':"[a-zA-Z0-9-]+'|grep -Po '[a-zA-Z0-9-]+'|head -1)
+
+                        echo "Hive Connection Pool: $HIVE_CONNECTION_POOL"
+
+                        curl -u admin:admin -i -H "Content-Type:application/json" -X PUT -d "{\"id\":\"$HIVE_CONNECTION_POOL\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$HIVE_CONNECTION_POOL\",\"state\":\"ENABLED\",\"properties\":{\"hive-db-connect-url\":\"jdbc:hive2://$HIVESERVER_INTERACTIVE_HOST:10500\"}}}" http://$NIFI_HOST:9090/nifi-api/controller-services/$HIVE_CONNECTION_POOL
+                fi
+
+       		if ! [ -z $(echo $TYPE|grep "ExecuteSparkInteractive") ]; then
+                        echo "***************************This is a ExecuteSparkInteractive Processor"
+
+                        LIVY_CONTROLLER=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '"livy_controller_service":"[a-zA-Z0-9-]+'|grep -Po ':"[a-zA-Z0-9-]+'|grep -Po '[a-zA-Z0-9-]+'|head -1)
+
+                        echo "Livy Controller Service: $LIVY_CONTROLLER"
+
+                        curl -u admin:admin -i -H "Content-Type:application/json" -X PUT -d "{\"id\":\"$LIVY_CONTROLLER\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$LIVY_CONTROLLER\",\"state\":\"ENABLED\",\"properties\":{\"livy_host\":\"$LIVY_HOST\"}}}" http://$NIFI_HOST:9090/nifi-api/controller-services/$LIVY_CONTROLLER
+                fi
+
+       		if ! [ -z $(echo $TYPE|grep "ConsumeKafka") ]; then
+       			echo "***************************This is a ConsumeKafka Processor"
        			echo "***************************Updating Kafka Broker Porperty and Activating Processor..."
-       			if ! [ -z $(echo $TYPE|grep "PutKafka") ]; then
-                    PAYLOAD=$(echo "{\"id\":\"$ID\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$ID\",\"config\":{\"properties\":{\"Known Brokers\":\"$AMBARI_HOST:6667\"}},\"state\":\"RUNNING\"}}")
-                else
-                    PAYLOAD=$(echo "{\"id\":\"$ID\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$ID\",\"config\":{\"properties\":{\"bootstrap.servers\":\"$AMBARI_HOST:6667\"}},\"state\":\"RUNNING\"}}")
+       			if ! [ -z $(echo $TYPE|grep "ConsumeKafka") ]; then
+                       		PAYLOAD=$(echo "{\"id\":\"$ID\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$ID\",\"config\":{\"properties\":{\"bootstrap.servers\":\"$AMBARI_HOST:6667\"}},\"state\":\"RUNNING\"}}")
                 fi
        		else
        			echo "***************************Activating Processor..."
-       				PAYLOAD=$(echo "{\"id\":\"$ID\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$ID\",\"state\":\"RUNNING\"}}")
-       			fi
+       			PAYLOAD=$(echo "{\"id\":\"$ID\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$ID\",\"state\":\"RUNNING\"}}")
+       		fi
        		echo "$PAYLOAD"
 
        		curl -u admin:admin -i -H "Content-Type:application/json" -d "${PAYLOAD}" -X PUT ${TARGETS[i]}
@@ -767,6 +881,25 @@ handleGroupPorts (){
        	done
 }
 
+configureNifiTempate () {
+	GROUP_TARGETS=$(curl -u admin:admin -i -X GET http://$NIFI_HOST:9090/nifi-api/process-groups/root | grep -Po '\"uri\":\"([a-z0-9-://.]+)' | grep -Po '(?!.*\")([a-z0-9-://.]+)')
+	#GROUP_TARGETS=$(curl -u admin:admin -i -X GET http://$NIFI_HOST:9090/nifi-api/process-groups/root/process-groups | grep -Po '\"uri\":\"([a-z0-9-://.]+)' | grep -Po '(?!.*\")([a-z0-9-://.]+)')
+	length=${#GROUP_TARGETS[@]}
+    echo $length
+    echo ${GROUP_TARGETS[0]}
+
+    for ((i = 0; i < $length; i++))
+    do
+       	CURRENT_GROUP=${GROUP_TARGETS[i]}
+       	#handleGroupPorts $CURRENT_GROUP
+       	echo "*************************Calling handle processors with group $CURRENT_GROUP"
+       	handleGroupProcessors $CURRENT_GROUP
+       	echo "*************************Done handle processors"
+    done
+
+    ROOT_TARGET=$(curl -u admin:admin -i -X GET http://$NIFI_HOST:9090/nifi-api/process-groups/root| grep -Po '\"uri\":\"([a-z0-9-://.]+)' | grep -Po '(?!.*\")([a-z0-9-://.]+)')
+}
+
 createHistorianTagCacheTable () {
 	echo "create 'historian_tag_cache','f'" | hbase shell
 }
@@ -781,6 +914,21 @@ waitForServiceToStart HIVE
 waitForServiceToStart ZOOKEEPER
 
 sleep 10
+
+HIVESERVER_INTERACTIVE_HOST=$(getHiveInteractiveServerHost)
+export HIVESERVER_INTERACTIVE_HOST=$HIVESERVER_INTERACTIVE_HOST
+ZK_HOST=$AMBARI_HOST
+export ZK_HOST=$ZK_HOST
+KAFKA_BROKER=$(getKafkaBroker)
+export KAFKA_BROKER=$KAFKA_BROKER
+ATLAS_HOST=$(getAtlasHost)
+export ATLAS_HOST=$ATLAS_HOST
+LIVY_HOST=$(geTLivyHost)
+export LIVY_HOST=$LIVY_HOST
+REGISTRY_HOST=$(getRegistryHost)
+export REGISTRY_HOST=$REGISTRY_HOST
+NIFI_HOST=$(getNifiHost)
+export NIFI_HOST=$NIFI_HOST
 
 sed -r -i 's;\{\{mysql_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/registry-config/registry-common.json
 sed -r -i 's;\{\{mysql_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/streamline-config/streamline-common.json
@@ -888,8 +1036,15 @@ else
        	echo "*********************************NIFI Service Started..."
 fi
 
+sleep 2
+waitForNifiServlet
+
 echo "*********************************Deploy Historian Orchestrator Template..."
 deployTemplateToNifi
+sleep 2
+
+echo "*********************************Configure Historian Orchestrator Template..."
+configureNifiTempate
 
 #export MYSQL_TEMP_PASSWORD=$(grep 'A temporary password' /var/log/mysqld.log |grep -Po ': .+'|grep -Po '[^: ].+')
 #mysqladmin -u root --password=$MYSQL_TEMP_PASSWORD password "Password!1"
