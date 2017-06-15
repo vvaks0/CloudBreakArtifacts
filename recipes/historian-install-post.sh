@@ -785,7 +785,7 @@ handleGroupProcessors (){
        			curl -u admin:admin -i -H "Content-Type:application/json" -X PUT -d "{\"id\":\"$MAP_CACHE_CLIENT\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$MAP_CACHE_CLIENT\",\"state\":\"ENABLED\"}}" http://$NIFI_HOST:9090/nifi-api/controller-services/$MAP_CACHE_CLIENT
        		fi
 
-       		if ! [ -z $(echo $TYPE|grep "HandleHttpRequest") ]; then
+       		if ! [ -z $(echo $TYPE|grep "HandleHttp") ]; then
                         echo "***************************This is a HandleHttpRequest or HandleHttpResponse Processor"
 
                         HTTP_CONTEXT=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '"HTTP Context Map":"[a-zA-Z0-9-]+'|grep -Po ':"[a-zA-Z0-9-]+'|grep -Po '[a-zA-Z0-9-]+'|head -1)
