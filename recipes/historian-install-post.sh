@@ -162,6 +162,7 @@ waitForServiceToStart () {
 waitForNifiServlet () {
        	LOOPESCAPE="false"
        	until [ "$LOOPESCAPE" == true ]; do
+       		echo "*********************************Requesting Nifi Servlet Status from http://$NIFI_HOST:9090/nifi-api/controller..."
        		TASKSTATUS=$(curl -u admin:admin -i -X GET http://$NIFI_HOST:9090/nifi-api/controller | grep -Po 'OK')
        		if [ "$TASKSTATUS" == OK ]; then
                		LOOPESCAPE="true"
@@ -923,7 +924,7 @@ KAFKA_BROKER=$(getKafkaBroker)
 export KAFKA_BROKER=$KAFKA_BROKER
 ATLAS_HOST=$(getAtlasHost)
 export ATLAS_HOST=$ATLAS_HOST
-LIVY_HOST=$(geTLivyHost)
+LIVY_HOST=$(getLivyHost)
 export LIVY_HOST=$LIVY_HOST
 REGISTRY_HOST=$(getRegistryHost)
 export REGISTRY_HOST=$REGISTRY_HOST
