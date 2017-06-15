@@ -397,21 +397,6 @@ installNifiService () {
        	done
 }
 
-waitForNifiServlet () {
-       	LOOPESCAPE="false"
-       	until [ "$LOOPESCAPE" == true ]; do
-       		TASKSTATUS=$(curl -u admin:admin -i -X GET http://$NIFI_HOST:9090/nifi-api/controller | grep -Po 'OK')
-       		if [ "$TASKSTATUS" == OK ]; then
-               		LOOPESCAPE="true"
-       		else
-               		TASKSTATUS="PENDING"
-       		fi
-       		echo "*********************************Waiting for NIFI Servlet..."
-       		echo "*********************************NIFI Servlet Status... " $TASKSTATUS
-       		sleep 2
-       	done
-}
-
 installDruidService () {
        	
        	echo "*********************************Creating DRUID service..."
