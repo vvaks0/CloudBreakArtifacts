@@ -923,7 +923,6 @@ sed -r -i 's;\{\{superset_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifac
 sed -r -i 's;\{\{mysql_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/druid-config/druid-common.json
 sed -r -i 's;\{\{mysql_host\}\};'$AMBARI_HOST';' $ROOT_PATH/CloudBreakArtifacts/hdf-config/druid-config/druid-superset.json
 
-export HIVESERVER_INTERACTIVE_HOST=$(getHiveInteractiveServerHost)
 export ZK_HOST=$AMBARI_HOST
 export KAFKA_BROKER=$(getKafkaBroker)
 export ATLAS_HOST=$(getAtlasHost)
@@ -1030,6 +1029,7 @@ fi
 
 sleep 2
 
+export HIVESERVER_INTERACTIVE_HOST=$(getHiveInteractiveServerHost)
 export DRUID_BROKER=$(getDruidBroker)
 export REGISTRY_HOST=$(getRegistryHost)
 export NIFI_HOST=$(getNifiHost)
