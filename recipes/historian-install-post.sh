@@ -943,12 +943,6 @@ sleep 2
 installUtils
 sleep 2
 
-configureHive
-sleep 2
-
-createHistorianTagCacheTable
-sleep 2
-
 installMySQL
 sleep 2
 
@@ -1029,10 +1023,16 @@ fi
 
 sleep 2
 
-export HIVESERVER_INTERACTIVE_HOST=$(getHiveInteractiveServerHost)
 export DRUID_BROKER=$(getDruidBroker)
+sleep 2
+configureHive
+
+export HIVESERVER_INTERACTIVE_HOST=$(getHiveInteractiveServerHost)
 export REGISTRY_HOST=$(getRegistryHost)
 export NIFI_HOST=$(getNifiHost)
+
+createHistorianTagCacheTable
+sleep 2
 
 sleep 2
 waitForNifiServlet
@@ -1047,6 +1047,8 @@ sleep 2
 
 echo "*********************************Start Historian Conductor Reporting Task..."
 startConductorReporter
+
+
 
 #export MYSQL_TEMP_PASSWORD=$(grep 'A temporary password' /var/log/mysqld.log |grep -Po ': .+'|grep -Po '[^: ].+')
 #mysqladmin -u root --password=$MYSQL_TEMP_PASSWORD password "Password!1"
