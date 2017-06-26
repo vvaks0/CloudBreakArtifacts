@@ -688,6 +688,17 @@ sleep 1
 	done
 }
 
+configureAtlas () {
+	#Enable Business Taxonomy
+	/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME application-properties atlas.feature.taxonomy.enable true
+	
+	sleep 2
+    stopService ATLAS
+    sleep 2
+    startService ATLAS
+	sleep 2
+}
+
 installNifiNars () {
 	git clone https://github.com/vakshorton/NifiLivyIntegration
 	git clone https://github.com/vakshorton/NifiDruidIntegration
@@ -793,7 +804,7 @@ handleGroupProcessors (){
                         echo "HTTP Context Service: $HTTP_CONTEXT"
 
                         curl -u admin:admin -i -H "Content-Type:application/json" -X PUT -d "{\"id\":\"$HTTP_CONTEXT\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$HTTP_CONTEXT\",\"state\":\"ENABLED\"}}" http://$NIFI_HOST:9090/nifi-api/controller-services/$HTTP_CONTEXT
-                fi
+            fi
 
        		if ! [ -z $(echo $TYPE|grep "PutDruid") ]; then
                         echo "***************************This is a PutDruid Processor"
@@ -803,7 +814,7 @@ handleGroupProcessors (){
                         echo "Druid Tranquility Service: $DRUID_CONTROLLER"
 
                         curl -u admin:admin -i -H "Content-Type:application/json" -X PUT -d "{\"id\":\"$DRUID_CONTROLLER\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$DRUID_CONTROLLER\",\"state\":\"ENABLED\",\"properties\":{\"zk_connect_string\":\"$ZK_HOST:2181\"}}}" http://$NIFI_HOST:9090/nifi-api/controller-services/$DRUID_CONTROLLER
-                fi
+            fi
 
        		if ! [ -z $(echo $TYPE|grep "SelectHiveQL") ]; then
                         echo "***************************This is a SelectHiveQL Processor"
@@ -813,7 +824,7 @@ handleGroupProcessors (){
                         echo "Hive Connection Pool: $HIVE_CONNECTION_POOL"
 
                         curl -u admin:admin -i -H "Content-Type:application/json" -X PUT -d "{\"id\":\"$HIVE_CONNECTION_POOL\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$HIVE_CONNECTION_POOL\",\"state\":\"ENABLED\",\"properties\":{\"hive-db-connect-url\":\"jdbc:hive2://$HIVESERVER_INTERACTIVE_HOST:10500\"}}}" http://$NIFI_HOST:9090/nifi-api/controller-services/$HIVE_CONNECTION_POOL
-                fi
+            fi
 
        		if ! [ -z $(echo $TYPE|grep "ExecuteSparkInteractive") ]; then
                         echo "***************************This is a ExecuteSparkInteractive Processor"
@@ -823,7 +834,7 @@ handleGroupProcessors (){
                         echo "Livy Controller Service: $LIVY_CONTROLLER"
 
                         curl -u admin:admin -i -H "Content-Type:application/json" -X PUT -d "{\"id\":\"$LIVY_CONTROLLER\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$LIVY_CONTROLLER\",\"state\":\"ENABLED\",\"properties\":{\"livy_host\":\"$LIVY_HOST\"}}}" http://$NIFI_HOST:9090/nifi-api/controller-services/$LIVY_CONTROLLER
-                fi
+            fi
 
        		if ! [ -z $(echo $TYPE|grep "ConsumeKafka") ]; then
        			echo "***************************This is a ConsumeKafka Processor"
@@ -1026,6 +1037,9 @@ sleep 2
 export DRUID_BROKER=$(getDruidBroker)
 sleep 2
 configureHive
+sleep 2
+configureAtlas
+sleep 2
 
 export HIVESERVER_INTERACTIVE_HOST=$(getHiveInteractiveServerHost)
 export REGISTRY_HOST=$(getRegistryHost)

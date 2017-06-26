@@ -1,6 +1,5 @@
 #!/bin/bash
-exec > >(tee -i preProvisioning.log)
-exec 2>&1
+
 echo "*********************************Install and Enable Open JDK 8"
 yum install -y wget
 yum install -y java-1.8.0-openjdk-devel
