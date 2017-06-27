@@ -26,7 +26,7 @@ installUtils () {
 	yum install -y wget
 	wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O 	/etc/yum.repos.d/epel-apache-maven.repo
 	if [ $(cat /etc/system-release|grep -Po Amazon) == Amazon ]; then
-		sed -i s/\$releasever/7/g /etc/yum.repos.d/epel-apache-maven.repo
+		sed -i s/\$releasever/6/g /etc/yum.repos.d/epel-apache-maven.repo
 	fi
 	yum install -y apache-maven
 	yum install -y git
