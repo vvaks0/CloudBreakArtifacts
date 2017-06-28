@@ -29,6 +29,14 @@ installUtils () {
 		sed -i s/\$releasever/6/g /etc/yum.repos.d/epel-apache-maven.repo
 	fi
 	yum install -y apache-maven
+	if [ $(cat /etc/system-release|grep -Po Amazon) == Amazon ]; then
+		alternatives --install /usr/bin/java java /usr/lib/jvm/jre-1.8.0-openjdk.x86_64/bin/java 20000
+		alternatives --install /usr/bin/javac javac /usr/lib/jvm/jre-1.8.0-openjdk.x86_64/bin/javac 20000
+		alternatives --install /usr/bin/jar jar /usr/lib/jvm/jre-1.8.0-openjdk.x86_64/bin/jar 20000
+		alternatives --auto java
+		alternatives --auto javac
+		alternatives --auto jar
+	fi
 	yum install -y git
 }
 
