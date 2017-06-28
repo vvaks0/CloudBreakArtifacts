@@ -36,6 +36,7 @@ installUtils () {
 		alternatives --auto java
 		alternatives --auto javac
 		alternatives --auto jar
+		ln -s /usr/lib/jvm/java-1.8.0 /usr/lib/jvm/java
 	fi
 	yum install -y git
 }
