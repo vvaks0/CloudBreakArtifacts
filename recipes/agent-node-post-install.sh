@@ -1,5 +1,17 @@
 #!/bin/bash
 
+if [ ! -d "/usr/jdk64" ]; then
+	echo "*********************************Install and Enable Oracle JDK 8"
+	wget http://public-repo-1.hortonworks.com/ARTIFACTS/jdk-8u77-linux-x64.tar.gz
+	tar -vxzf jdk-8u77-linux-x64.tar.gz -C /usr
+	mv /usr/jdk1.8.0_77 /usr/jdk64
+	alternatives --install /usr/bin/java java /usr/jdk64/bin/java 3
+	alternatives --install /usr/bin/javac javac /usr/jdk64/bin/javac 3
+	alternatives --install /usr/bin/jar jar /usr/jdk64/bin/jar 3
+	export JAVA_HOME=/usr/jdk64
+	echo "export JAVA_HOME=/usr/jdk64" >> /etc/bashrc
+fi
+
 waitForServiceToStart () {
        	# Ensure that Service is not in a transitional state
        	SERVICE=$1
