@@ -1,17 +1,5 @@
 #!/bin/bash
 
-if [ ! -d "/usr/jdk64" ]; then
-	echo "*********************************Install and Enable Oracle JDK 8"
-	wget http://public-repo-1.hortonworks.com/ARTIFACTS/jdk-8u77-linux-x64.tar.gz
-	tar -vxzf jdk-8u77-linux-x64.tar.gz -C /usr
-	mv /usr/jdk1.8.0_77 /usr/jdk64
-	alternatives --install /usr/bin/java java /usr/jdk64/bin/java 3
-	alternatives --install /usr/bin/javac javac /usr/jdk64/bin/javac 3
-	alternatives --install /usr/bin/jar jar /usr/jdk64/bin/jar 3
-	export JAVA_HOME=/usr/jdk64
-	echo "export JAVA_HOME=/usr/jdk64" >> /etc/bashrc
-fi
-
 waitForServiceToStart () {
        	# Ensure that Service is not in a transitional state
        	SERVICE=$1
@@ -73,8 +61,19 @@ getNifiHost () {
        	echo $NIFI_HOST
 }
 
-AMBARI_HOST=$(cat /etc/ambari-agent/conf/ambari-agent.ini| grep hostname= |grep -Po '([0-9.]+)')
+if [ ! -d "/usr/jdk64" ]; then
+	echo "*********************************Install and Enable Oracle JDK 8"
+	wget http://public-repo-1.hortonworks.com/ARTIFACTS/jdk-8u77-linux-x64.tar.gz
+	tar -vxzf jdk-8u77-linux-x64.tar.gz -C /usr
+	mv /usr/jdk1.8.0_77 /usr/jdk64
+	alternatives --install /usr/bin/java java /usr/jdk64/bin/java 3
+	alternatives --install /usr/bin/javac javac /usr/jdk64/bin/javac 3
+	alternatives --install /usr/bin/jar jar /usr/jdk64/bin/jar 3
+	export JAVA_HOME=/usr/jdk64
+	echo "export JAVA_HOME=/usr/jdk64" >> /etc/bashrc
+fi
 
+AMBARI_HOST=$(cat /etc/ambari-agent/conf/ambari-agent.ini| grep hostname= |grep -Po '([0-9.]+)')
 
 export CLUSTER_NAME=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters |grep cluster_name|grep -Po ': "(.+)'|grep -Po '[a-zA-Z0-9\-_!?.]+')
 
@@ -98,9 +97,6 @@ waitForServiceToStart NIFI
 
 sleep 10
 
-#AMBARI_HOST=$(nslookup $(cat /etc/ambari-agent/conf/ambari-agent.ini| grep hostname= |grep -Po '([0-9.]+)')| grep -Po ' = (.*)'| grep -Po '([0-9a-zA-Z\-_.,?!@#$%^&*]+)'| rev | cut -c 2- | rev)
-
-#export JAVA_HOME=/usr/jdk64
 NAMENODE_HOST=$(getNameNodeHost)
 export NAMENODE_HOST=$NAMENODE_HOST
 HIVESERVER_HOST=$(getHiveServerHost)
