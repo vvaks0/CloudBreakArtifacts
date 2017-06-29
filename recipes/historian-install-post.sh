@@ -22,6 +22,18 @@ fi
 export HADOOP_USER_NAME=hdfs
 echo "*********************************HADOOP_USER_NAME set to HDFS"
 
+ if [ ! -d "/usr/jdk64" ]; then
+	echo "*********************************Install and Enable Oracle JDK 8"
+	wget http://public-repo-1.hortonworks.com/ARTIFACTS/jdk-8u77-linux-x64.tar.gz
+	tar -vxzf jdk-8u77-linux-x64.tar.gz -C /usr
+	mv /usr/jdk1.8.0_77 /usr/jdk64
+	alternatives --install /usr/bin/java java /usr/jdk64/bin/java 3
+	alternatives --install /usr/bin/javac javac /usr/jdk64/bin/javac 3
+	alternatives --install /usr/bin/jar jar /usr/jdk64/bin/jar 3
+	export JAVA_HOME=/usr/jdk64
+	echo "export JAVA_HOME=/usr/jdk64" >> /etc/bashrc
+fi
+
 installUtils () {
 	yum install -y wget
 	wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O 	/etc/yum.repos.d/epel-apache-maven.repo
