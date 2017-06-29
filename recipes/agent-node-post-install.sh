@@ -1,19 +1,23 @@
 #!/bin/bash
-exec > >(tee -i postProvisioning.log)
-exec 2>&1
 
-#AMBARI_HOST=$(nslookup $(cat /etc/ambari-agent/conf/ambari-agent.ini| grep hostname= |grep -Po '([0-9.]+)')| grep -Po ' = (.*)'| grep -Po '([0-9a-zA-Z\-_.,?!@#$%^&*]+)'| rev | cut -c 2- | rev)
-AMBARI_HOST=$(cat /etc/ambari-agent/conf/ambari-agent.ini| grep hostname= |grep -Po '([0-9.]+)')
-
-
-export CLUSTER_NAME=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters |grep cluster_name|grep -Po ': "(.+)'|grep -Po '[a-zA-Z0-9\-_!?.]+')
-
-if [[ -z $CLUSTER_NAME ]]; then
-        echo "Could not get Cluster Name since Ambari Server Host could not be identified from amabri-agent.ini file.."
-        exit 1
-else
-       	echo "*********************************CLUSTER NAME IS: $CLUSTER_NAME"
-fi
+waitForServiceToStart () {
+       	# Ensure that Service is not in a transitional state
+       	SERVICE=$1
+       	SERVICE_STATUS=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/$SERVICE | grep '"state" :' | grep -Po '([A-Z]+)')
+       	sleep 2
+       	echo "$SERVICE STATUS: $SERVICE_STATUS"
+       	LOOPESCAPE="false"
+       	if ! [[ "$SERVICE_STATUS" == STARTED ]]; then
+        	until [ "$LOOPESCAPE" == true ]; do
+                SERVICE_STATUS=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/$SERVICE | grep '"state" :' | grep -Po '([A-Z]+)')
+            if [[ "$SERVICE_STATUS" == STARTED ]]; then
+                LOOPESCAPE="true"
+            fi
+            echo "*********************************$SERVICE Status: $SERVICE_STATUS"
+            sleep 2
+        done
+       	fi
+}
 
 getNameNodeHost () {
        	NAMENODE_HOST=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/HDFS/components/NAMENODE|grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
@@ -56,6 +60,33 @@ getNifiHost () {
 
        	echo $NIFI_HOST
 }
+
+AMBARI_HOST=$(cat /etc/ambari-agent/conf/ambari-agent.ini| grep hostname= |grep -Po '([0-9.]+)')
+
+
+export CLUSTER_NAME=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters |grep cluster_name|grep -Po ': "(.+)'|grep -Po '[a-zA-Z0-9\-_!?.]+')
+
+if [[ -z $CLUSTER_NAME ]]; then
+        echo "Could not get Cluster Name since Ambari Server Host could not be identified from amabri-agent.ini file.."
+        exit 1
+else
+       	echo "*********************************CLUSTER NAME IS: $CLUSTER_NAME"
+fi
+
+echo "*********************************Waiting for cluster install to complete..."
+waitForServiceToStart YARN
+
+waitForServiceToStart HDFS
+
+waitForServiceToStart HIVE
+
+waitForServiceToStart ZOOKEEPER
+
+waitForServiceToStart NIFI
+
+sleep 10
+
+#AMBARI_HOST=$(nslookup $(cat /etc/ambari-agent/conf/ambari-agent.ini| grep hostname= |grep -Po '([0-9.]+)')| grep -Po ' = (.*)'| grep -Po '([0-9a-zA-Z\-_.,?!@#$%^&*]+)'| rev | cut -c 2- | rev)
 
 export JAVA_HOME=/usr/jdk64
 NAMENODE_HOST=$(getNameNodeHost)
