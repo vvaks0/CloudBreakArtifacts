@@ -19,6 +19,7 @@ class DemoControl(Script):
     Execute('git clone ' + params.historian_repo)
     os.chdir(params.install_dir+'/historian')
     Execute('mvn package docker:build')
+    Execute(params.install_dir+'/CloudBreakArtifacts/recipes/historian-service-install.sh')
 
   def start(self, env):
     self.configure(env)

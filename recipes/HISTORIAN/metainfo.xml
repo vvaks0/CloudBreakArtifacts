@@ -3,14 +3,14 @@
     <schemaVersion>2.0</schemaVersion>
     <services>
         <service>
-            <name>DEVICE_MANAGER_DEMO_CONTROL</name>
-            <displayName>Device Manager Demo Control</displayName>
-            <comment>Utility to start and stop Device and Technician event generator for the Device Manager Demo</comment>
+            <name>HISTORIAN</name>
+            <displayName>Historian</displayName>
+            <comment>Historian Time Series Platform</comment>
             <version>0.1.0</version>
             <components>
                 <component>
-					<name>DEVICE_MANAGER_DEMO_CONTROL</name>
-            		<displayName>Device Manager Demo Control</displayName>
+					<name>HISTORIAN</name>
+            		<displayName>Historian</displayName>
                     <category>MASTER</category>
                     <cardinality>1</cardinality>
                     <commandScript>
@@ -26,7 +26,7 @@
                 </osSpecific>
             </osSpecifics>
             <configuration-dependencies>
-        		<config-type>control-config</config-type>
+        		<config-type>historian-config</config-type>
       	    </configuration-dependencies>
             <restartRequiredAfterChange>false</restartRequiredAfterChange>
             <quickLinksConfigurations>
