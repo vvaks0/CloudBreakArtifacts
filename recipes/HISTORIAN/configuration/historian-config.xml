@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+ 
+<configuration>
+
+  <property require-input="true">
+    <name>historian.install_dir</name>
+    <value>/root</value>
+    <description>Directory under which simulator control utility will be installed</description>
+  </property> 
+
+  <property require-input="true">
+    <name>historian.historian_repo</name>
+    <value>https://github.com/kirkhas/historian.git</value>
+    <description>Online location to download Historian package</description>
+  </property> 
+
+  <property require-input="true">
+    <name>historian.simulator_repo</name>
+    <value>https://github.com/vakshorton/DataSimulators.git</value>
+    <description>Online location to download Historian package</description>
+  </property>
+    
+  <property require-input="true">
+    <name>historian.nifi_host_ip</name>
+    <value></value>
+    <description>IP of the Historian Nifi API host </description>
+  </property>
+  
+    <property require-input="true">
+    <name>historian.api.port</name>
+    <value>8055</value>
+    <description>IP of the Historian Nifi API host </description>
+  </property>
+  
+    <property require-input="true">
+    <name>historian.ui.port</name>
+    <value>8095</value>
+    <description>The port that Historian UI will listen on </description>
+  </property>   
+</configuration>
+
