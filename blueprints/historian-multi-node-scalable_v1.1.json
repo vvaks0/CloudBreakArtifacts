@@ -1,0 +1,278 @@
+{
+       "host_groups": [
+        {
+			"name": "host_group_1",
+            "cardinality": "1",
+            "components": [
+                {
+                    "name": "NODEMANAGER"
+                },
+                {
+                    "name": "YARN_CLIENT"
+                },
+                {
+                    "name": "HDFS_CLIENT"
+                },
+                {
+                    "name": "INFRA_SOLR_CLIENT"
+                },
+                {
+                    "name": "HBASE_MASTER"
+                },
+                {
+                    "name": "NAMENODE"
+                },
+                {
+                    "name": "TEZ_CLIENT"
+                },
+                {
+                    "name": "ZOOKEEPER_CLIENT"
+                },
+                {
+                    "name": "HCAT"
+                },
+                {
+                    "name": "PIG"
+                },
+                {
+                    "name": "KAFKA_BROKER"
+                },
+                {
+                    "name": "MAPREDUCE2_CLIENT"
+                },
+                {
+                    "name": "SLIDER"
+                },
+				{
+        			"name" : "SPARK2_CLIENT"
+		        },
+                {
+                    "name": "ZOOKEEPER_SERVER"
+                },
+                {
+                    "name": "ATLAS_CLIENT"
+                },
+                {
+                    "name": "AMBARI_SERVER"
+                },
+                {
+                    "name": "HBASE_REGIONSERVER"
+                },
+                {
+                    "name": "DATANODE"
+                },
+                {
+                    "name": "HBASE_CLIENT"
+                },
+                {
+                    "name": "HIVE_CLIENT"
+                }
+            ]
+        }, 
+        {
+        	"name": "host_group_2",
+            "cardinality": "1",
+            "components": [
+                {
+                    "name": "NODEMANAGER"
+                },
+                {
+                    "name": "YARN_CLIENT"
+                },
+                {
+                    "name": "HDFS_CLIENT"
+                },
+                {
+                    "name": "HISTORYSERVER"
+                },
+                {
+                    "name": "INFRA_SOLR_CLIENT"
+                },
+                {
+                    "name": "HIVE_METASTORE"
+                },
+                {
+                    "name": "TEZ_CLIENT"
+                },
+                {
+                    "name": "ZOOKEEPER_CLIENT"
+                },
+                {
+                    "name": "HCAT"
+                },
+                {
+                    "name": "PIG"
+                },
+                {
+                    "name": "SECONDARY_NAMENODE"
+                },
+                {
+                    "name": "MAPREDUCE2_CLIENT"
+                },
+                {
+                    "name": "SLIDER"
+                },
+                {
+        			"name" : "SPARK2_CLIENT"
+		        },
+                {
+                    "name": "ZOOKEEPER_SERVER"
+                },
+                {
+                    "name": "ATLAS_CLIENT"
+                },
+                {
+                    "name": "HBASE_REGIONSERVER"
+                },
+                {
+                    "name": "DATANODE"
+                },
+                {
+                    "name": "HBASE_CLIENT"
+                },
+                {
+                    "name": "APP_TIMELINE_SERVER"
+                },
+                {
+                    "name": "HIVE_CLIENT"
+                },
+                {
+                    "name": "RESOURCEMANAGER"
+                }
+            ]
+        },
+        {
+        	"name": "host_group_3",
+            "cardinality": "1",
+            "components": [
+                {
+                    "name": "NODEMANAGER"
+                },
+                {
+                    "name": "YARN_CLIENT"
+                },
+                {
+                    "name": "HDFS_CLIENT"
+                },
+                {
+                    "name": "HIVE_SERVER"
+                },
+                {
+                    "name": "MYSQL_SERVER"
+                },
+                {
+                    "name": "INFRA_SOLR_CLIENT"
+                },
+                {
+                    "name": "TEZ_CLIENT"
+                },
+                {
+                    "name": "ATLAS_SERVER"
+                },
+                {
+                    "name": "ZOOKEEPER_CLIENT"
+                },
+                {
+                    "name": "HCAT"
+                },
+                {
+                    "name": "PIG"
+                },
+                {
+                    "name": "WEBHCAT_SERVER"
+                },
+                {
+                    "name": "MAPREDUCE2_CLIENT"
+                },
+                {
+                    "name": "SLIDER"
+                },
+                {
+        			"name" : "SPARK2_CLIENT"
+		        },
+		        {
+        			"name" : "SPARK2_JOBHISTORYSERVER"
+		        },
+				{
+        			"name" : "LIVY2_SERVER"
+		        },
+                {
+                    "name": "ZOOKEEPER_SERVER"
+                },
+                {
+                    "name": "ATLAS_CLIENT"
+                },
+                {
+                    "name": "HBASE_REGIONSERVER"
+                },
+                {
+                    "name": "DATANODE"
+                },
+                {
+                    "name": "HBASE_CLIENT"
+                },
+                {
+                    "name": "INFRA_SOLR"
+                },
+                {
+                    "name": "HIVE_CLIENT"
+                }
+            ]
+        },
+        {
+        	"name": "host_group_4",
+            "components": [
+                {
+                    "name": "YARN_CLIENT"
+                },
+                {
+                    "name": "HDFS_CLIENT"
+                },
+                {
+                    "name": "INFRA_SOLR_CLIENT"
+                },
+                {
+                    "name": "TEZ_CLIENT"
+                },
+                {
+                    "name": "ZOOKEEPER_CLIENT"
+                },
+                {
+                    "name": "PIG"
+                },
+                {
+                    "name": "MAPREDUCE2_CLIENT"
+                },
+                {
+                    "name": "SLIDER"
+                },
+                {
+        			"name": "SPARK2_CLIENT"
+		        },
+                {
+                    "name": "ATLAS_CLIENT"
+                },
+                {
+                    "name": "HBASE_REGIONSERVER"
+                },
+                {
+                    "name": "DATANODE"
+                },
+                {
+                    "name": "HBASE_CLIENT"
+                },
+                {
+                    "name": "HIVE_CLIENT"
+                },                
+                {
+                    "name": "HCAT"
+                }
+            ]
+        }
+    ],
+    "Blueprints": {
+        "blueprint_name": "historian-multi-node-scalable",
+        "stack_name": "HDP",
+        "stack_version": "2.6"
+    }
+}
