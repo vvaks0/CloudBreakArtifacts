@@ -1,7 +1,10 @@
 #!/bin/bash
 
 installUtils () {
+	echo "*********************************Installing WGET..."
 	yum install -y wget
+	
+	echo "*********************************Installing Maven..."
 	wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O 	/etc/yum.repos.d/epel-apache-maven.repo
 	if [ $(cat /etc/system-release|grep -Po Amazon) == Amazon ]; then
 		sed -i s/\$releasever/6/g /etc/yum.repos.d/epel-apache-maven.repo
@@ -16,7 +19,21 @@ installUtils () {
 		alternatives --auto jar
 		ln -s /usr/lib/jvm/java-1.8.0 /usr/lib/jvm/java
 	fi
+	
+	echo "*********************************Installing GIT..."
 	yum install -y git
+	
+	echo "*********************************Installing Docker..."
+	echo " 				  *****************Installing Docker via Yum..."
+		yum install -y docker
+	
+	echo " 				  *****************Configuring Docker Permissions..."
+	groupadd docker
+	gpasswd -a yarn docker
+	echo " 				  *****************Registering Docker to Start on Boot..."
+	service docker start
+	chkconfig --add docker
+	chkconfig docker on
 }
 
 waitForAmbari () {

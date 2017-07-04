@@ -25,7 +25,7 @@ class DemoControl(Script):
     self.configure(env)
     import params
     Execute('echo Start UI')
-    Execute('docker run -p -d '+parmas.ui_port+':8080 -e ATLAS_HOST='+parmas.atlas_host+' -e ATLAS_PORT='+parmas.atlas_port+' -e API_HOST='+parmas.nifi_host_ip+' -e API_PORT='+parmas.api_port+' -t hortonworks/historian')
+    Execute('docker run -p -d '+params.ui_port+':8080 -e ATLAS_HOST='+params.atlas_host+' -e ATLAS_PORT='+params.atlas_port+' -e API_HOST='+params.nifi_host_ip+' -e API_PORT='+params.api_port+' -t hortonworks/historian')
     #Execute('nohup java -jar target/historian-0.0.1.jar --server.port=8095 > historian.log &')
     Execute('echo Start Simulation')
     Execute('nohup java -jar '+params.install_dir+'/DeviceSimulator-0.0.1-SNAPSHOT-jar-with-dependencies.jar Historian 1000 Simulation '+params.nifi_host_ip+' > '+params.install_dir+'/historian_sim.log 2>&1 & echo $! > /var/run/historian_sim.pid')
