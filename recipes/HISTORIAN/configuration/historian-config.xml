@@ -16,7 +16,7 @@
   </property> 
 
   <property require-input="true">
-    <name>historian.simulator_repo</name>
+    <name>historian.simulator.repo</name>
     <value>https://github.com/vakshorton/DataSimulators.git</value>
     <description>Online location to download Historian package</description>
   </property>
