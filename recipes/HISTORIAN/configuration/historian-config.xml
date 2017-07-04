@@ -21,11 +21,11 @@
     <description>Online location to download Historian package</description>
   </property>
     
-  <property require-input="true">
+  <!--<property require-input="false">
     <name>historian.nifi.host.ip</name>
     <value></value>
     <description>IP of the Historian Nifi API host </description>
-  </property>
+  </property> -->
   
     <property require-input="true">
     <name>historian.api.port</name>

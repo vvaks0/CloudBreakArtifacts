@@ -23,6 +23,6 @@ nifi_host_ip = socket.gethostbyname(str(json.loads(requests.get('http://'+ambari
 
 nifi_host_port = config['configurations']['nifi-ambari-config']['nifi.node.port']
 
-api_port = config['configurations']['historian-config']['api.port']
+api_port = config['configurations']['historian-config']['historian.api.port']
 
-ui_port = config['configurations']['historian-config']['ui.port']
+ui_port = config['configurations']['historian-config']['historian.ui.port']
