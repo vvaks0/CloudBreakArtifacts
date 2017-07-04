@@ -5,6 +5,7 @@ from resource_management import *
 
 # server configurations
 config = Script.get_config()
+master_configs = config['clusterHostInfo']
 
 ambari_server_host = str(master_configs['ambari_server_host'][0])
 ambari_server_port = '8080'
