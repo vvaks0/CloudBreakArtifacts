@@ -20,6 +20,20 @@
     <value>https://github.com/vakshorton/DataSimulators.git</value>
     <description>Online location to download Historian package</description>
   </property>
+  
+    <property require-input="true">
+    <name>historian.historian.repo.username</name>
+    <value></value>
+    <property-type>PASSWORD</property-type>
+    <description>Historian repo username</description>
+  </property> 
+  
+  <property require-input="true">
+    <name>historian.historian.repo.password</name>
+    <value></value>
+    <property-type>PASSWORD</property-type>
+    <description>Historian repo password</description>
+  </property> 
     
   <!--<property require-input="false">
     <name>historian.nifi.host.ip</name>
