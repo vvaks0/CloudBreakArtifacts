@@ -203,7 +203,7 @@ getHostByPosition (){
 deployTemplateToNifi () {
        	echo "*********************************Importing NIFI Template..."
        	# Import NIFI Template HDF 3.x
-       	TEMPLATEID=$(curl -v -F template=@"$ROOT_PATH/CloudBreakArtifacts/hdf-config/nifi-template/orchestrator.xml" -X POST http://$NIFI_HOST:9090/nifi-api/process-groups/root/templates/upload | grep -Po '<id>([a-z0-9-]+)' | grep -Po '>([a-z0-9-]+)' | grep -Po '([a-z0-9-]+)')
+       	TEMPLATEID=$(curl -v -F template=@"$ROOT_PATH/historian/src/nifi/orchestrator.xml" -X POST http://$NIFI_HOST:9090/nifi-api/process-groups/root/templates/upload | grep -Po '<id>([a-z0-9-]+)' | grep -Po '>([a-z0-9-]+)' | grep -Po '([a-z0-9-]+)')
        		sleep 1
 
        		# Instantiate NIFI Template 3.x
