@@ -49,7 +49,7 @@
   
     <property require-input="true">
     <name>historian.ui.port</name>
-    <value>8090</value>
+    <value>8091</value>
     <description>The port that Historian UI will listen on </description>
   </property>   
 </configuration>
