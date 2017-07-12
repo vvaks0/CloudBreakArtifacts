@@ -40,8 +40,6 @@ class DemoControl(Script):
     Execute ('rm -f /var/run/historian_sim.pid')
     
   def status(self, env):
-    import params
-    env.set_params(params)
     check_process_status('/var/run/historian_sim.pid')
     
   def configure(self, env):
