@@ -1,0 +1,3 @@
+"properties" : {
+"content" : "\nNiFiClient {\n    com.sun.security.auth.module.Krb5LoginModule required\n    useKeyTab=true\n    keyTab=\"{{nifi_service_keytab}}\"\n    storeKey=true\n    useTicketCache=false\n    principal=\"{{nifi_service_principal}}\";\n};\nRegistryClient {\n    com.sun.security.auth.module.Krb5LoginModule required\n    useKeyTab=true\n    keyTab=\"{{nifi_service_keytab}}\"\n    storeKey=true\n    useTicketCache=false\n    principal=\"{{nifi_service_principal}}\";\n};"
+}

@@ -26,6 +26,9 @@
     <value></value>
     <property-type>PASSWORD</property-type>
     <description>Historian repo username</description>
+        <value-attributes>
+		<type>password</type>
+    </value-attributes>
   </property> 
   
   <property require-input="true">
@@ -33,6 +36,9 @@
     <value></value>
     <property-type>PASSWORD</property-type>
     <description>Historian repo password</description>
+    <value-attributes>
+		<type>password</type>
+    </value-attributes>
   </property> 
     
   <!--<property require-input="false">
