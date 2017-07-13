@@ -372,7 +372,7 @@ configureNifiTempate () {
     for ((i = 0; i < $length; i++))
     do
        	CURRENT_GROUP=${GROUP_TARGETS[i]}
-       	#handleGroupPorts $CURRENT_GROUP
+       	handleGroupPorts $CURRENT_GROUP
        	echo "*************************Calling handle processors with group $CURRENT_GROUP"
        	handleGroupProcessors $CURRENT_GROUP
        	echo "*************************Done handle processors"
