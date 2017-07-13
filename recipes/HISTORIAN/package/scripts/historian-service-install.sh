@@ -363,8 +363,8 @@ handleGroupPorts (){
 }
 
 configureNifiTempate () {
-	GROUP_TARGETS=$(curl -u admin:admin -i -X GET http://$NIFI_HOST:9090/nifi-api/process-groups/root | grep -Po '\"uri\":\"([a-z0-9-://.]+)' | grep -Po '(?!.*\")([a-z0-9-://.]+)')
-	#GROUP_TARGETS=$(curl -u admin:admin -i -X GET http://$NIFI_HOST:9090/nifi-api/process-groups/root/process-groups | grep -Po '\"uri\":\"([a-z0-9-://.]+)' | grep -Po '(?!.*\")([a-z0-9-://.]+)')
+	#GROUP_TARGETS=$(curl -u admin:admin -i -X GET http://$NIFI_HOST:9090/nifi-api/process-groups/root | grep -Po '\"uri\":\"([a-z0-9-://.]+)' | grep -Po '(?!.*\")([a-z0-9-://.]+)')
+	GROUP_TARGETS=$(curl -u admin:admin -i -X GET http://$NIFI_HOST:9090/nifi-api/process-groups/root/process-groups | grep -Po '\"uri\":\"([a-z0-9-://.]+)' | grep -Po '(?!.*\")([a-z0-9-://.]+)')
 	length=${#GROUP_TARGETS[@]}
     echo $length
     echo ${GROUP_TARGETS[0]}

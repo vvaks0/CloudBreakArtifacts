@@ -360,25 +360,53 @@ handleGroupPorts (){
        		echo "PAYLOAD"
        		curl -u admin:admin -i -H "Content-Type:application/json" -d "${PAYLOAD}" -X PUT ${TARGETS[i]}
        	done
+       	
+       	TARGETS=($(curl -u admin:admin -i -X GET $TARGET_GROUP/input-ports | grep -Po '\"uri\":\"([a-z0-9-://.]+)' | grep -Po '(?!.*\")([a-z0-9-://.]+)'))
+       	length=${#TARGETS[@]}
+       	echo $length
+       	echo ${TARGETS[0]}
+
+       	for ((i = 0; i < $length; i++))
+       	do
+       		ID=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '"id":"([a-zA-z0-9\-]+)'|grep -Po ':"([a-zA-z0-9\-]+)'|grep -Po '([a-zA-z0-9\-]+)'|head -1)
+       		REVISION=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '\"version\":([0-9]+)'|grep -Po '([0-9]+)')
+       		TYPE=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '"type":"([a-zA-Z0-9\-.]+)' |grep -Po ':"([a-zA-Z0-9\-.]+)' |grep -Po '([a-zA-Z0-9\-.]+)' |head -1)
+       		echo "Current Processor Path: ${TARGETS[i]}"
+       		echo "Current Processor Revision: $REVISION"
+       		echo "Current Processor ID: $ID"
+
+       		echo "***************************Activating Port ${TARGETS[i]}..."
+
+       		PAYLOAD=$(echo "{\"id\":\"$ID\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$ID\",\"state\": \"RUNNING\"}}")
+
+       		echo "PAYLOAD"
+       		curl -u admin:admin -i -H "Content-Type:application/json" -d "${PAYLOAD}" -X PUT ${TARGETS[i]}
+       	done
 }
 
 configureNifiTempate () {
-	GROUP_TARGETS=$(curl -u admin:admin -i -X GET http://$NIFI_HOST:9090/nifi-api/process-groups/root | grep -Po '\"uri\":\"([a-z0-9-://.]+)' | grep -Po '(?!.*\")([a-z0-9-://.]+)')
-	#GROUP_TARGETS=$(curl -u admin:admin -i -X GET http://$NIFI_HOST:9090/nifi-api/process-groups/root/process-groups | grep -Po '\"uri\":\"([a-z0-9-://.]+)' | grep -Po '(?!.*\")([a-z0-9-://.]+)')
-	length=${#GROUP_TARGETS[@]}
+	GROUP_TARGETS=$(curl -u admin:admin -i -X GET http://$AMBARI_HOST:9090/nifi-api/process-groups/root/process-groups | grep -Po '\"uri\":\"([a-z0-9-://.]+)' | grep -Po '(?!.*\")([a-z0-9-://.]+)')
+    length=${#GROUP_TARGETS[@]}
     echo $length
     echo ${GROUP_TARGETS[0]}
 
-    for ((i = 0; i < $length; i++))
+    #for ((i = 0; i < $length; i++))
+    for GROUP in $GROUP_TARGETS
     do
-       	CURRENT_GROUP=${GROUP_TARGETS[i]}
-       	#handleGroupPorts $CURRENT_GROUP
-       	echo "*************************Calling handle processors with group $CURRENT_GROUP"
+       	#CURRENT_GROUP=${GROUP_TARGETS[i]}
+       	CURRENT_GROUP=$GROUP
+       	echo "***********************************************************calling handle ports with group $CURRENT_GROUP"
+       	handleGroupPorts $CURRENT_GROUP
+       	echo "***********************************************************calling handle processors with group $CURRENT_GROUP"
        	handleGroupProcessors $CURRENT_GROUP
-       	echo "*************************Done handle processors"
+       	echo "***********************************************************done handle processors"
     done
 
-    ROOT_TARGET=$(curl -u admin:admin -i -X GET http://$NIFI_HOST:9090/nifi-api/process-groups/root| grep -Po '\"uri\":\"([a-z0-9-://.]+)' | grep -Po '(?!.*\")([a-z0-9-://.]+)')
+    ROOT_TARGET=$(curl -u admin:admin -i -X GET http://$AMBARI_HOST:9090/nifi-api/process-groups/root| grep -Po '\"uri\":\"([a-z0-9-://.]+)' | grep -Po '(?!.*\")([a-z0-9-://.]+)')
+
+    handleGroupPorts $ROOT_TARGET
+
+    handleGroupProcessors $ROOT_TARGET
 }
 
 startConductorReporter() {
