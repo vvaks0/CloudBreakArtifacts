@@ -238,10 +238,12 @@ handleGroupProcessors (){
        		ID=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '"id":"([a-zA-z0-9\-]+)'|grep -Po ':"([a-zA-z0-9\-]+)'|grep -Po '([a-zA-z0-9\-]+)'|head -1)
        		REVISION=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '\"version\":([0-9]+)'|grep -Po '([0-9]+)')
        		TYPE=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '"type":"([a-zA-Z0-9\-.]+)' |grep -Po ':"([a-zA-Z0-9\-.]+)' |grep -Po '([a-zA-Z0-9\-.]+)' |head -1)
+       		NAME=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '"type":"([a-zA-Z0-9\-.]+)' |grep -Po ':"([a-zA-Z0-9\-.]+)' |grep -Po '([a-zA-Z0-9\-.]+)' |head -1)
        		echo "Current Processor Path: ${TARGETS[i]}"
        		echo "Current Processor Revision: $REVISION"
        		echo "Current Processor ID: $ID"
        		echo "Current Processor TYPE: $TYPE"
+       		echo "Current Processor NAME: $NAME"
 
        		if ! [ -z $(echo $TYPE|grep "Record") ]; then
        			echo "***************************This is a Record Processor"
@@ -324,11 +326,17 @@ handleGroupProcessors (){
        			echo "***************************This is a ConsumeKafka Processor"
        			echo "***************************Updating Kafka Broker Porperty and Activating Processor..."
        			if ! [ -z $(echo $TYPE|grep "ConsumeKafka") ]; then
-                       		PAYLOAD=$(echo "{\"id\":\"$ID\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$ID\",\"config\":{\"properties\":{\"bootstrap.servers\":\"$AMBARI_HOST:6667\"}},\"state\":\"RUNNING\"}}")
+                	PAYLOAD=$(echo "{\"id\":\"$ID\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$ID\",\"config\":{\"properties\":{\"bootstrap.servers\":\"$AMBARI_HOST:6667\"}},\"state\":\"RUNNING\"}}")
                 fi
        		else
-       			echo "***************************Activating Processor..."
-       			PAYLOAD=$(echo "{\"id\":\"$ID\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$ID\",\"state\":\"RUNNING\"}}")
+       			if ! [ -z $(echo $NAME|grep "SparkPrepareParameters") ]; then
+                	echo "***************************This Processor Contains Parameters for Livy Spark Integration"
+					PAYLOAD=$(echo "{\"id\":\"$ID\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$ID\",\"config\":{\"properties\":{\"druidBrokerHost\":\"$DRUID_BROKER\"}},\"state\":\"RUNNING\"}}")
+
+            	else
+       				echo "***************************Activating Processor..."
+       				PAYLOAD=$(echo "{\"id\":\"$ID\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$ID\",\"state\":\"RUNNING\"}}")
+       			fi
        		fi
        		echo "$PAYLOAD"
 
