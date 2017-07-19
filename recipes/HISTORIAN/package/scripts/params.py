@@ -15,6 +15,7 @@ install_dir = config['configurations']['historian-config']['historian.install.di
 historian_repo_username = config['configurations']['historian-config']['historian.historian.repo.username']
 historian_repo_password = config['configurations']['historian-config']['historian.historian.repo.password']
 historian_repo = config['configurations']['historian-config']['historian.historian.repo']
+historian_dir = install_dir+'/'+historian_repo.split('/')[len(historian_repo.split('/'))-1].replace('.git','')
 historian_repo = historian_repo.replace('https://','https://'+historian_repo_username+':'+historian_repo_password+'@')
 simulator_repo = config['configurations']['historian-config']['historian.simulator.repo']
 
