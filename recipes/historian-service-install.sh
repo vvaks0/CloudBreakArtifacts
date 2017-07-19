@@ -201,9 +201,11 @@ getHostByPosition (){
 }
 
 deployTemplateToNifi () {
+       	HISTORIAN_DIR=$1
+       	
        	echo "*********************************Importing NIFI Template..."
        	# Import NIFI Template HDF 3.x
-       	# HISTORIAN_DIR should have been set by the Ambari install process
+       	# HISTORIAN_DIR should have been passed in by the caller install process
        	TEMPLATEID=$(curl -v -F template=@"$HISTORIAN_DIR/src/nifi/orchestrator.xml" -X POST http://$NIFI_HOST:9090/nifi-api/process-groups/root/templates/upload | grep -Po '<id>([a-z0-9-]+)' | grep -Po '>([a-z0-9-]+)' | grep -Po '([a-z0-9-]+)')
        		sleep 1
 
@@ -472,7 +474,7 @@ createHistorianTagCacheTable
 sleep 2
 
 echo "*********************************Deploy Historian Orchestrator Template..."
-deployTemplateToNifi
+deployTemplateToNifi $1
 sleep 2
 
 echo "*********************************Configure Historian Orchestrator Template..."

@@ -17,13 +17,9 @@ class DemoControl(Script):
     shutil.copy('DeviceSimulator-0.0.1-SNAPSHOT-jar-with-dependencies.jar', params.install_dir)
     os.chdir(params.install_dir)
     Execute('git clone ' + params.historian_repo)
-    Execute('export HISTORIAN_DIR='+params.historian_dir)
-    Execute('export "HISTORIAN_DIR='+params.historian_dir+'" >> /etc/bashrc')
-    Execute('export "HISTORIAN_DIR='+params.historian_dir+'" >> ~/.bash_profile')
-    Execute('. ~/.bash_profile')
     os.chdir(params.historian_dir)
     Execute('mvn package docker:build')
-    Execute(params.install_dir+'/CloudBreakArtifacts/recipes/historian-service-install.sh')
+    Execute(params.install_dir+'/CloudBreakArtifacts/recipes/historian-service-install.sh '+params.historian_dir)
 
   def start(self, env):
     self.configure(env)
