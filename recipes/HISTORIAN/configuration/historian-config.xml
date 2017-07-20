@@ -11,7 +11,7 @@
 
   <property require-input="true">
     <name>historian.historian.repo</name>
-    <value>https://github.com/kirkhas/historian.git</value>
+    <value>https://github.com/hortonworks/fieldeng-rhea.git</value>
     <description>Online location to download Historian package</description>
   </property> 
 
