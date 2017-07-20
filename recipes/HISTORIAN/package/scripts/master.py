@@ -34,7 +34,7 @@ class DemoControl(Script):
     self.configure(env)
     import params
     Execute('echo Stop UI')
-    Execute('docker rm $(docker stop $(docker ps -a -q --filter ancestor=hortonworks/historian --format="{{.ID}}"))')
+    Execute('docker rm $(docker stop $(docker ps -a -q --filter ancestor=hortonworks/rhea --format="{{.ID}}"))')
     Execute('echo Stop Simulation')
     Execute (format('kill -9 `cat /var/run/historian_sim.pid` >/dev/null 2>&1')) 
     Execute ('rm -f /var/run/historian_sim.pid')
