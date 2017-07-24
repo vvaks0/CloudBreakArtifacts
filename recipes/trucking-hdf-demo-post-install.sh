@@ -212,7 +212,7 @@ echo $PAYLOAD
 
 	curl -u admin:admin -i -H "content-type: application/json" -d "$PAYLOAD" -X POST http://$AMBARI_HOST:7788/api/v1/schemaregistry/schemas/truck_speed_events_log/versions
 	
-	PAYLOAD="{\"name\":\"truck_events_avro:v\",\"type\":\"avro\",\"schemaGroup\":\"truck-sensors-log\",\"description\":\"truck_events_log\",\"evolve\":true,\"compatibility\":\"BACKWARD\"}"
+	PAYLOAD="{\"name\":\"truck_events_avro\",\"type\":\"avro\",\"schemaGroup\":\"truck-sensors-log\",\"description\":\"truck_events_log\",\"evolve\":true,\"compatibility\":\"BACKWARD\"}"
 	
 	curl -u admin:admin -i -H "content-type: application/json" -d "$PAYLOAD" -X POST http://$AMBARI_HOST:7788/api/v1/schemaregistry/schemas
 	
@@ -222,7 +222,7 @@ echo $PAYLOAD
 	
 	curl -u admin:admin -i -H "content-type: application/json" -d "$PAYLOAD" -X POST http://$AMBARI_HOST:7788/api/v1/schemaregistry/schemas/truck_events_avro%3Av/versions
 	
-PAYLOAD="{\"name\":\"truck_speed_events_avro:v\",\"type\":\"avro\",\"schemaGroup\":\"truck-sensors-log\",\"description\":\"truck_speed_events_avro\",\"evolve\":true,\"compatibility\":\"BACKWARD\"}"
+PAYLOAD="{\"name\":\"truck_speed_events_avro\",\"type\":\"avro\",\"schemaGroup\":\"truck-sensors-log\",\"description\":\"truck_speed_events_avro\",\"evolve\":true,\"compatibility\":\"BACKWARD\"}"
 	
 	curl -u admin:admin -i -H "content-type: application/json" -d "$PAYLOAD" -X POST http://$AMBARI_HOST:7788/api/v1/schemaregistry/schemas
 	
