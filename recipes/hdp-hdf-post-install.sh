@@ -395,17 +395,18 @@ installDruidService () {
 		
 		/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME druid-superset $ROOT_PATH/CloudBreakArtifacts/hdf-config/druid-config/druid-superset.json
 		
-		HOST1=$(getHostByPosition 1)
-		HOST2=$(getHostByPosition 2)
-		HOST3=$(getHostByPosition 3)			
+		export HOST1=$(getHostByPosition 1)
+		export HOST2=$(getHostByPosition 2)
+		export HOST3=$(getHostByPosition 3)			
 		
        	echo "*********************************Adding DRUID BROKER role to Host..."
        	# Add DRUID BROKER role to Host
        	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/hosts/$HOST1/host_components/DRUID_BROKER
+       	export DRUID_BROKER=$HOST1
        	
        	echo "*********************************Adding DRUID SUPERSET role to Host..."
        	# Add DRUID SUPERSET role to Host
-       	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/hosts/$HOST1/host_components/DRUID_SUPERSET
+       	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/hosts/$AMBARI_HOST/host_components/DRUID_SUPERSET
        	
        	echo "*********************************Adding DRUID ROUTER role to Host..."
        	# Add DRUID BROKER role to Host
@@ -413,11 +414,11 @@ installDruidService () {
        	
        	echo "*********************************Adding DRUID OVERLORD role to Host..."
        	# Add DRUID OVERLORD role to Host
-       	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/hosts/$HOST2/host_components/DRUID_OVERLORD
+       	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/hosts/$AMBARI_HOST/host_components/DRUID_OVERLORD
        	
        	echo "*********************************Adding DRUID COORDINATOR role to Host..."
        	# Add DRUID COORDINATOR role to Host
-       	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/hosts/$HOST3/host_components/DRUID_COORDINATOR
+       	curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/hosts/$AMBARI_HOST/host_components/DRUID_COORDINATOR
        	
        	echo "*********************************Adding DRUID HISTORICAL role to Host..."
        	# Add DRUID HISTORICAL role to Host
