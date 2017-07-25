@@ -251,6 +251,11 @@ installStreamlineService () {
                	echo "*********************************Task Status" $TASKSTATUS
                	sleep 2
        	done
+       	
+	rm -f /usr/hdf/current/storm-client/lib/storm-bridge-shim.jar
+	rm -f /usr/hdf/current/storm-client/lib/atlas-plugin-classloader.jar
+	ln -s /usr/hdp/current/atlas-client/hook/storm/atlas-plugin-classloader-0.8.0.2.6.1.0-129.jar /usr/hdf/current/storm-client/lib/atlas-plugin-classloader.jar
+	ln -s /usr/hdp/current/atlas-client/hook/storm/storm-bridge-shim-0.8.0.2.6.1.0-129.jar /usr/hdf/current/storm-client/lib/storm-bridge-shim.jar
 }
 
 installNifiService () {
