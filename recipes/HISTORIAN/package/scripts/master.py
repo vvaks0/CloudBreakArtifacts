@@ -24,7 +24,7 @@ class DemoControl(Script):
     if not os.path.exists(params.scythe_dir): 
         Execute('git clone ' + params.scythe_repo)
     os.chdir(params.scythe_dir)
-    Execute('mvn clean package')
+    Execute('mvn clean package -Dmaven.test.skip=true')
     os.chdir(params.scythe_dir+'/target')
     shutil.copy('scythe-0.0.1-SNAPSHOT-jar-with-dependencies.jar', '/usr/hdp/current/spark2-client/jars')
     os.chdir(params.install_dir)
