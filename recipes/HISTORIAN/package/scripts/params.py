@@ -14,10 +14,25 @@ cluster_name = str(json.loads(requests.get('http://'+ambari_server_host+':'+amba
 install_dir = config['configurations']['historian-config']['historian.install.dir']
 historian_repo_username = config['configurations']['historian-config']['historian.historian.repo.username']
 historian_repo_password = config['configurations']['historian-config']['historian.historian.repo.password']
-historian_repo = config['configurations']['historian-config']['historian.historian.repo']
-historian_dir = install_dir+'/'+historian_repo.split('/')[len(historian_repo.split('/'))-1].replace('.git','')
-historian_repo = historian_repo.replace('https://','https://'+historian_repo_username+':'+historian_repo_password+'@')
+
+cronus_repo = config['configurations']['historian-config']['cronus.repo']
+cronus_dir = install_dir+'/'+cronus_repo.split('/')[len(cronus_repo.split('/'))-1].replace('.git','')
+cronus_repo = cronus_repo.replace('https://','https://'+historian_repo_username+':'+historian_repo_password+'@')
+
+rhea_repo = config['configurations']['historian-config']['rhea.repo']
+rhea_dir = install_dir+'/'+rhea_repo.split('/')[len(rhea_repo.split('/'))-1].replace('.git','')
+rhea_repo = rhea_repo.replace('https://','https://'+historian_repo_username+':'+historian_repo_password+'@')
+
+scythe_repo = config['configurations']['historian-config']['scythe.repo']
+scythe_dir = install_dir+'/'+scythe_repo.split('/')[len(scythe_repo.split('/'))-1].replace('.git','')
+scythe_repo = scythe_repo.replace('https://','https://'+historian_repo_username+':'+historian_repo_password+'@')
+
 simulator_repo = config['configurations']['historian-config']['historian.simulator.repo']
+simulator_dir = install_dir+'/'+simulator_repo.split('/')[len(simulator_repo.split('/'))-1].replace('.git','')
+
+cronus_data_dir = config['configurations']['historian-config']['cronus.import.data.dir']
+cronus_urls_dir = config['configurations']['historian-config']['cronus.import.urls.dir']
+cronus_scripts_dir = config['configurations']['historian-config']['cronus.import.scripts.dir']
 
 atlas_host_ip = socket.gethostbyname(str(json.loads(requests.get('http://'+ambari_server_host+':'+ambari_server_port+'/api/v1/clusters/'+cluster_name+'/services/ATLAS/components/ATLAS_SERVER', auth=('admin', 'admin')).content).get('host_components')[0].get('HostRoles').get('host_name')))
 

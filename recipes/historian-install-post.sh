@@ -830,9 +830,9 @@ sleep 2
 installSchemaRegistryService
 sleep 2
 startServiceIfReady REGISTRY
-sleep 2
+sleep 5
 installNifiService
-sleep 2
+sleep 5
 installNifiNars
 sleep 2
 startServiceIfReady NIFI

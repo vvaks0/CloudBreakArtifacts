@@ -106,7 +106,7 @@
 "nifi.templates.directory" : "{{nifi_internal_dir}}/templates",
 "nifi.ui.autorefresh.interval" : "30 sec",
 "nifi.ui.banner.text" : "",
-"nifi.variable.registry.properties" : "",
+"nifi.variable.registry.properties" : "./conf/env.properties",
 "nifi.version" : "{{service_version}}.{{stack_version_buildnum}}",
 "nifi.web.http.host" : "{{nifi_node_nonssl_host}}",
 "nifi.web.http.port" : "{{nifi_node_port}}",

@@ -6,19 +6,31 @@
   <property require-input="true">
     <name>historian.install.dir</name>
     <value>/root</value>
-    <description>Directory under which simulator control utility will be installed</description>
+    <description>Directory under which source code will be downloaded and built</description>
   </property> 
 
   <property require-input="true">
-    <name>historian.historian.repo</name>
+    <name>cronus.repo</name>
+    <value>https://github.com/hortonworks/fieldeng-cronus.git</value>
+    <description>Online location to download Cronus (Platform)</description>
+  </property> 
+
+  <property require-input="true">
+    <name>rhea.repo</name>
     <value>https://github.com/hortonworks/fieldeng-rhea.git</value>
-    <description>Online location to download Historian package</description>
+    <description>Online location to download Rhea (UI)</description>
+  </property> 
+
+  <property require-input="true">
+    <name>scythe.repo</name>
+    <value>https://github.com/hortonworks/fieldeng-scythe.git</value>
+    <description>Online location to download Scythe (DS library)</description>
   </property> 
 
   <property require-input="true">
     <name>historian.simulator.repo</name>
     <value>https://github.com/vakshorton/DataSimulators.git</value>
-    <description>Online location to download Historian package</description>
+    <description>Online location to download data simulator package</description>
   </property>
   
     <property require-input="true">
@@ -40,23 +52,35 @@
 		<type>password</type>
     </value-attributes>
   </property> 
-    
-  <!--<property require-input="false">
-    <name>historian.nifi.host.ip</name>
-    <value></value>
-    <description>IP of the Historian Nifi API host </description>
-  </property> -->
   
     <property require-input="true">
-    <name>historian.api.port</name>
+    <name>cronus.api.port</name>
     <value>8055</value>
-    <description>IP of the Historian Nifi API host </description>
+    <description>IP of the Cronus Nifi API host </description>
   </property>
   
-    <property require-input="true">
-    <name>historian.ui.port</name>
+  <property require-input="true">
+    <name>rhea.ui.port</name>
     <value>8092</value>
-    <description>The port that Historian UI will listen on </description>
-  </property>   
+    <description>The port that Rhea UI will listen on </description>
+  </property>
+  
+  <property require-input="true">
+    <name>cronus.import.data.dir</name>
+    <value>/home/cronus/data</value>
+    <description>The directory where Cronus will look for various data being imported </description>
+  </property>
+  
+  <property require-input="true">
+    <name>cronus.import.urls.dir</name>
+    <value>/home/cronus/urls</value>
+    <description>The directory where Cronus will look for url locations of various data being imported </description>
+  </property>
+	
+  <property require-input="true">
+    <name>cronus.import.scripts.dir</name>
+    <value>/home/cronus/scripts</value>
+    <description>The directory where Cronus will look for various scripts and code snippets like SQL and arbitrary code statements</description>
+  </property>     
 </configuration>
 
