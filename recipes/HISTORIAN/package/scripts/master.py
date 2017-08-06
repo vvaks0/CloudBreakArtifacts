@@ -11,7 +11,7 @@ class DemoControl(Script):
         os.makedirs(params.install_dir)
     os.chdir(params.install_dir)
     
-    if not os.path.exists(params.simualtor_dir): 
+    if not os.path.exists(params.simulator_dir): 
         Execute('git clone ' + params.simulator_repo)
     os.chdir(params.simulator_dir)
     Execute('mvn clean package')
