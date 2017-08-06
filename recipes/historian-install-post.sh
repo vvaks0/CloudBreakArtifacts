@@ -780,6 +780,7 @@ if [ ! -d "/usr/jdk64" ]; then
 	alternatives --install /usr/bin/jar jar /usr/jdk64/bin/jar 3
 	export JAVA_HOME=/usr/jdk64
 	echo "export JAVA_HOME=/usr/jdk64" >> /etc/bashrc
+	echo "export JAVA_HOME=/usr/jdk64" >> ~/.bash_profile
 fi
 
 echo "*********************************Waiting for cluster install to complete..."

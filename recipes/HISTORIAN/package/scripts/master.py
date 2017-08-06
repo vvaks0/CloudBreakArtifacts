@@ -6,7 +6,9 @@ class DemoControl(Script):
   def install(self, env):
     self.configure(env)
     import params
-  
+    
+    Execute('. ~/.bash_profile')
+    
     if not os.path.exists(params.install_dir):  
         os.makedirs(params.install_dir)
     os.chdir(params.install_dir)
