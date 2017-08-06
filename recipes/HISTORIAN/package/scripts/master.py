@@ -40,7 +40,7 @@ class DemoControl(Script):
     
     shutil.copytree(params.cronus_dir+'/data', params.cronus_data_dir, False, None)
     shutil.copytree(params.cronus_dir+'/urls', params.cronus_urls_dir, False, None)
-    shutil.copytree(params.cronus_dir+'/scripts', params.cronus_scripts_dir, False, None)
+    shutil.copytree(params.cronus_dir+'/src/python/scripts', params.cronus_scripts_dir, False, None)
     
     nifi_env_file = open('/usr/hdf/current/nifi/conf/env.properties','w+')
     nifi_env_file.write("data.dir=" + params.cronus_data_dir)
