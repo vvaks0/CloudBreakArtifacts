@@ -15,7 +15,7 @@ class DemoControl(Script):
     
     if not os.path.exists(params.simulator_dir): 
         Execute('git clone ' + params.simulator_repo)
-    os.chdir(params.simulator_dir)
+    os.chdir(params.simulator_dir+'/DeviceSimulator')
     Execute('mvn clean package')
     os.chdir(params.simulator_dir+'/DeviceSimulator/target')
     shutil.copy('DeviceSimulator-0.0.1-SNAPSHOT-jar-with-dependencies.jar', params.install_dir)
