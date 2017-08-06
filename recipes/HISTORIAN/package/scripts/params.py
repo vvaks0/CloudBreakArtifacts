@@ -30,9 +30,7 @@ scythe_repo = scythe_repo.replace('https://','https://'+historian_repo_username+
 simulator_repo = config['configurations']['historian-config']['historian.simulator.repo']
 simulator_dir = install_dir+'/'+simulator_repo.split('/')[len(simulator_repo.split('/'))-1].replace('.git','')
 
-cronus_data_dir = config['configurations']['historian-config']['cronus.import.data.dir']
-cronus_urls_dir = config['configurations']['historian-config']['cronus.import.urls.dir']
-cronus_scripts_dir = config['configurations']['historian-config']['cronus.import.scripts.dir']
+cronus_home_dir = config['configurations']['historian-config']['cronus.home.dir']
 
 atlas_host_ip = socket.gethostbyname(str(json.loads(requests.get('http://'+ambari_server_host+':'+ambari_server_port+'/api/v1/clusters/'+cluster_name+'/services/ATLAS/components/ATLAS_SERVER', auth=('admin', 'admin')).content).get('host_components')[0].get('HostRoles').get('host_name')))
 

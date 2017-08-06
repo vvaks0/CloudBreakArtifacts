@@ -56,31 +56,20 @@
     <property require-input="true">
     <name>cronus.api.port</name>
     <value>8055</value>
-    <description>IP of the Cronus Nifi API host </description>
+    <description>The port that Cronus Nifi API will listen on</description>
   </property>
   
   <property require-input="true">
     <name>rhea.ui.port</name>
     <value>8092</value>
-    <description>The port that Rhea UI will listen on </description>
+    <description>The port that Rhea UI will listen on</description>
   </property>
   
   <property require-input="true">
-    <name>cronus.import.data.dir</name>
-    <value>/home/cronus/data</value>
-    <description>The directory where Cronus will look for various data being imported </description>
+    <name>cronus.home.dir</name>
+    <value>/home/cronus</value>
+    <description>The workspace directory for Cronus</description>
   </property>
   
-  <property require-input="true">
-    <name>cronus.import.urls.dir</name>
-    <value>/home/cronus/urls</value>
-    <description>The directory where Cronus will look for url locations of various data being imported </description>
-  </property>
-	
-  <property require-input="true">
-    <name>cronus.import.scripts.dir</name>
-    <value>/home/cronus/scripts</value>
-    <description>The directory where Cronus will look for various scripts and code snippets like SQL and arbitrary code statements</description>
-  </property>     
 </configuration>
 

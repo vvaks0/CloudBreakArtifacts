@@ -38,14 +38,15 @@ class DemoControl(Script):
     if not os.path.exists(params.cronus_dir): 
         Execute('git clone ' + params.cronus_repo)
     
-    shutil.copytree(params.cronus_dir+'/data', params.cronus_data_dir, False, None)
-    shutil.copytree(params.cronus_dir+'/urls', params.cronus_urls_dir, False, None)
-    shutil.copytree(params.cronus_dir+'/src/python/scripts', params.cronus_scripts_dir, False, None)
+    shutil.rmtree(params.cronus_home_dir)
+    shutil.copytree(params.cronus_dir+'/data', params.cronus_home_dir+'/data', False, None)
+    shutil.copytree(params.cronus_dir+'/urls', params.cronus_home_dir+'/urls', False, None)
+    shutil.copytree(params.cronus_dir+'/src/python/scripts', params.cronus_home_dir+'/scripts', False, None)
     
     nifi_env_file = open('/usr/hdf/current/nifi/conf/env.properties','w+')
-    nifi_env_file.write("data.dir=" + params.cronus_data_dir)
-    nifi_env_file.write("urls.dir=" + params.cronus_urls_dir)
-    nifi_env_file.write("scripts.dir=" + params.cronus_scripts_dir)
+    nifi_env_file.write("data.dir=" + params.cronus_home_dir+'/data')
+    nifi_env_file.write("urls.dir=" + params.cronus_home_dir+'/urls')
+    nifi_env_file.write("scripts.dir=" + params.cronus_home_dir+'/scripts')
     
     os.chdir(params.install_dir)
     Execute(params.install_dir+'/CloudBreakArtifacts/recipes/historian-service-install.sh '+params.cronus_dir)
