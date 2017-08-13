@@ -78,6 +78,43 @@ getRangerHost () {
        	echo $RANGER_HOST
 }
 
+installMySQL (){
+	yum remove -y mysql57-community*
+	yum remove -y mysql56-server*
+	yum remove -y mysql-community*
+	rm -Rvf /var/lib/mysql
+
+	yum install -y epel-release
+	yum install -y libffi-devel.x86_64
+	ln -s /usr/lib64/libffi.so.6 /usr/lib64/libffi.so.5
+
+	yum install -y mysql-connector-java*
+	ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
+
+
+	if [ $(cat /etc/system-release|grep -Po Amazon) == Amazon ]; then       	
+		yum install -y mysql56-server
+		service mysqld start
+	else
+		yum localinstall -y https://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm
+		yum install -y mysql-community-server
+		#yum localinstall -y https://dev.mysql.com/get/mysql57-community-release-el7-8.noarch.rpm
+#yum install -y mysql-community-server
+		systemctl start mysqld.service
+	fi
+}
+
+setupRangerDataStore (){
+	mysql --execute="CREATE USER 'rangerdba'@'localhost' IDENTIFIED BY 'rangerdba';"
+	mysql --execute="GRANT ALL PRIVILEGES ON *.* TO 'rangerdba'@'localhost';"
+	mysql --execute="CREATE USER 'rangerdba'@'%' IDENTIFIED BY 'rangerdba';"
+	mysql --execute="GRANT ALL PRIVILEGES ON *.* TO 'rangerdba'@'%';"
+	mysql --execute="GRANT ALL PRIVILEGES ON *.* TO 'rangerdba'@'localhost' WITH GRANT OPTION;"
+	mysql --execute="GRANT ALL PRIVILEGES ON *.* TO 'rangerdba'@'%' WITH GRANT OPTION;"
+	mysql --execute="FLUSH PRIVILEGES;"
+	mysql --execute="COMMIT;"
+}
+
 export JAVA_HOME=/usr/jdk64
 NAMENODE_HOST=$(getNameNodeHost)
 export NAMENODE_HOST=$NAMENODE_HOST
