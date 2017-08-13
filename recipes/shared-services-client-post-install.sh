@@ -362,7 +362,8 @@ cp -Rvf $ROOT_PATH/Utils/DATA_PLANE_CLIENT /var/lib/ambari-server/resources/stac
 #stopService SPARK
 #startService SPARK
 echo "*********************************Restarting Ambari... "
-ambari-server restart
+ambari-server stop
+ambari-server start
 
 echo "*********************************Installation Complete... "
 cd $ROOT_PATH
