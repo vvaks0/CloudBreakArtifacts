@@ -357,13 +357,19 @@ cd $ROOT_PATH
 git clone https://github.com/vakshorton/Utils
 cp -Rvf $ROOT_PATH/Utils/DATA_PLANE_CLIENT /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/
 
+sleep 2
+echo "*********************************Create admin user folder in HDFS..."
+hadoop fs -mkdir /user/admin
+hadoop fs -chown admin:hdfs /user/admin
+
+sleep 2
 #echo "*********************************Checking Spark Configurations..."
 #enableSparkLLAP
 #stopService SPARK
 #startService SPARK
 echo "*********************************Restarting Ambari... "
 ambari-server stop
-ambari-server start
+ambari-server restart
 
 echo "*********************************Installation Complete... "
 cd $ROOT_PATH
