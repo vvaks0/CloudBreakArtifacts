@@ -22,6 +22,56 @@ fi
 export HADOOP_USER_NAME=hdfs
 echo "*********************************HADOOP_USER_NAME set to HDFS"
 
+installUtils () {
+	echo "*********************************Installing WGET..."
+	yum install -y wget
+	
+	echo "*********************************Installing Maven..."
+	wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O 	/etc/yum.repos.d/epel-apache-maven.repo
+	if [ $(cat /etc/system-release|grep -Po Amazon) == Amazon ]; then
+		sed -i s/\$releasever/6/g /etc/yum.repos.d/epel-apache-maven.repo
+	fi
+	yum install -y apache-maven
+	if [ $(cat /etc/system-release|grep -Po Amazon) == Amazon ]; then
+		alternatives --install /usr/bin/java java /usr/lib/jvm/jre-1.8.0-openjdk.x86_64/bin/java 20000
+		alternatives --install /usr/bin/javac javac /usr/lib/jvm/jre-1.8.0-openjdk.x86_64/bin/javac 20000
+		alternatives --install /usr/bin/jar jar /usr/lib/jvm/jre-1.8.0-openjdk.x86_64/bin/jar 20000
+		alternatives --auto java
+		alternatives --auto javac
+		alternatives --auto jar
+		ln -s /usr/lib/jvm/java-1.8.0 /usr/lib/jvm/java
+	fi
+	
+	echo "*********************************Installing GIT..."
+	yum install -y git
+	
+	echo "*********************************Installing Docker..."
+	echo " 				  *****************Installing Docker via Yum..."
+	if [ $(cat /etc/system-release|grep -Po Amazon) == Amazon ]; then
+		yum install -y docker
+	else
+		echo " 				  *****************Adding Docker Yum Repo..."
+		tee /etc/yum.repos.d/docker.repo <<-'EOF'
+		[dockerrepo]
+		name=Docker Repository
+		baseurl=https://yum.dockerproject.org/repo/main/centos/$releasever/
+		enabled=1
+		gpgcheck=1
+		gpgkey=https://yum.dockerproject.org/gpg
+		EOF
+		rpm -iUvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+		yum install -y docker-io
+	fi
+	
+	echo " 				  *****************Configuring Docker Permissions..."
+	groupadd docker
+	gpasswd -a yarn docker
+	echo " 				  *****************Registering Docker to Start on Boot..."
+	service docker start
+	chkconfig --add docker
+	chkconfig docker on
+}
+
 waitForAmbari () {
        	# Wait for Ambari
        	LOOPESCAPE="false"
@@ -576,6 +626,9 @@ kill -9 $(netstat -nlp|grep 9090|grep -Po '[0-9]+/[a-zA-Z]+'|grep -Po '[0-9]+')
 echo "*********************************Install TRUCKING_DEMO_CONTROL service..."
 cp -Rf $ROOT_PATH/CloudBreakArtifacts/recipes/TRUCKING_DEMO_CONTROL /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/
 
+echo "*********************************Install DEVICE_MANAGER_DEMO_CONTROL_SAM service..."
+cp -Rf $ROOT_PATH/CloudBreakArtifacts/recipes/DEVICE_MANAGER_DEMO_CONTROL_SAM /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/
+
 echo "*********************************Install HDF Management Pack..."
 instalHDFManagementPack 
 sleep 2
@@ -664,6 +717,7 @@ else
        	echo "*********************************NIFI Service Started..."
 fi
 
+echo "********************************* Adding Symbolic Links to Atlas Client..."
 #Add symbolic links to Atlas Hooks
 ln -s /usr/hdp/current/atlas-client/hook/storm/atlas-plugin-classloader-0.8.0.2.6.1.0-34.jar /usr/hdf/current/storm-client/lib/atlas-plugin-classloader.jar
 
