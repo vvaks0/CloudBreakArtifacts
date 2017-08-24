@@ -652,6 +652,10 @@ sleep 2
 #configureAmbariRepos
 #sleep 2
 
+echo "*********************************Install Utilities..."
+installUtils
+sleep 2
+
 echo "*********************************Install MySQL..."
 installMySQL
 sleep 2
