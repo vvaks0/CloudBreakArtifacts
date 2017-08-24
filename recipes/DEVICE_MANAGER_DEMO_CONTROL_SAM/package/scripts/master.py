@@ -8,9 +8,8 @@ class DemoControl(Script):
     import params
     
     cwd = os.getcwd()
-    script_path = os.path.realpath(__file__)
-    Execute('echo ' + cwd)
-    Execute('echo ' + script_path)
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+    Execute('echo ' + dir_path + '/device-manager-sam-install.sh')
     
     if not os.path.exists(params.install_dir):  
         os.makedirs(params.install_dir)
