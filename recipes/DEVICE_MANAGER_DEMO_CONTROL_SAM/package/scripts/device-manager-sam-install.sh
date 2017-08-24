@@ -185,6 +185,12 @@ getComponentStatus () {
        	echo $COMPONENT_STATUS
 }
 
+getHiveMetaStoreHost () {
+        HIVE_METASTORE_HOST=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/HIVE/components/HIVE_METASTORE|grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
+
+        echo $HIVE_METASTORE_HOST
+}
+
 getRegistryHost () {
        	REGISTRY_HOST=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/REGISTRY/components/REGISTRY_SERVER |grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
        	
@@ -654,7 +660,7 @@ deployContainers (){
 	#mvn clean package
 	#mvn docker:build
 	
-	cd APP_DIR/Map_UI
+	cd $APP_DIR/Map_UI
 	mvn clean package
 	mvn docker:build
 	
@@ -662,21 +668,6 @@ deployContainers (){
 	docker run -d -p 8099:8091 vvaks/cometd
 	docker run -d -e MAP_API_KEY=$GOOGLE_API_KEY -e ZK_HOST=$ZK_HOST -e COMETD_HOST=$COMETD_HOST -e COMETD_PORT=8099 -p 8098:8090 vvaks/mapui
 
-}
-
-enablePhoenix () {
-	echo "*********************************Installing Phoenix Binaries..."
-	yum install -y phoenix
-	echo "*********************************Enabling Phoenix..."
-	/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hbase-site phoenix.functions.allowUserDefinedFunctions true
-	sleep 1
-	/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hbase-site hbase.defaults.for.version.skip true
-	sleep 1
-	/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hbase-site hbase.regionserver.wal.codec org.apache.hadoop.hbase.regionserver.wal.IndexedWALEditCodec
-	sleep 1
-	/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hbase-site hbase.region.server.rpc.scheduler.factory.class org.apache.hadoop.hbase.ipc.PhoenixRpcSchedulerFactory
-	sleep 1
-	/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hbase-site hbase.rpc.controllerfactory.class org.apache.hadoop.hbase.ipc.controller.ServerRpcControllerFactory
 }
 
 createHbaseTables () {
@@ -707,6 +698,9 @@ createKafkaTopics () {
 
 }
 
+exec > >(tee -i /root/device-manager-sam-install.log)
+exec 2>&1
+
 export ROOT_PATH=$1
 echo "*********************************ROOT PATH IS: $ROOT_PATH"
 
@@ -731,11 +725,6 @@ echo "*********************************HDP VERSION IS: $VERSION"
 #git clone https://github.com/vakshorton/sam-custom-extensions
 #git clone https://github.com/vakshorton/DeviceManagerDemo
 
-echo "********************************* Enabling Phoenix"
-enablePhoenix
-echo "********************************* Restarting Hbase"
-stopService HBASE
-startService HBASE
 echo "********************************* Capturing Service Endpoint in the Environment"
 captureEnvironment
 echo "********************************* Creating Hbase Tables"
@@ -752,6 +741,8 @@ echo "********************************* Deploying Nifi Template"
 deployTemplateToNifi $ROOT_PATH/DeviceManagerDemo/Nifi/template
 echo "********************************* Configuring Nifi Template"
 configureNifiTempate
+echo "********************************* Creating SAM Service Pool"
+createSAMCluster
 echo "********************************* Initializing SAM Namespace"
 initializeSAMNamespace
 echo "********************************* Uploading SAM Extensions"

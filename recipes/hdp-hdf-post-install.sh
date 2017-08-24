@@ -664,14 +664,14 @@ echo "*********************************Setup DBs for HDF Services..."
 setupHDFDataStores
 sleep 2
 
-echo "********************************* Enabling Phoenix"
-enablePhoenix
-echo "********************************* Restarting Hbase"
-stopService HBASE
-sleep 2
-startService HBASE
+#echo "********************************* Enabling Phoenix"
+#enablePhoenix
+#echo "********************************* Restarting Hbase"
+#stopService HBASE
+#sleep 2
+#startService HBASE
+#sleep 2
 
-sleep 2
 installDruidService
 
 sleep 2

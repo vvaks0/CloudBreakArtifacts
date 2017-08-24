@@ -185,6 +185,12 @@ getComponentStatus () {
        	echo $COMPONENT_STATUS
 }
 
+getHiveMetaStoreHost () {
+        HIVE_METASTORE_HOST=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/HIVE/components/HIVE_METASTORE|grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
+
+        echo $HIVE_METASTORE_HOST
+}
+
 getRegistryHost () {
        	REGISTRY_HOST=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/REGISTRY/components/REGISTRY_SERVER |grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
        	
@@ -654,7 +660,7 @@ deployContainers (){
 	#mvn clean package
 	#mvn docker:build
 	
-	cd APP_DIR/Map_UI
+	cd $APP_DIR/Map_UI
 	mvn clean package
 	mvn docker:build
 	
@@ -735,6 +741,8 @@ echo "********************************* Deploying Nifi Template"
 deployTemplateToNifi $ROOT_PATH/DeviceManagerDemo/Nifi/template
 echo "********************************* Configuring Nifi Template"
 configureNifiTempate
+echo "********************************* Creating SAM Service Pool"
+createSAMCluster
 echo "********************************* Initializing SAM Namespace"
 initializeSAMNamespace
 echo "********************************* Uploading SAM Extensions"

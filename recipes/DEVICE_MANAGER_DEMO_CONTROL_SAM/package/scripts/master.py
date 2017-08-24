@@ -7,16 +7,16 @@ class DemoControl(Script):
     self.configure(env)
     import params
     
-    cwd = os.getcwd()
     script_dir = os.path.dirname(os.path.realpath(__file__))
-    Execute('echo ' + script_dir + '/device-manager-sam-install.sh')
     
     if not os.path.exists(params.install_dir):  
         os.makedirs(params.install_dir)
     os.chdir(params.install_dir)
     Execute('git clone ' + params.device_manager_download_url)
     Execute('git clone ' + params.sam_extentions_download_url)
-    Execute(params.install_dir + '/CloudBreakArtifacts/recipes/device-manager-sam-install.sh ' + params.install_dir + ' '+ params.google_api_key)
+    Execute('echo ' + script_dir + '/device-manager-sam-install.sh')
+    Execute(script_dir + '/device-manager-sam-install.sh')
+    #Execute(params.install_dir + '/CloudBreakArtifacts/recipes/device-manager-sam-install.sh ' + params.install_dir + ' '+ params.google_api_key)
     Execute('git clone ' + params.simulator_download_url)
     os.chdir(params.install_dir+'/DataSimulators/DeviceSimulator')
     Execute('mvn clean package')
