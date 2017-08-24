@@ -644,6 +644,8 @@ cp -Rf $ROOT_PATH/CloudBreakArtifacts/recipes/TRUCKING_DEMO_CONTROL /var/lib/amb
 echo "*********************************Install DEVICE_MANAGER_DEMO_CONTROL_SAM service..."
 cp -Rf $ROOT_PATH/CloudBreakArtifacts/recipes/DEVICE_MANAGER_DEMO_CONTROL_SAM /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/
 
+chmod 755 /var/lib/ambari-agent/cache/stacks/HDP/$VERSION/services/DEVICE_MANAGER_DEMO_CONTROL_SAM/package/scripts/device-manager-sam-install.sh
+
 echo "*********************************Install HDF Management Pack..."
 instalHDFManagementPack 
 sleep 2
@@ -683,6 +685,8 @@ if ! [[ $DRUID_STATUS == STARTED || $DRUID_STATUS == INSTALLED ]]; then
        	echo "*********************************DRUID has entered a ready state..."
 fi
 
+sleep 2
+
 if [[ $DRUID_STATUS == INSTALLED ]]; then
        	startService DRUID
 else
@@ -701,6 +705,7 @@ if ! [[ $REGISTRY_STATUS == STARTED || $REGISTRY_STATUS == INSTALLED ]]; then
        	echo "*********************************REGISTRY has entered a ready state..."
 fi
 
+sleep 2
 if [[ $REGISTRY_STATUS == INSTALLED ]]; then
        	startService REGISTRY
 else
@@ -719,6 +724,8 @@ if ! [[ $STREAMLINE_STATUS == STARTED || $STREAMLINE_STATUS == INSTALLED ]]; the
        	echo "*********************************STREAMLINE has entered a ready state..."
 fi
 
+sleep 2
+
 if [[ $STREAMLINE_STATUS == INSTALLED ]]; then
        	startService STREAMLINE
 else
@@ -736,6 +743,8 @@ if ! [[ $NIFI_STATUS == STARTED || $NIFI_STATUS == INSTALLED ]]; then
        	waitForService NIFI
        	echo "*********************************NIFI has entered a ready state..."
 fi
+
+sleep 2
 
 if [[ $NIFI_STATUS == INSTALLED ]]; then
        	startService NIFI
