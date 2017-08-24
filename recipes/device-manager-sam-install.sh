@@ -707,6 +707,9 @@ createKafkaTopics () {
 
 }
 
+exec > >(tee -i /root/device-manager-sam-install.log)
+exec 2>&1
+
 export ROOT_PATH=$1
 echo "*********************************ROOT PATH IS: $ROOT_PATH"
 
