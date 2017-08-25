@@ -185,6 +185,12 @@ getComponentStatus () {
        	echo $COMPONENT_STATUS
 }
 
+getHiveServerHost () {
+        HIVESERVER_HOST=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/HIVE/components/HIVE_SERVER|grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
+
+        echo $HIVESERVER_HOST
+}
+
 getHiveMetaStoreHost () {
         HIVE_METASTORE_HOST=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/HIVE/components/HIVE_METASTORE|grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
 
@@ -371,41 +377,12 @@ handleGroupProcessors (){
                         curl -u admin:admin -i -H "Content-Type:application/json" -X PUT -d "{\"id\":\"$DRUID_CONTROLLER\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$DRUID_CONTROLLER\",\"state\":\"ENABLED\",\"properties\":{\"zk_connect_string\":\"$ZK_HOST:2181\"}}}" http://$NIFI_HOST:9090/nifi-api/controller-services/$DRUID_CONTROLLER
             fi
 
-       		if ! [ -z $(echo $TYPE|grep "SelectHiveQL") ]; then
-                        echo "***************************This is a SelectHiveQL Processor"
-
-                        HIVE_CONNECTION_POOL=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '"Hive Database Connection Pooling Service":"[a-zA-Z0-9-]+'|grep -Po ':"[a-zA-Z0-9-]+'|grep -Po '[a-zA-Z0-9-]+'|head -1)
-
-                        echo "Hive Connection Pool: $HIVE_CONNECTION_POOL"
-
-                        curl -u admin:admin -i -H "Content-Type:application/json" -X PUT -d "{\"id\":\"$HIVE_CONNECTION_POOL\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$HIVE_CONNECTION_POOL\",\"state\":\"ENABLED\",\"properties\":{\"hive-db-connect-url\":\"jdbc:hive2://$HIVESERVER_INTERACTIVE_HOST:10500\"}}}" http://$NIFI_HOST:9090/nifi-api/controller-services/$HIVE_CONNECTION_POOL
-            fi
-
-       		if ! [ -z $(echo $TYPE|grep "ExecuteSparkInteractive") ]; then
-                        echo "***************************This is a ExecuteSparkInteractive Processor"
-
-                        LIVY_CONTROLLER=$(curl -u admin:admin -i -X GET ${TARGETS[i]} |grep -Po '"livy_controller_service":"[a-zA-Z0-9-]+'|grep -Po ':"[a-zA-Z0-9-]+'|grep -Po '[a-zA-Z0-9-]+'|head -1)
-
-                        echo "Livy Controller Service: $LIVY_CONTROLLER"
-
-                        curl -u admin:admin -i -H "Content-Type:application/json" -X PUT -d "{\"id\":\"$LIVY_CONTROLLER\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$LIVY_CONTROLLER\",\"state\":\"ENABLED\",\"properties\":{\"livy_host\":\"$LIVY_HOST\"}}}" http://$NIFI_HOST:9090/nifi-api/controller-services/$LIVY_CONTROLLER
-            fi
-
-       		if ! [[ -z $(echo $TYPE|grep "ConsumeKafka") || -z $(echo $TYPE|grep "PublishKafka") ]]; then
+       		if ! [ -z $(echo $TYPE|grep "ConsumeKafka") ] || ! [ -z $(echo $TYPE|grep "PublishKafka") ]; then
        			echo "***************************This is a Kafka Processor"
        			echo "***************************Updating Kafka Broker Porperty and Activating Processor..."
        			if ! [[ -z $(echo $TYPE|grep "ConsumeKafka") || -z $(echo $TYPE|grep "PublishKafka") ]]; then
                 	PAYLOAD=$(echo "{\"id\":\"$ID\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$ID\",\"config\":{\"properties\":{\"bootstrap.servers\":\"$AMBARI_HOST:6667\"}},\"state\":\"RUNNING\"}}")
                 fi
-       		else
-       			if ! [ -z $(echo $NAME|grep "SparkPrepareParameters") ]; then
-                	echo "***************************This Processor Contains Parameters for Livy Spark Integration"
-					PAYLOAD=$(echo "{\"id\":\"$ID\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$ID\",\"config\":{\"properties\":{\"druidBrokerHost\":\"$DRUID_BROKER\"}},\"state\":\"RUNNING\"}}")
-
-            	else
-       				echo "***************************Activating Processor..."
-       				PAYLOAD=$(echo "{\"id\":\"$ID\",\"revision\":{\"version\":$REVISION},\"component\":{\"id\":\"$ID\",\"state\":\"RUNNING\"}}")
-       			fi
        		fi
        		echo "$PAYLOAD"
 
@@ -567,14 +544,19 @@ importSAMTopology () {
 	sed -r -i 's;\{\{CLUSTERNAME\}\};'$CLUSTER_NAME';g' $SAM_DIR/device-manager.json
  
 	export TOPOLOGY_ID=$(curl -F file=@$SAM_DIR/device-manager.json -F 'topologyName=device-manager' -F 'namespaceId='$NAMESPACE_ID -X POST http://$AMBARI_HOST:7777/api/v1/catalog/topologies/actions/import| grep -Po '\"topologyId\":([0-9]+)'|grep -Po '([0-9]+)')
-
+	
+	echo $TOPOLOGY_ID
 }
 
 deploySAMTopology () {
+	TOPOLOGY_ID=$
+	
 	#Deploy Topology
+	echo "********** curl -X POST http://$AMBARI_HOST:7777/api/v1/catalog/topologies/$TOPOLOGY_ID/versions/$TOPOLOGY_ID/actions/deploy"
 	curl -X POST http://$AMBARI_HOST:7777/api/v1/catalog/topologies/$TOPOLOGY_ID/versions/$TOPOLOGY_ID/actions/deploy
 	
 	#Poll Deployment State until deployment completes or fails
+	echo "curl -X GET http://$AMBARI_HOST:7777/api/v1/catalog/topologies/$TOPOLOGY_ID/deploymentstate"
 	TOPOLOGY_STATUS=$(curl -X GET http://$AMBARI_HOST:7777/api/v1/catalog/topologies/$TOPOLOGY_ID/deploymentstate | grep -Po '"name":"([A-Z_]+)'| grep -Po '([A-Z_]+)')
     sleep 2
     echo "TOPOLOGY STATUS: $TOPOLOGY_STATUS"
@@ -598,7 +580,7 @@ PAYLOAD="{\"name\":\"technician_incoming\",\"type\":\"avro\",\"schemaGroup\":\"t
 
 	curl -u admin:admin -i -H "content-type: application/json" -d "$PAYLOAD" -X POST http://$AMBARI_HOST:7788/api/v1/schemaregistry/schemas
 	
-	PAYLOAD="{\"description\":\"technician status\",\"schemaText\":\"{\\n   \\\"type\\\" : \\\"record\\\",\\n   \\\"namespace\\\" : \\\"com.hortonworks\\\",\\n   \\\"name\\\" : \\\"technician_status\\\",\\n   \\\"fields\\\" : [\\n\\t  { \\\"name\\\" : \\\"technician_id\\\" , \\\"type\\\" : \\\"string\\\" },\\n      { \\\"name\\\" : \\\"longitude\\\" , \\\"type\\\" : \\\"double\\\" },\\n      { \\\"name\\\" : \\\"latitude\\\" , \\\"type\\\" : \\\"double\\\" },\\n      { \\\"name\\\" : \\\"status\\\" , \\\"type\\\" : \\\"string\\\"},\\n      { \\\"name\\\" : \\\"ip_address\\\" , \\\"type\\\" : \\\"string\\\"},\\n      { \\\"name\\\" : \\\"port\\\" , \\\"type\\\" : \\\"string\\\"},\\n      { \\\"name\\\" : \\\"event_type\\\" , \\\"type\\\" : \\\"string\\\"}\\n\\t]\\n}\"}"
+	PAYLOAD="{\"description\":\"technician status\",\"schemaText\":\"{\\n   \\\"type\\\" : \\\"record\\\",\\n   \\\"namespace\\\" : \\\"com.hortonworks\\\",\\n   \\\"name\\\" : \\\"technician_status\\\",\\n   \\\"fields\\\" : [\\n\\t  { \\\"name\\\" : \\\"technicianId\\\" , \\\"type\\\" : \\\"string\\\" },\\n      { \\\"name\\\" : \\\"longitude\\\" , \\\"type\\\" : \\\"double\\\" },\\n      { \\\"name\\\" : \\\"latitude\\\" , \\\"type\\\" : \\\"double\\\" },\\n      { \\\"name\\\" : \\\"status\\\" , \\\"type\\\" : \\\"string\\\"},\\n      { \\\"name\\\" : \\\"ipAddress\\\" , \\\"type\\\" : \\\"string\\\"},\\n      { \\\"name\\\" : \\\"port\\\" , \\\"type\\\" : \\\"string\\\"},\\n      { \\\"name\\\" : \\\"eventType\\\" , \\\"type\\\" : \\\"string\\\"}\\n\\t]\\n}\"}"
 
 	echo $PAYLOAD
 	
@@ -660,7 +642,7 @@ deployContainers (){
 	#mvn clean package
 	#mvn docker:build
 	
-	cd $APP_DIR/Map_UI
+	cd $APP_DIR/MapUI
 	mvn clean package
 	mvn docker:build
 	
@@ -673,7 +655,7 @@ deployContainers (){
 createHbaseTables () {
 	#Create Hbase Tables
 	echo "create 'device_events','0'" | hbase shell
-	echo "create 'technician_location','0'" | hbase shell
+	echo "create 'technician_events','0'" | hbase shell
 }
 createHbaseTables
 createPhoenixTables () {
@@ -750,6 +732,6 @@ uploadSAMExtensions
 echo "********************************* Import PMML Model to SAM"
 importPMMLModel $ROOT_PATH/DeviceManagerDemo/Model
 echo "********************************* Import SAM Template"
-importSAMTopology $ROOT_PATH/DeviceManagerDemo/SAM/template
+TOPOLOGY_ID=$(importSAMTopology $ROOT_PATH/DeviceManagerDemo/SAM/template)
 echo "********************************* Deploy SAM Topology"
-deploySAMTopology
+deploySAMTopology $TOPOLOGY_ID
