@@ -28,13 +28,13 @@ class DemoControl(Script):
     self.configure(env)
     import params
     Execute('echo Start Simulation')
-    Execute('nohup java -jar '+params.install_dir+'/DeviceSimulator-0.0.1-SNAPSHOT-jar-with-dependencies.jar STB 1000 Simulation '+params.nifi_host_ip+' > '+params.install_dir+'/STB_1000_Sim.log 2>&1 & echo $! > /var/run/STB_1000_Sim.pid')
-    Execute('nohup java -jar '+params.install_dir+'/DeviceSimulator-0.0.1-SNAPSHOT-jar-with-dependencies.jar STB 2000 Simulation '+params.nifi_host_ip+' > '+params.install_dir+'/STB_2000_Sim.log 2>&1 & echo $! > /var/run/STB_2000_Sim.pid')
-    Execute('nohup java -jar '+params.install_dir+'/DeviceSimulator-0.0.1-SNAPSHOT-jar-with-dependencies.jar STB 3000 Simulation '+params.nifi_host_ip+' > '+params.install_dir+'/STB_3000_Sim.log 2>&1 & echo $! > /var/run/STB_3000_Sim.pid')
+    Execute('nohup java -jar '+params.install_dir+'/DeviceSimulator-0.0.1-SNAPSHOT-jar-with-dependencies.jar STB 1000 Simulation '+params.nifi_host+' > '+params.install_dir+'/STB_1000_Sim.log 2>&1 & echo $! > /var/run/STB_1000_Sim.pid')
+    Execute('nohup java -jar '+params.install_dir+'/DeviceSimulator-0.0.1-SNAPSHOT-jar-with-dependencies.jar STB 2000 Simulation '+params.nifi_host+' > '+params.install_dir+'/STB_2000_Sim.log 2>&1 & echo $! > /var/run/STB_2000_Sim.pid')
+    Execute('nohup java -jar '+params.install_dir+'/DeviceSimulator-0.0.1-SNAPSHOT-jar-with-dependencies.jar STB 3000 Simulation '+params.nifi_host+' > '+params.install_dir+'/STB_3000_Sim.log 2>&1 & echo $! > /var/run/STB_3000_Sim.pid')
 
-    Execute('nohup java -jar '+params.install_dir+'/DeviceSimulator-0.0.1-SNAPSHOT-jar-with-dependencies.jar Technician 1000 Simulation '+params.nifi_host_ip+' > '+params.install_dir+'/Technician_1000_Sim.log 2>&1 & echo $! > /var/run/Technician_1000_Sim.pid')
-    Execute('nohup java -jar '+params.install_dir+'/DeviceSimulator-0.0.1-SNAPSHOT-jar-with-dependencies.jar Technician 2000 Simulation '+params.nifi_host_ip+' > '+params.install_dir+'/Technician_2000_Sim.log 2>&1 & echo $! > /var/run/Technician_2000_Sim.pid')
-    Execute('nohup java -jar '+params.install_dir+'/DeviceSimulator-0.0.1-SNAPSHOT-jar-with-dependencies.jar Technician 3000 Simulation '+params.nifi_host_ip+' > '+params.install_dir+'/Technician_3000_Sim.log 2>&1 & echo $! > /var/run/Technician_3000_Sim.pid')
+    Execute('nohup java -jar '+params.install_dir+'/DeviceSimulator-0.0.1-SNAPSHOT-jar-with-dependencies.jar Technician 1000 Simulation '+params.nifi_host+' > '+params.install_dir+'/Technician_1000_Sim.log 2>&1 & echo $! > /var/run/Technician_1000_Sim.pid')
+    Execute('nohup java -jar '+params.install_dir+'/DeviceSimulator-0.0.1-SNAPSHOT-jar-with-dependencies.jar Technician 2000 Simulation '+params.nifi_host+' > '+params.install_dir+'/Technician_2000_Sim.log 2>&1 & echo $! > /var/run/Technician_2000_Sim.pid')
+    Execute('nohup java -jar '+params.install_dir+'/DeviceSimulator-0.0.1-SNAPSHOT-jar-with-dependencies.jar Technician 3000 Simulation '+params.nifi_host+' > '+params.install_dir+'/Technician_3000_Sim.log 2>&1 & echo $! > /var/run/Technician_3000_Sim.pid')
     
   def stop(self, env):
     self.configure(env)
