@@ -461,9 +461,9 @@ importSAMTopology () {
 	sed -r -i 's;\{\{HOST1\}\};'$AMBARI_HOST';g' $SAM_DIR/device-manager.json
 	sed -r -i 's;\{\{CLUSTERNAME\}\};'$CLUSTER_NAME';g' $SAM_DIR/device-manager.json
  
-	export TOPOLOGY_ID=$(curl -F file=@$SAM_DIR/device-manager.json -F 'topologyName=device-manager' -F 'namespaceId='$NAMESPACE_ID -X POST http://$AMBARI_HOST:7777/api/v1/catalog/topologies/actions/import| grep -Po '\"topologyId\":([0-9]+)'|grep -Po '([0-9]+)')
-	
-	echo $TOPOLOGY_ID
+	export TOPOLOGY_ID=$(curl -F file=@$SAM_DIR/device-manager.json -F 'topologyName=device-manager8' -F 'namespaceId='$NAMESPACE_ID -X POST http://$AMBARI_HOST:7777/api/v1/catalog/topologies/actions/import| grep -Po '\"id\":([0-9]+)'|grep -Po '([0-9]+)')
+
+    echo $TOPOLOGY_ID
 }
 
 deploySAMTopology () {
@@ -652,4 +652,4 @@ importPMMLModel $ROOT_PATH/DeviceManagerDemo/Model
 echo "********************************* Import SAM Template"
 TOPOLOGY_ID=$(importSAMTopology $ROOT_PATH/DeviceManagerDemo/SAM/template)
 echo "********************************* Deploy SAM Topology"
-deploySAMTopology $TOPOLOGY_ID
+deploySAMTopology "$TOPOLOGY_ID"
