@@ -527,6 +527,17 @@ PAYLOAD="{\"name\":\"technician_incoming\",\"type\":\"avro\",\"schemaGroup\":\"t
 	
 	curl -u admin:admin -i -H "content-type: application/json" -d "$PAYLOAD" -X POST http://$AMBARI_HOST:7788/api/v1/schemaregistry/schemas/technician_destination/versions
 
+#technician_destination_outgoing
+	PAYLOAD="{\"name\":\"technician_destination_outgoing\",\"type\":\"avro\",\"schemaGroup\":\"technician\",\"description\":\"technician_destination_outgoing\",\"evolve\":true,\"compatibility\":\"BACKWARD\"}"
+	
+	curl -u admin:admin -i -H "content-type: application/json" -d "$PAYLOAD" -X POST http://$AMBARI_HOST:7788/api/v1/schemaregistry/schemas
+	
+	PAYLOAD="{\"description\":\"technician_destination_outgoing\",\"schemaText\":\"{\\n \\\"type\\\": \\\"record\\\",\\n \\\"namespace\\\": \\\"com.hortonworks\\\",\\n \\\"name\\\": \\\"technician_destination_outgoing\\\",\\n \\\"fields\\\": [\\n  {\\n   \\\"name\\\": \\\"technicianId\\\",\\n   \\\"type\\\": \\\"string\\\"\\n  },\\n  {\\n   \\\"name\\\": \\\"longitude\\\",\\n   \\\"type\\\": \\\"double\\\"\\n  },\\n  {\\n   \\\"name\\\": \\\"latitude\\\",\\n   \\\"type\\\": \\\"double\\\"\\n  },\\n  {\\n   \\\"name\\\": \\\"status\\\",\\n   \\\"type\\\": \\\"string\\\"\\n  },\\n  {\\n   \\\"name\\\": \\\"ipAddress\\\",\\n   \\\"type\\\": \\\"string\\\"\\n  },\\n  {\\n   \\\"name\\\": \\\"port\\\",\\n   \\\"type\\\": \\\"string\\\"\\n  },\\n  {\\n   \\\"name\\\": \\\"eventType\\\",\\n   \\\"type\\\": [\\n    \\\"null\\\",\\n    \\\"string\\\"\\n   ]\\n  },\\n  {\\n   \\\"name\\\": \\\"destinationLongitude\\\",\\n   \\\"type\\\": \\\"double\\\"\\n  },\\n  {\\n   \\\"name\\\": \\\"destinationLatitude\\\",\\n   \\\"type\\\": \\\"double\\\"\\n  }\\n ]\\n}\"}"
+
+	echo $PAYLOAD
+	
+	curl -u admin:admin -i -H "content-type: application/json" -d "$PAYLOAD" -X POST http://$AMBARI_HOST:7788/api/v1/schemaregistry/schemas/technician_destination_outgoing/versions
+
 #stb_incoming
 	
 PAYLOAD="{\"name\":\"stb_incoming\",\"type\":\"avro\",\"schemaGroup\":\"device\",\"description\":\"stb_incoming\",\"evolve\":true,\"compatibility\":\"BACKWARD\"}"
