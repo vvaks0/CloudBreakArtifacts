@@ -13,7 +13,7 @@ class DemoControl(Script):
         os.makedirs(params.install_dir)
     os.chdir(params.install_dir)
     Execute('git clone ' + params.device_manager_download_url)
-    Execute('git clone ' + params.sam_extentions_download_url)
+    Execute('git clone ' + params.sam_extensions_download_url)
     Execute('echo ' + script_dir + '/device-manager-sam-install.sh')
     #Execute(script_dir + '/device-manager-sam-install.sh ' + params.install_dir + ' '+ params.google_api_key)
     Execute(params.install_dir + '/CloudBreakArtifacts/recipes/device-manager-sam-install.sh ' + params.install_dir + ' '+ params.google_api_key)

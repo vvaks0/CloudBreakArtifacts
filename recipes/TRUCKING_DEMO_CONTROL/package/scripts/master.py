@@ -16,7 +16,7 @@ class DemoControl(Script):
         os.chdir(params.install_dir+'/Data-Loader')
         Execute('tar -zxvf routes.tar.gz')
     if not os.path.exists(params.install_dir+'/sam-custom-extensions'):
-        Execute('git clone ' + params.sam_extentions_download_url)
+        Execute('git clone ' + params.sam_extensions_download_url)
     Execute(params.install_dir+'/CloudBreakArtifacts/recipes/trucking-demo-sam-install.sh')
 
   def start(self, env):
