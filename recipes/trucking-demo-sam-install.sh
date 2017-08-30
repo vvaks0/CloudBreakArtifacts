@@ -507,7 +507,9 @@ importPMMLModel () {
 	MODEL_FILE=$2
 	MODEL_NAME=$3
 	#Import PMML Model
-	curl -sS -i -F pmmlFile=@$MODEL_DIR'/'@MODEL_FILE -F 'modelInfo={"name":"'$MODEL_NAME'","namespace":"ml_model","uploadedFileName":"'@MODEL_FILE'"};type=text/json' -X POST http://$AMBARI_HOST:7777/api/v1/catalog/ml/models
+	echo pmmlFile=@$MODEL_DIR'/'$MODEL_FILE_-F_'modelInfo={"name":"'$MODEL_NAME'","namespace":"ml_model","uploadedFileName":"'$MODEL_FILE'"};type=text/json'-X_POST_http://$AMBARI_HOST:7777/api/v1/catalog/ml/models
+	
+	curl -sS -i -F pmmlFile=@$MODEL_DIR'/'$MODEL_FILE -F 'modelInfo={"name":"'$MODEL_NAME'","namespace":"ml_model","uploadedFileName":"'$MODEL_FILE'"};type=text/json' -X POST http://$AMBARI_HOST:7777/api/v1/catalog/ml/models
 }
 
 importSAMTopology () {
@@ -616,8 +618,8 @@ CREATE TABLE IF NOT EXISTS drivers (
  CONSTRAINT pk PRIMARY KEY (driverid));
 EOF
 	/usr/hdp/current/phoenix-client/bin/sqlline.py $ZK_HOST:2181:/hbase-unsecure create_tables.sql 
-	/usr/hdp/current/phoenix-client/bin/psql.py -t timesheet $DATA_FOLDER/drivers.csv
-	/usr/hdp/current/phoenix-client/bin/psql.py -t timesheet $DATA_FOLDER/timesheet.csv
+	/usr/hdp/current/phoenix-client/bin/psql.py -t DRIVERS $DATA_FOLDER/drivers.csv
+	/usr/hdp/current/phoenix-client/bin/psql.py -t TIMESHEET $DATA_FOLDER/timesheet.csv
 }
 
 createKafkaTopics () {

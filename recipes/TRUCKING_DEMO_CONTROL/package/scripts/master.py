@@ -10,13 +10,13 @@ class DemoControl(Script):
     if not os.path.exists(params.install_dir):  
         os.makedirs(params.install_dir)
     os.chdir(params.install_dir)
+    if not os.path.exists(params.install_dir+'/sam-custom-extensions'):
+        Execute('git clone ' + params.sam_extensions_download_url)
     if not os.path.exists(params.install_dir+'/Data-Loader'):
         Execute('wget -O simulator.zip '+params.download_url)
         Execute('unzip simulator.zip')
         os.chdir(params.install_dir+'/Data-Loader')
         Execute('tar -zxvf routes.tar.gz')
-    if not os.path.exists(params.install_dir+'/sam-custom-extensions'):
-        Execute('git clone ' + params.sam_extensions_download_url)
     Execute(params.install_dir+'/CloudBreakArtifacts/recipes/trucking-demo-sam-install.sh')
 
   def start(self, env):
