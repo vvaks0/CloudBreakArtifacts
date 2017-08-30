@@ -657,7 +657,7 @@ captureEnvironment
 echo "********************************* Creating Hbase Tables"
 createHbaseTables
 echo "********************************* Creating Phoenix Tables"
-createPhoenixTables
+createPhoenixTables $ROOT_PATH/CloudBreakArtifacts/recipes/TRUCKING_DEMO_CONTROL/package/data
 echo "********************************* Creating Kafka Topics"
 createKafkaTopics
 echo "********************************* Registering Schemas"
