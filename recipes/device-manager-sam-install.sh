@@ -273,12 +273,13 @@ captureEnvironment () {
 
 deployTemplateToNifi () {
        	TEMPLATE_DIR=$1
+       	TEMPLATE_NAME=$2
        	
        	echo "*********************************Importing NIFI Template..."
        	# Import NIFI Template HDF 3.x
        	# TEMPLATE_DIR should have been passed in by the caller install process
        	sleep 1
-       	TEMPLATEID=$(curl -v -F template=@"$TEMPLATE_DIR/device-manager.xml" -X POST http://$NIFI_HOST:9090/nifi-api/process-groups/root/templates/upload | grep -Po '<id>([a-z0-9-]+)' | grep -Po '>([a-z0-9-]+)' | grep -Po '([a-z0-9-]+)')
+       	TEMPLATEID=$(curl -v -F template=@"$TEMPLATE_DIR" -X POST http://$NIFI_HOST:9090/nifi-api/process-groups/root/templates/upload | grep -Po '<id>([a-z0-9-]+)' | grep -Po '>([a-z0-9-]+)' | grep -Po '([a-z0-9-]+)')
        	sleep 1
 
        	# Instantiate NIFI Template 3.x
@@ -293,7 +294,7 @@ deployTemplateToNifi () {
        	sleep 1
        	ROOT_GROUP_ID=$(curl -X GET http://$NIFI_HOST:9090/nifi-api/process-groups/root|grep -Po '("component":{"id":")([0-9a-zA-z\-]+)'| grep -Po '(:"[0-9a-zA-z\-]+)'| grep -Po '([0-9a-zA-z\-]+)')
 
-       	PAYLOAD=$(echo "{\"id\":\"$ROOT_GROUP_ID\",\"revision\":{\"version\":$ROOT_GROUP_REVISION},\"component\":{\"id\":\"$ROOT_GROUP_ID\",\"name\":\"Device-Manager\"}}")
+       	PAYLOAD=$(echo "{\"id\":\"$ROOT_GROUP_ID\",\"revision\":{\"version\":$ROOT_GROUP_REVISION},\"component\":{\"id\":\"$ROOT_GROUP_ID\",\"name\":\"$TEMPLATE_NAME\"}}")
 
        	sleep 1
        	curl -d $PAYLOAD  -H "Content-Type: application/json" -X PUT http://$NIFI_HOST:9090/nifi-api/process-groups/$ROOT_GROUP_ID
@@ -451,17 +452,20 @@ mvn assembly:assembly -DskipTests
 
 importPMMLModel () {
 	MODEL_DIR=$1
-	#Import PMML Model - Need to git clone PMML file from somewhere
-	curl -sS -i -F pmmlFile=@$MODEL_DIR/device_manager_svm.xml -F 'modelInfo={"name":"device_monitor_svm","namespace":"ml_model","uploadedFileName":"device_manager_svm.xml"};type=text/json' -X POST http://$AMBARI_HOST:7777/api/v1/catalog/ml/models
+	MODEL_FILE=$2
+	MODEL_NAME=$3
+	#Import PMML Model
+	curl -sS -i -F pmmlFile=@$MODEL_DIR'/'@MODEL_FILE -F 'modelInfo={"name":"'$MODEL_NAME'","namespace":"ml_model","uploadedFileName":"'@MODEL_FILE'"};type=text/json' -X POST http://$AMBARI_HOST:7777/api/v1/catalog/ml/models
 }
 
 importSAMTopology () {
 	SAM_DIR=$1
+	TOPOLOGY_NAME=$2
 	#Import Topology
-	sed -r -i 's;\{\{HOST1\}\};'$AMBARI_HOST';g' $SAM_DIR/device-manager.json
-	sed -r -i 's;\{\{CLUSTERNAME\}\};'$CLUSTER_NAME';g' $SAM_DIR/device-manager.json
+	sed -r -i 's;\{\{HOST1\}\};'$AMBARI_HOST';g' $SAM_DIR
+	sed -r -i 's;\{\{CLUSTERNAME\}\};'$CLUSTER_NAME';g' $SAM_DIR
  
-	export TOPOLOGY_ID=$(curl -F file=@$SAM_DIR/device-manager.json -F 'topologyName=device-manager8' -F 'namespaceId='$NAMESPACE_ID -X POST http://$AMBARI_HOST:7777/api/v1/catalog/topologies/actions/import| grep -Po '\"id\":([0-9]+)'|grep -Po '([0-9]+)')
+	export TOPOLOGY_ID=$(curl -F file=@$SAM_DIR -F 'topologyName='$TOPOLOGY_NAME -F 'namespaceId='$NAMESPACE_ID -X POST http://$AMBARI_HOST:7777/api/v1/catalog/topologies/actions/import| grep -Po '\"id\":([0-9]+)'|grep -Po '([0-9]+)')
 
     echo $TOPOLOGY_ID
 }
@@ -586,7 +590,7 @@ createHbaseTables () {
 	echo "create 'device_events','0'" | hbase shell
 	echo "create 'technician_events','0'" | hbase shell
 }
-createHbaseTables
+
 createPhoenixTables () {
 	#Create Phoenix Tables
 	tee create_device_details.sql <<-'EOF'
@@ -649,7 +653,7 @@ deployContainers $ROOT_PATH/DeviceManagerDemo
 echo "********************************* Registering Schemas"
 pushSchemasToRegistry
 echo "********************************* Deploying Nifi Template"
-deployTemplateToNifi $ROOT_PATH/DeviceManagerDemo/Nifi/template
+deployTemplateToNifi $ROOT_PATH/DeviceManagerDemo/Nifi/template/device-manager.xml Device-Manager
 echo "********************************* Configuring Nifi Template"
 configureNifiTempate
 echo "********************************* Creating SAM Service Pool"
@@ -659,8 +663,8 @@ initializeSAMNamespace
 echo "********************************* Uploading SAM Extensions"
 uploadSAMExtensions
 echo "********************************* Import PMML Model to SAM"
-importPMMLModel $ROOT_PATH/DeviceManagerDemo/Model
+importPMMLModel $ROOT_PATH/DeviceManagerDemo/Model device_manager_svm.xml device_manager_svm
 echo "********************************* Import SAM Template"
-TOPOLOGY_ID=$(importSAMTopology $ROOT_PATH/DeviceManagerDemo/SAM/template)
+TOPOLOGY_ID=$(importSAMTopology $ROOT_PATH/DeviceManagerDemo/SAM/template/device-manager.json Device-Manager)
 echo "********************************* Deploy SAM Topology"
 deploySAMTopology "$TOPOLOGY_ID"
