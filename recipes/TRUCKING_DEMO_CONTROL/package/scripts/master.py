@@ -17,6 +17,7 @@ class DemoControl(Script):
         Execute('unzip simulator.zip')
         os.chdir(params.install_dir+'/Data-Loader')
         Execute('tar -zxvf routes.tar.gz')
+    os.chdir(params.install_dir)
     Execute(params.install_dir+'/CloudBreakArtifacts/recipes/trucking-demo-sam-install.sh')
 
   def start(self, env):
