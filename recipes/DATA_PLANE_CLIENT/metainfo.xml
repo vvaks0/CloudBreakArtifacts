@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<metainfo>
+    <schemaVersion>2.0</schemaVersion>
+    <services>
+        <service>
+            <name>SHARED_SERVICES_CLIENT</name>
+            <displayName>Shared Services Client</displayName>
+            <comment>Client utility that configures the flow meta data and access policy enforcement between this cluster and a persistent "Shared Services" Cluster. The Shared Services Cluster is the central repository for Meta Data, Authorization, and Audit services (Atlas, Ranger, Schema Meta Store).</comment>
+            <version>0.1.0</version>
+            <components>
+                <component>
+                    <name>SHARED_SERVICES_CLIENT</name>
+                    <displayName>Shared Services Client</displayName>
+                    <category>CLIENT</category>
+                    <cardinality>1+</cardinality>
+                    <commandScript>
+                        <script>scripts/client.py</script>
+                        <scriptType>PYTHON</scriptType>
+                        <timeout>600</timeout>
+                    </commandScript>
+                    <customCommands>
+						<customCommand>
+							<name>data_plane_synch</name>
+							<commandScript>
+          						<script>scripts/client.py</script>
+          						<scriptType>PYTHON</scriptType>
+          						<timeout>600</timeout>
+        					</commandScript>
+      					</customCommand>
+    				</customCommands>
+        		</component>
+            </components>
+            <osSpecifics>
+                <osSpecific>
+                    <osFamily>any</osFamily>
+                </osSpecific>
+            </osSpecifics>
+            <configuration-dependencies>
+        		<config-type>data-plane-config</config-type>
+      	    </configuration-dependencies>
+            <restartRequiredAfterChange>false</restartRequiredAfterChange>
+            <!--<quickLinksConfigurations>
+				<quickLinksConfiguration>
+					<fileName>quicklinks.json</fileName>
+					<default>true</default>
+				</quickLinksConfiguration> 
+			</quickLinksConfigurations>-->
+        </service>
+    </services>
+</metainfo>

@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+ 
+<configuration>
+
+  <property require-input="true">
+    <name>install_dir</name>
+    <value>/root</value>
+    <description>Directory under which Shared Services Client will be installed</description>
+  </property> 
+
+  <property require-input="true">
+    <name>download_url</name>
+    <value>https://github.com/vakshorton/Utils.git</value>
+    <description>Online location to download Shared Services client package</description>
+  </property> 
+
+  <property require-input="true">
+    <name>shared.services.ambari.host</name>
+    <value></value>
+    <description>Hostname where the Ambari Server of the Shared Services cluster is hosted</description>
+  </property>
+  
+  <property require-input="true">
+    <name>shared.services.ranger.hive.repo</name>
+    <value></value>
+    <description>Ranger Hive authorization policy repo name</description>
+  </property>
+  
+  <property require-input="true">
+    <name>shared.services.aws.key</name>
+    <value></value>
+    <property-type>PASSWORD</property-type>
+    <description>AWS key to access s3 datawarehouse bucket</description>
+        <value-attributes>
+		<type>password</type>
+    </value-attributes>
+  </property> 
+  
+  <property require-input="true">
+    <name>shared.services.aws.secret</name>
+    <value></value>
+    <property-type>PASSWORD</property-type>
+    <description>AWS secret to access s3 datawarehouse bucket</description>
+        <value-attributes>
+		<type>password</type>
+    </value-attributes>
+  </property>
+  
+  <property require-input="true">
+    <name>shared.services.s3.datawarehouse.bucket</name>
+    <value></value>
+    <description>url (s3a://.../) of s3 datawarehouse bucket </description>
+  </property> 
+  
+</configuration>

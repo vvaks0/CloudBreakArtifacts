@@ -1,0 +1,8 @@
+"properties" : {
+"xasecure.policymgr.clientssl.keystore" : "/usr/hdp/current/hive-server2/conf/ranger-plugin-keystore.jks",
+"xasecure.policymgr.clientssl.keystore.credential.file" : "jceks://file{{credential_file}}",
+"xasecure.policymgr.clientssl.keystore.password" : "admin",
+"xasecure.policymgr.clientssl.truststore" : "/usr/hdp/current/hive-server2/conf/ranger-plugin-truststore.jks",
+"xasecure.policymgr.clientssl.truststore.credential.file" : "jceks://file{{credential_file}}",
+"xasecure.policymgr.clientssl.truststore.password" : "admin"
+}

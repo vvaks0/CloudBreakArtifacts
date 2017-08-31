@@ -1,0 +1,9 @@
+"properties" : {
+"ranger.plugin.hive.policy.cache.dir" : "/etc/ranger/{{REPO_NAME}}/policycache",
+"ranger.plugin.hive.policy.pollIntervalMs" : "30000",
+"ranger.plugin.hive.policy.rest.ssl.config.file" : "/usr/hdp/current/{{ranger_hive_component}}/conf/conf.server/ranger-policymgr-ssl.xml",
+"ranger.plugin.hive.policy.rest.url" : "{{RANGER_URL}}",
+"ranger.plugin.hive.policy.source.impl" : "org.apache.ranger.admin.client.RangerAdminRESTClient",
+"ranger.plugin.hive.service.name" : "{{REPO_NAME}}",
+"xasecure.hive.update.xapolicies.on.grant.revoke" : "true"
+}
