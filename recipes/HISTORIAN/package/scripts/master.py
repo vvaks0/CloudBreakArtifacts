@@ -43,9 +43,9 @@ class DemoControl(Script):
     #shutil.rmtree(params.cronus_home_dir)
     if not os.path.exists(params.cronus_dir+'/data'): 
         shutil.copytree(params.cronus_dir+'/data', params.cronus_home_dir+'/data', False, None)
-    if not os.path.exists(params.cronus_dir+'/urls): 
+    if not os.path.exists(params.cronus_dir+'/urls'): 
         shutil.copytree(params.cronus_dir+'/urls', params.cronus_home_dir+'/urls', False, None)
-    if not os.path.exists(params.cronus_dir+'/scripts): 
+    if not os.path.exists(params.cronus_dir+'/scripts'): 
         shutil.copytree(params.cronus_dir+'/src/python/scripts', params.cronus_home_dir+'/scripts', False, None)
     
     nifi_env_file = open('/usr/hdf/current/nifi/conf/env.properties','w+')
