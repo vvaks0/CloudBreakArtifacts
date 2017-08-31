@@ -41,9 +41,12 @@ class DemoControl(Script):
     if not os.path.exists(params.cronus_home_dir): 
         os.makedirs(params.cronus_home_dir)
     #shutil.rmtree(params.cronus_home_dir)
-    shutil.copytree(params.cronus_dir+'/data', params.cronus_home_dir+'/data', False, None)
-    shutil.copytree(params.cronus_dir+'/urls', params.cronus_home_dir+'/urls', False, None)
-    shutil.copytree(params.cronus_dir+'/src/python/scripts', params.cronus_home_dir+'/scripts', False, None)
+    if not os.path.exists(params.cronus_dir+'/data): 
+        shutil.copytree(params.cronus_dir+'/data', params.cronus_home_dir+'/data', False, None)
+    if not os.path.exists(params.cronus_dir+'/urls): 
+        shutil.copytree(params.cronus_dir+'/urls', params.cronus_home_dir+'/urls', False, None)
+    if not os.path.exists(params.cronus_dir+'/scripts): 
+        shutil.copytree(params.cronus_dir+'/src/python/scripts', params.cronus_home_dir+'/scripts', False, None)
     
     nifi_env_file = open('/usr/hdf/current/nifi/conf/env.properties','w+')
     nifi_env_file.write("data.dir=" + params.cronus_home_dir+'/data')
@@ -57,7 +60,7 @@ class DemoControl(Script):
     self.configure(env)
     import params
     Execute('echo Start Rhea UI')
-    Execute('docker run -d -p '+params.ui_port+':8080 -e ATLAS_HOST='+params.atlas_host_ip+' -e ATLAS_PORT='+params.atlas_port+' -e API_HOST='+params.nifi_host_ip+' -e API_PORT='+params.api_port+' -t hortonworks/rhea')
+    Execute('docker run -d -p '+params.ui_port+':8080 -e ATLAS_HOST='+params.atlas_host_ip+' -e ATLAS_PORT='+params.atlas_port+' -e API_HOST='+params.nifi_host_ip+' -e API_PORT='+params.api_port+' -t hortonworks/fieldeng-rhea')
     #Execute('nohup java -jar target/historian-0.0.1.jar --server.port=8095 > historian.log &')
     Execute('echo Start Data Simulation')
     Execute('nohup java -jar '+params.install_dir+'/DeviceSimulator-0.0.1-SNAPSHOT-jar-with-dependencies.jar Historian 1000 Simulation '+params.nifi_host_ip+' > '+params.install_dir+'/historian_sim.log 2>&1 & echo $! > /var/run/historian_sim.pid')
