@@ -197,6 +197,12 @@ getHiveMetaStoreHost () {
         echo $HIVE_METASTORE_HOST
 }
 
+getStormUIHost () {
+        HIVE_METASTORE_HOST=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/STORM/components/STORM_UI_SERVER|grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
+
+        echo $STORMUI_HOST
+}
+
 getRegistryHost () {
        	REGISTRY_HOST=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/REGISTRY/components/REGISTRY_SERVER |grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
        	
@@ -613,6 +619,13 @@ createKafkaTopics () {
 
 }
 
+createStormView () {
+	STORMUI_HOST=$(getStormUIHost)
+
+	curl -u admin:admin -H "X-Requested-By:ambari" -X POST -d '{"ViewInstanceInfo":{"instance_name":"Storm_View","label":"Storm View","visible":true,"icon_path":"","icon64_path":"","description":"storm view","properties":{"storm.host":"'$STORMUI_HOST'","storm.port":"8744","storm.sslEnabled":"false"},"cluster_type":"NONE"}}' http://$AMBARI_HOST:8080/api/v1/views/Storm_Monitoring/versions/0.1.0/instances/Storm_View
+
+}
+
 exec > >(tee -i /root/device-manager-sam-install.log)
 exec 2>&1
 
@@ -648,6 +661,8 @@ echo "********************************* Creating Phoenix Tables"
 createPhoenixTables
 echo "********************************* Creating Kafka Topics"
 createKafkaTopics
+echo "********************************* Create Storm View"
+createStormView
 echo "********************************* Deploying UI and HTTP Pub/Sub containers"
 deployContainers $ROOT_PATH/DeviceManagerDemo
 echo "********************************* Registering Schemas"
