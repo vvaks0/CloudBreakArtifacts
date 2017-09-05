@@ -199,6 +199,29 @@ startService (){
        	fi
 }
 
+startServiceAndComplete (){
+       	SERVICE=$1
+       	SERVICE_STATUS=$(getServiceStatus $SERVICE)
+       	echo "*********************************Starting Service $SERVICE ..."
+       	if [ "$SERVICE_STATUS" == INSTALLED ]; then
+        TASKID=$(curl -u admin:admin -H "X-Requested-By:ambari" -i -X PUT -d "{\"RequestInfo\": {\"context\": \"INSTALL COMPLETE\"}, \"ServiceInfo\": {\"maintenance_state\" : \"OFF\", \"state\": \"STARTED\"}}" http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/$SERVICE | grep "id" | grep -Po '([0-9]+)')
+
+        echo "*********************************Start $SERVICE TaskID $TASKID"
+        sleep 2
+        LOOPESCAPE="false"
+        until [ "$LOOPESCAPE" == true ]; do
+            TASKSTATUS=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/requests/$TASKID | grep "request_status" | grep -Po '([A-Z]+)')
+            if [[ "$TASKSTATUS" == COMPLETED || "$TASKSTATUS" == FAILED ]]; then
+                LOOPESCAPE="true"
+            fi
+            echo "*********************************Start $SERVICE Task Status $TASKSTATUS"
+            sleep 2
+        done
+       	elif [ "$SERVICE_STATUS" == STARTED ]; then
+       	echo "*********************************$SERVICE Service Started..."
+       	fi
+}
+
 installSchemaRegistryService () {
        	
        	echo "*********************************Creating REGISTRY service..."
@@ -747,7 +770,7 @@ fi
 sleep 2
 
 if [[ $NIFI_STATUS == INSTALLED ]]; then
-       	startService NIFI
+       	startServiceAndComplete NIFI
 else
        	echo "*********************************NIFI Service Started..."
 fi
