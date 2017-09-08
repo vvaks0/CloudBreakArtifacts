@@ -283,7 +283,7 @@ exec 2>&1
 export ROOT_PATH=~
 echo "*********************************ROOT PATH IS: $ROOT_PATH"
 
-export AMBARI_HOST=$(hostname -f)
+AMBARI_HOST=$(cat /etc/ambari-agent/conf/ambari-agent.ini| grep hostname= |grep -Po '([0-9.]+)')
 echo "*********************************AMABRI HOST IS: $AMBARI_HOST"
 
 export CLUSTER_NAME=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters |grep cluster_name|grep -Po ': "(.+)'|grep -Po '[a-zA-Z0-9\-_!?.]+')
@@ -368,7 +368,7 @@ cp $CONFIG_DIR/* $HIVE_CONFIG_DIR
 
 
 echo "*********************************CHANGE AMBARI HOST TO LOCAL CLUSTER"
-export AMBARI_HOST=$(hostname -f)
+AMBARI_HOST=$(cat /etc/ambari-agent/conf/ambari-agent.ini| grep hostname= |grep -Po '([0-9.]+)')
 export CLUSTER_NAME=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters |grep cluster_name|grep -Po ': "(.+)'|grep -Po '[a-zA-Z0-9\-_!?.]+')
 echo "*********************************$AMBARI_HOST : $CLUSTER_NAME"
 
