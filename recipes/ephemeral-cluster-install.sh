@@ -127,6 +127,12 @@ getHiveMetaStoreHost () {
         echo $HIVE_METASTORE_HOST
 }
 
+getHiveMySQLHost () {
+        HIVE_MYSQL_HOST=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/HIVE/components/MYSQL_SERVER|grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
+
+        echo $HIVE_MYSQL_HOST
+}
+
 getHiveInteractiveServerHost () {
         HIVESERVER_INTERACTIVE_HOST=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/HIVE/components/HIVE_SERVER_INTERACTIVE|grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
 
@@ -324,6 +330,7 @@ export SHARED_ATLAS_PORT="21000"
 export SHARED_RANGER_HOST=$(getRangerHost)
 export SHARED_RANGER_PORT="6080"
 export SHARED_HIVESERVER_HOST=$(getHiveServerHost)
+export SHARED_HIVE_MYSQL_HOST=$(getHiveMySQLHost)
 export SHARED_HIVE_METASTORE_HOST=$(getHiveMetaStoreHost)
 export SHARED_HIVE_METASTORE_PORT="9083"
 export SHARED_HIVESERVER_INTERACTIVE_HOST=$(getHiveInteractiveServerHost)
@@ -335,6 +342,7 @@ echo "SHARED_ATLAS_HOST" $SHARED_ATLAS_HOST
 echo "SHARED_RANGER_HOST" $SHARED_RANGER_HOST
 echo "SHARED_RANGER_PORT" $SHARED_RANGER_PORT
 echo "SHARED_HIVESERVER_HOST" $SHARED_HIVESERVER_HOST
+echo "SHARED_HIVE_MYSQL_HOST" $SHARED_HIVE_MYSQL_HOST
 echo "SHARED_HIVE_METASTORE_HOST" $SHARED_HIVE_METASTORE_HOST
 echo "SHARED_HIVE_METASTORE_PORT" $SHARED_HIVE_METASTORE_PORT
 echo "SHARED_HIVESERVER_INTERACTIVE_HOST" $SHARED_HIVESERVER_INTERACTIVE_HOST
@@ -396,7 +404,7 @@ $CONFIG_HELPER set $AMBARI_HOST $CLUSTER_NAME hive-atlas-application.properties 
 $CONFIG_HELPER set $AMBARI_HOST $CLUSTER_NAME hive-atlas-application.properties "atlas.kafka.zookeeper.connect" "$SHARED_KAFKA_BROKER:$SHARED_KAFKA_PORT"
 
 echo "**********Setting Hive Meta Store Configuration..."
-$CONFIG_HELPER set $AMBARI_HOST $CLUSTER_NAME hive-site "javax.jdo.option.ConnectionURL" "jdbc:mysql://$SHARED_HIVESERVER_HOST/hive?createDatabaseIfNotExist=true"
+$CONFIG_HELPER set $AMBARI_HOST $CLUSTER_NAME hive-site "javax.jdo.option.ConnectionURL" "jdbc:mysql://$SHARED_HIVE_MYSQL_HOST/hive?createDatabaseIfNotExist=true"
 
 $CONFIG_HELPER set $AMBARI_HOST $CLUSTER_NAME hive-site "javax.jdo.option.ConnectionPassword" "hive"
 
