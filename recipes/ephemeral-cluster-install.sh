@@ -411,7 +411,12 @@ $CONFIG_HELPER set $AMBARI_HOST $CLUSTER_NAME hive-site "hive.metastore.uris" "t
 echo "**********Configuring Data Storage and Keys..."
 $CONFIG_HELPER set $AMBARI_HOST $CLUSTER_NAME hive-site "hive.metastore.warehouse.dir" "$S3_TARGET_BUCKET"
 
+sleep 10
+echo "**********Restarting Services with Stale Configs..."
 stopService HIVE
+sleep 2
 startService HIVE
+sleep 2
 stopService ATLAS
+sleep 2
 startServiceAndComplete ATLAS
