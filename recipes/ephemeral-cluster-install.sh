@@ -207,22 +207,6 @@ waitForServiceToStart () {
        	fi
 }
 
-waitForNifiServlet () {
-       	LOOPESCAPE="false"
-       	until [ "$LOOPESCAPE" == true ]; do
-       		echo "*********************************Requesting Nifi Servlet Status from http://$NIFI_HOST:9090/nifi-api/controller..."
-       		TASKSTATUS=$(curl -u admin:admin -i -X GET http://$NIFI_HOST:9090/nifi-api/controller | grep -Po 'OK')
-       		if [ "$TASKSTATUS" == OK ]; then
-               		LOOPESCAPE="true"
-       		else
-               		TASKSTATUS="PENDING"
-       		fi
-       		echo "*********************************Waiting for NIFI Servlet..."
-       		echo "*********************************NIFI Servlet Status... " $TASKSTATUS
-       		sleep 2
-       	done
-}
-
 stopService () {
        	SERVICE=$1
        	SERVICE_STATUS=$(getServiceStatus $SERVICE)
@@ -310,6 +294,17 @@ if [[ -z $CLUSTER_NAME ]]; then
 else
        	echo "*********************************CLUSTER NAME IS: $CLUSTER_NAME"
 fi
+
+waitForServiceToStart YARN
+
+waitForServiceToStart HDFS
+
+waitForServiceToStart ATLAS
+
+waitForServiceToStart HIVE
+
+waitForServiceToStart ZOOKEEPER
+
 
 export VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
 export INTVERSION=$(echo $VERSION*10 | bc | grep -Po '([0-9][0-9])')
