@@ -315,6 +315,15 @@ export AMBARI_HOST=$1
 export CLUSTER_NAME=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters |grep cluster_name|grep -Po ': "(.+)'|grep -Po '[a-zA-Z0-9\-_!?.]+')
 echo "*********************************$AMBARI_HOST : $CLUSTER_NAME"
 
+export HADOOP_USER_NAME=hdfs
+echo "*********************************HADOOP_USER_NAME set to HDFS"
+hadoop fs -mkdir /user/admin
+hadoop fs -chown admin:hdfs /user/admin
+
+curl -u admin:admin -H "X-Requested-By:ambari" -i -X POST -d '{"Users/user_name":"hive","Users/password":"hive","Users/active":true,"Users/admin":false}' http://$AMBARI_HOST:8080/api/v1/users
+
+curl -u admin:admin -H "Content-Type:plain/text" -H "X-Requested-By:ambari" -i -X PUT -d '[{"PrivilegeInfo":{"permission_name":"VIEW.USER","principal_name":"hive","principal_type":"USER"}},{"PrivilegeInfo":{"permission_name":"VIEW.USER","principal_name":"CLUSTER.ADMINISTRATOR","principal_type":"ROLE"}},{"PrivilegeInfo":{"permission_name":"VIEW.USER","principal_name":"CLUSTER.OPERATOR","principal_type":"ROLE"}},{"PrivilegeInfo":{"permission_name":"VIEW.USER","principal_name":"SERVICE.OPERATOR","principal_type":"ROLE"}},{"PrivilegeInfo":{"permission_name":"VIEW.USER","principal_name":"SERVICE.ADMINISTRATOR","principal_type":"ROLE"}},{"PrivilegeInfo":{"permission_name":"VIEW.USER","principal_name":"CLUSTER.USER","principal_type":"ROLE"}}]' http://$AMBARI_HOST:8080/api/v1/views/HIVE/versions/2.0.0/instances/AUTO_HIVE20_INSTANCE/privileges
+
 export S3_TARGET_BUCKET=$2
 export SHARED_HIVE_REPO=$3
 
