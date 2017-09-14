@@ -19,6 +19,17 @@
                         <timeout>600</timeout>
                     </commandScript>
         		</component>
+        		<component>
+					<name>SCYTHE_CLIENT</name>
+            		<displayName>Scythe Client</displayName>
+                    <category>CLIENT</category>
+                    <cardinality>1+</cardinality>
+                    <commandScript>
+                        <script>scripts/client.py</script>
+                        <scriptType>PYTHON</scriptType>
+                        <timeout>600</timeout>
+                    </commandScript>
+        		</component>
             </components>
             <osSpecifics>
                 <osSpecific>

@@ -49,9 +49,9 @@ class DemoControl(Script):
         shutil.copytree(params.cronus_dir+'/src/python/scripts', params.cronus_home_dir+'/scripts', False, None)
     
     nifi_env_file = open('/usr/hdf/current/nifi/conf/env.properties','w+')
-    nifi_env_file.write("data.dir=" + params.cronus_home_dir+'/data')
-    nifi_env_file.write("urls.dir=" + params.cronus_home_dir+'/urls')
-    nifi_env_file.write("scripts.dir=" + params.cronus_home_dir+'/scripts')
+    nifi_env_file.write("data.dir=" + params.cronus_home_dir+'/data\n')
+    nifi_env_file.write("urls.dir=" + params.cronus_home_dir+'/urls\n')
+    nifi_env_file.write("scripts.dir=" + params.cronus_home_dir+'/scripts\n')
     
     os.chdir(params.install_dir)
     Execute(params.install_dir+'/CloudBreakArtifacts/recipes/historian-service-install.sh '+params.cronus_dir)
