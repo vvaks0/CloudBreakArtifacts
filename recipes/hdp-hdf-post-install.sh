@@ -1,27 +1,5 @@
 #!/bin/bash
 
-#echo "*********************************Download Configurations"
-#git clone https://github.com/vakshorton/CloudBreakArtifacts
-#cd CloudBreakArtifacts
-
-export ROOT_PATH=~
-echo "*********************************ROOT PATH IS: $ROOT_PATH"
-
-export AMBARI_HOST=$(hostname -f)
-echo "*********************************AMABRI HOST IS: $AMBARI_HOST"
-
-export CLUSTER_NAME=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters |grep cluster_name|grep -Po ': "(.+)'|grep -Po '[a-zA-Z0-9\-_!?.]+')
-
-if [[ -z $CLUSTER_NAME ]]; then
-        echo "Could not connect to Ambari Server. Please run the install script on the same host where Ambari Server is installed."
-        exit 1
-else
-       	echo "*********************************CLUSTER NAME IS: $CLUSTER_NAME"
-fi
-
-export HADOOP_USER_NAME=hdfs
-echo "*********************************HADOOP_USER_NAME set to HDFS"
-
 installUtils () {
 	echo "*********************************Installing WGET..."
 	yum install -y wget
@@ -595,12 +573,14 @@ installMySQL (){
 	if [ $(cat /etc/system-release|grep -Po Amazon) == Amazon ]; then       	
 		yum install -y mysql56-server
 		service mysqld start
+		chkconfig --levels 3 mysqld on
 	else
 		yum localinstall -y https://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm
 		yum install -y mysql-community-server
 		#yum localinstall -y https://dev.mysql.com/get/mysql57-community-release-el7-8.noarch.rpm
 #yum install -y mysql-community-server
 		systemctl start mysqld.service
+		systemctl enable mysqld.service
 	fi
 }
 
@@ -635,6 +615,28 @@ enablePhoenix () {
 	sleep 1
 	/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hbase-site hbase.rpc.controllerfactory.class org.apache.hadoop.hbase.ipc.controller.ServerRpcControllerFactory
 }
+
+#echo "*********************************Download Configurations"
+#git clone https://github.com/vakshorton/CloudBreakArtifacts
+#cd CloudBreakArtifacts
+
+export ROOT_PATH=~
+echo "*********************************ROOT PATH IS: $ROOT_PATH"
+
+export AMBARI_HOST=$(hostname -f)
+echo "*********************************AMABRI HOST IS: $AMBARI_HOST"
+
+export CLUSTER_NAME=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters |grep cluster_name|grep -Po ': "(.+)'|grep -Po '[a-zA-Z0-9\-_!?.]+')
+
+if [[ -z $CLUSTER_NAME ]]; then
+        echo "Could not connect to Ambari Server. Please run the install script on the same host where Ambari Server is installed."
+        exit 1
+else
+       	echo "*********************************CLUSTER NAME IS: $CLUSTER_NAME"
+fi
+
+export HADOOP_USER_NAME=hdfs
+echo "*********************************HADOOP_USER_NAME set to HDFS"
 
 echo "*********************************Waiting for cluster install to complete..."
 waitForServiceToStart YARN

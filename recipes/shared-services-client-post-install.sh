@@ -347,14 +347,14 @@ installMySQL (){
 }
 
 setupRangerDataStore (){
-	mysql --execute="CREATE USER 'rangerdba'@'localhost' IDENTIFIED BY 'rangerdba';"
-	mysql --execute="GRANT ALL PRIVILEGES ON *.* TO 'rangerdba'@'localhost';"
-	mysql --execute="CREATE USER 'rangerdba'@'%' IDENTIFIED BY 'rangerdba';"
-	mysql --execute="GRANT ALL PRIVILEGES ON *.* TO 'rangerdba'@'%';"
-	mysql --execute="GRANT ALL PRIVILEGES ON *.* TO 'rangerdba'@'localhost' WITH GRANT OPTION;"
-	mysql --execute="GRANT ALL PRIVILEGES ON *.* TO 'rangerdba'@'%' WITH GRANT OPTION;"
-	mysql --execute="FLUSH PRIVILEGES;"
-	mysql --execute="COMMIT;"
+mysql --execute="CREATE USER 'rangerdba'@'localhost' IDENTIFIED BY 'rangerdba';"
+mysql --execute="GRANT ALL PRIVILEGES ON *.* TO 'rangerdba'@'localhost';"
+mysql --execute="CREATE USER 'rangerdba'@'%' IDENTIFIED BY 'rangerdba';"
+mysql --execute="GRANT ALL PRIVILEGES ON *.* TO 'rangerdba'@'%';"
+mysql --execute="GRANT ALL PRIVILEGES ON *.* TO 'rangerdba'@'localhost' WITH GRANT OPTION;"
+mysql --execute="GRANT ALL PRIVILEGES ON *.* TO 'rangerdba'@'%' WITH GRANT OPTION;"
+mysql --execute="FLUSH PRIVILEGES;"
+mysql --execute="COMMIT;"
 }
 
 if [ ! -d "/usr/jdk64" ]; then

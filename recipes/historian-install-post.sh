@@ -25,7 +25,7 @@ installUtils () {
 	
 	echo "*********************************Installing Docker..."
 	echo " 				  *****************Installing Docker via Yum..."
-		yum install -y docker
+	yum install -y docker
 	
 	echo " 				  *****************Configuring Docker Permissions..."
 	groupadd docker
