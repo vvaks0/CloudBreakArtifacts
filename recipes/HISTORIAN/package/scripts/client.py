@@ -34,6 +34,7 @@ class DemoControlClient(Script):
         Execute('git clone ' + params.scythe_repo)
     os.chdir(params.scythe_dir)
     Execute('git pull origin master')
+    Execute('rm -f classes.*')
     Execute('mvn clean package -Dmaven.test.skip=true')
     os.chdir(params.scythe_dir+'/target')
     shutil.copy('scythe-0.0.1-SNAPSHOT-jar-with-dependencies.jar', '/usr/hdp/current/spark2-client/jars')
