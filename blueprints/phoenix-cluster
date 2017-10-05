@@ -1,0 +1,270 @@
+{
+    "configurations": [
+        {
+            "hbase-site": {
+                "properties_attributes": {},
+                "properties": {
+                    "phoenix.query.timeoutMs": "60000",
+                    "phoenix.functions.allowUserDefinedFunctions": "true",
+                    "hbase.regionserver.wal.codec": "org.apache.hadoop.hbase.regionserver.wal.IndexedWALEditCodec",
+                    "hbase.defaults.for.version.skip": "true",
+                    "hbase.region.server.rpc.scheduler.factory.class": "org.apache.hadoop.hbase.ipc.PhoenixRpcSchedulerFactory",
+                    "hbase.rpc.controllerfactory.class": "org.apache.hadoop.hbase.ipc.controller.ServerRpcControllerFactory"
+                }
+            }
+        }
+    ],
+    "host_groups": [
+        {
+            "name": "host_group_1",
+            "cardinality": "1",
+            "components": [
+                {
+                    "name": "NODEMANAGER"
+                },
+                {
+                    "name": "YARN_CLIENT"
+                },
+                {
+                    "name": "HDFS_CLIENT"
+                },
+                {
+                    "name": "SPARK_CLIENT"
+                },
+                {
+                    "name": "SPARK_JOBHISTORYSERVER"
+                },
+                {
+                    "name": "HBASE_MASTER"
+                },
+                {
+                    "name": "NAMENODE"
+                },
+                {
+                    "name": "TEZ_CLIENT"
+                },
+                {
+                    "name": "ZOOKEEPER_CLIENT"
+                },
+                {
+                    "name": "HCAT"
+                },
+                {
+                    "name": "PIG"
+                },
+                {
+                    "name": "MAPREDUCE2_CLIENT"
+                },
+                {
+                    "name": "SLIDER"
+                },
+                {
+                    "name": "ZOOKEEPER_SERVER"
+                },
+                {
+                    "name": "HBASE_REGIONSERVER"
+                },
+                {
+                    "name": "DATANODE"
+                },
+                {
+                    "name": "HBASE_CLIENT"
+                },
+                {
+                    "name": "HIVE_CLIENT"
+                },
+                {
+                    "name": "PHOENIX_QUERY_SERVER"
+                }
+            ]
+        },
+        {
+            "name": "host_group_2",
+            "cardinality": "1",
+            "components": [
+                {
+                    "name": "NODEMANAGER"
+                },
+                {
+                    "name": "YARN_CLIENT"
+                },
+                {
+                    "name": "HDFS_CLIENT"
+                },
+                {
+                    "name": "HISTORYSERVER"
+                },
+                {
+                    "name": "HIVE_METASTORE"
+                },
+                {
+                    "name": "TEZ_CLIENT"
+                },
+                {
+                    "name": "SPARK_CLIENT"
+                },
+                {
+                    "name": "ZOOKEEPER_CLIENT"
+                },
+                {
+                    "name": "HCAT"
+                },
+                {
+                    "name": "PIG"
+                },
+                {
+                    "name": "SECONDARY_NAMENODE"
+                },
+                {
+                    "name": "MAPREDUCE2_CLIENT"
+                },
+                {
+                    "name": "SLIDER"
+                },
+                {
+                    "name": "ZOOKEEPER_SERVER"
+                },
+                {
+                    "name": "HBASE_REGIONSERVER"
+                },
+                {
+                    "name": "DATANODE"
+                },
+                {
+                    "name": "HBASE_CLIENT"
+                },
+                {
+                    "name": "APP_TIMELINE_SERVER"
+                },
+                {
+                    "name": "HIVE_CLIENT"
+                },
+                {
+                    "name": "RESOURCEMANAGER"
+                },
+                {
+					"name" : "ZEPPELIN_MASTER"
+		        },
+                {
+                    "name": "PHOENIX_QUERY_SERVER"
+                }
+            ]
+        },
+        {
+            "name": "master_group_3",
+            "cardinality": "1",
+            "components": [
+                {
+                    "name": "NODEMANAGER"
+                },
+                {
+                    "name": "YARN_CLIENT"
+                },
+                {
+                    "name": "HDFS_CLIENT"
+                },
+                {
+                    "name": "SPARK_CLIENT"
+                },
+                {
+                    "name": "HIVE_SERVER"
+                },
+                {
+                    "name": "MYSQL_SERVER"
+                },
+                {
+                    "name": "TEZ_CLIENT"
+                },
+                {
+                    "name": "ZOOKEEPER_CLIENT"
+                },
+                {
+                    "name": "HCAT"
+                },
+                {
+                    "name": "PIG"
+                },
+                {
+                    "name": "WEBHCAT_SERVER"
+                },
+                {
+                    "name": "MAPREDUCE2_CLIENT"
+                },
+                {
+                    "name": "SLIDER"
+                },
+                {
+                    "name": "ZOOKEEPER_SERVER"
+                },
+                {
+                    "name": "HBASE_REGIONSERVER"
+                },
+                {
+                    "name": "DATANODE"
+                },
+                {
+                    "name": "HBASE_CLIENT"
+                },
+                {
+                    "name": "HIVE_CLIENT"
+                },
+                {
+                    "name": "PHOENIX_QUERY_SERVER"
+                }
+            ]
+        },
+        {
+      		"name" : "worker_group_1",
+			"cardinality" : "1+",
+      		"components" : [
+        		{
+          			"name" : "NODEMANAGER"
+        		},
+        		{
+          			"name" : "YARN_CLIENT"
+        		},
+        		{
+          			"name" : "HDFS_CLIENT"
+        		},
+		        {
+					"name" : "SPARK_CLIENT"
+		        },
+		        {
+					"name" : "TEZ_CLIENT"
+        		},
+		        {
+					"name" : "ZOOKEEPER_CLIENT"
+		        },
+		        {
+					"name" : "HCAT"
+		        },
+		        {
+					"name" : "PIG"
+		        },
+		        {
+					"name" : "MAPREDUCE2_CLIENT"
+		        },
+				{
+					"name" : "SLIDER"
+				},
+				{
+					"name" : "HBASE_REGIONSERVER"
+				},
+				{
+					"name" : "DATANODE"
+				},
+				{
+					"name" : "HBASE_CLIENT"
+        		},
+        		{
+					"name" : "HIVE_CLIENT"
+        		}
+      		]
+    	}
+    ],
+    "Blueprints": {
+        "blueprint_name": "phoenix",
+        "stack_name": "HDP",
+        "stack_version": "2.6"
+    }
+}
