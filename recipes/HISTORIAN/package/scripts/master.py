@@ -60,7 +60,7 @@ class DemoControl(Script):
     self.configure(env)
     import params
     Execute('echo Start Rhea UI')
-    Execute('docker run -d -p '+params.ui_port+':8080 -e ATLAS_HOST='+params.atlas_host_ip+' -e ATLAS_PORT='+params.atlas_port+' -e API_HOST='+params.nifi_host_ip+' -e API_PORT='+params.api_port+' -t hortonworks/fieldeng-rhea')
+    Execute('docker run -d -p '+params.ui_port+':8080 -e ATLAS_HOST='+params.atlas_host_ip+' -e ATLAS_PORT='+params.atlas_port+' -e KAFKA_HOST='+params.kafka_host_ip+' -e KAFKA_PORT='+params.kafka_port+' -e ZK_HOST='+params.zk_host_ip+' -e ZK_PORT='+params.zk_port+' -e API_HOST='+params.nifi_host_ip+' -e API_PORT='+params.api_port+' -t hortonworks/fieldeng-rhea')
     #Execute('nohup java -jar target/historian-0.0.1.jar --server.port=8095 > historian.log &')
     Execute('echo Start Data Simulation')
     Execute('nohup java -jar '+params.install_dir+'/DeviceSimulator-0.0.1-SNAPSHOT-jar-with-dependencies.jar Historian 1000 Simulation '+params.nifi_host_ip+' > '+params.install_dir+'/historian_sim.log 2>&1 & echo $! > /var/run/historian_sim.pid')

@@ -36,6 +36,14 @@ atlas_host_ip = socket.gethostbyname(str(json.loads(requests.get('http://'+ambar
 
 atlas_port = config['configurations']['application-properties']['atlas.server.http.port']
 
+kafka_host_ip = socket.gethostbyname(str(json.loads(requests.get('http://'+ambari_server_host+':'+ambari_server_port+'/api/v1/clusters/'+cluster_name+'/services/KAFKA/components/KAFKA_BROKER', auth=('admin', 'admin')).content).get('host_components')[0].get('HostRoles').get('host_name')))
+
+kafka_port = config['configurations']['kafka-broker']['port']
+
+zk_host_ip = socket.gethostbyname(str(json.loads(requests.get('http://'+ambari_server_host+':'+ambari_server_port+'/api/v1/clusters/'+cluster_name+'/services/ZOOKEEPER/components/ZOOKEEPER_SERVER', auth=('admin', 'admin')).content).get('host_components')[0].get('HostRoles').get('host_name')))
+
+zk_port = config['configurations']['zoo.cfg']['clientPort']
+
 nifi_host_ip = socket.gethostbyname(str(json.loads(requests.get('http://'+ambari_server_host+':'+ambari_server_port+'/api/v1/clusters/'+cluster_name+'/services/NIFI/components/NIFI_MASTER', auth=('admin', 'admin')).content).get('host_components')[0].get('HostRoles').get('host_name')))
 
 nifi_host_port = config['configurations']['nifi-ambari-config']['nifi.node.port']
