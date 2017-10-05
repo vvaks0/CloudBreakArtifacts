@@ -833,6 +833,9 @@ export KAFKA_BROKER=$(getKafkaBroker)
 export ATLAS_HOST=$(getAtlasHost)
 export LIVY_HOST=$(getLivyHost)
 
+export KAFKA_BROKER_IP=$(getent hosts $KAFKA_BROKER | awk '{ print $1 }')
+/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME kafka-broker "listeners" "PLAINTEXT://$KAFKA_BROKER_IP:6667"
+
 installHistorianService
 sleep 2
 instalHDFManagementPack 
