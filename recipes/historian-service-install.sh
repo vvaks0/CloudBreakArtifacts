@@ -508,3 +508,5 @@ sleep 2
 
 echo "*********************************Start Historian Conductor Reporting Task..."
 startConductorReporter
+
+sleep 10
