@@ -443,6 +443,11 @@ configureNifiTempate () {
     handleGroupPorts $ROOT_TARGET
 
     handleGroupProcessors $ROOT_TARGET
+    
+    export HADOOP_USER_NAME=hdfs
+    hadoop fs -mkdir /apps/historian
+    hadoop fs -chmod 755 /apps
+    hadoop fs -chown -R nifi:hdfs /apps/historian
 }
 
 startConductorReporter() {
@@ -508,5 +513,3 @@ sleep 2
 
 echo "*********************************Start Historian Conductor Reporting Task..."
 startConductorReporter
-
-sleep 10

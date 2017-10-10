@@ -21,13 +21,13 @@ class DemoControl(Script):
     shutil.copy('DeviceSimulator-0.0.1-SNAPSHOT-jar-with-dependencies.jar', params.install_dir)
     os.chdir(params.install_dir)
     
-    if not os.path.exists(params.scythe_dir): 
-        Execute('git clone ' + params.scythe_repo)
-    os.chdir(params.scythe_dir)
-    Execute('mvn clean package -Dmaven.test.skip=true')
-    os.chdir(params.scythe_dir+'/target')
-    shutil.copy('scythe-0.0.1-SNAPSHOT-jar-with-dependencies.jar', '/usr/hdp/current/spark2-client/jars')
-    os.chdir(params.install_dir)
+    #if not os.path.exists(params.scythe_dir): 
+    #    Execute('git clone ' + params.scythe_repo)
+    #os.chdir(params.scythe_dir)
+    #Execute('mvn clean package -Dmaven.test.skip=true')
+    #os.chdir(params.scythe_dir+'/target')
+    #shutil.copy('scythe-0.0.1-SNAPSHOT-jar-with-dependencies.jar', '/usr/hdp/current/spark2-client/jars')
+    #os.chdir(params.install_dir)
     
     if not os.path.exists(params.rhea_dir): 
         Execute('git clone ' + params.rhea_repo)
@@ -45,7 +45,7 @@ class DemoControl(Script):
         shutil.copytree(params.cronus_dir+'/data', params.cronus_home_dir+'/data', False, None)
     if not os.path.exists(params.cronus_dir+'/urls'): 
         shutil.copytree(params.cronus_dir+'/urls', params.cronus_home_dir+'/urls', False, None)
-    if not os.path.exists(params.cronus_dir+'/scripts'): 
+    if not os.path.exists(params.cronus_home_dir+'/scripts'): 
         shutil.copytree(params.cronus_dir+'/src/python/scripts', params.cronus_home_dir+'/scripts', False, None)
     
     nifi_env_file = open('/usr/hdf/current/nifi/conf/env.properties','w+')

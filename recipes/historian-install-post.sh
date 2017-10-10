@@ -618,6 +618,8 @@ installMySQL (){
 #yum install -y mysql-community-server
 		systemctl start mysqld.service
 	fi
+	chkconfig --add mysqld
+	chkconfig mysqld on
 }
 
 setupHDFDataStores (){
