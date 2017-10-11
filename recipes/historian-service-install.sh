@@ -465,7 +465,7 @@ configureNifiTempate () {
 startConductorReporter() {
 	sleep 1
 	echo "*********************************Instantiating Historian Conductor Reporting Task..."
-	PAYLOAD=$(echo "{\"revision\":{\"version\":0},\"component\":{\"name\":\"HistorianDeanReporter\",\"type\":\"com.hortonworks.historian.nifi.reporter.HistorianDeanReporter\",\"properties\": {\"Tag Dimension Name\": \"function\",\"Atlas URL\":\"http://$ATLAS_HOST:21000\",\"Nifi URL\": \"http://$NIFI_HOST:9090\",\"Hive Server Connection String\": \"jdbc:hive2://$HIVESERVER_INTERACTIVE_HOST:10500/default\",\"Name Node URL\": \"hdfs://NAME_NODE:8020\",\"Druid Broker HTTP endpoint\": \"http://$DRUID_BROKER:8082\",\"Druid Overlord HTTP endpoint\": \"http://$DRUID_OVERLORD:8090\"}}}")
+	PAYLOAD=$(echo "{\"revision\":{\"version\":0},\"component\":{\"name\":\"HistorianDeanReporter\",\"type\":\"com.hortonworks.historian.nifi.reporter.HistorianDeanReporter\",\"properties\": {\"Tag Dimension Name\": \"function\",\"Atlas URL\":\"http://$ATLAS_HOST:21000\",\"Nifi URL\": \"http://$NIFI_HOST:9090\",\"Hive Server Connection String\": \"jdbc:hive2://$HIVESERVER_INTERACTIVE_HOST:10500/default\",\"Name Node URL\": \"hdfs://$NAME_NODE:8020\",\"Druid Broker HTTP endpoint\": \"http://$DRUID_BROKER:8082\",\"Druid Overlord HTTP endpoint\": \"http://$DRUID_OVERLORD:8090\"}}}")
 
 	REPORTING_TASK_ID=$(curl -d "$PAYLOAD" -H "Content-Type: application/json" -X POST http://$NIFI_HOST:9090/nifi-api/controller/reporting-tasks|grep -Po '("component":{"id":")([0-9a-zA-z\-]+)'| grep -Po '(:"[0-9a-zA-z\-]+)'| grep -Po '([0-9a-zA-z\-]+)')
 	
