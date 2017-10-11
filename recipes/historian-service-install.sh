@@ -68,10 +68,22 @@ getHiveInteractiveServerHost () {
         echo $HIVESERVER_INTERACTIVE_HOST
 }
 
+getNameNode () {
+        NAME_NODE=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/HDFS/components/NAMENODE|grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
+
+        echo $NAME_NODE
+}
+
 getDruidBroker () {
         DRUID_BROKER=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/DRUID/components/DRUID_BROKER|grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
 
         echo $DRUID_BROKER
+}
+
+getDruidOverlord () {
+        DRUID_OVERLORD=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1/clusters/$CLUSTER_NAME/services/DRUID/components/DRUID_OVERLORD|grep "host_name"|grep -Po ': "([a-zA-Z0-9\-_!?.]+)'|grep -Po '([a-zA-Z0-9\-_!?.]+)')
+
+        echo $DRUID_OVERLORD
 }
 
 getKafkaBroker () {
@@ -453,7 +465,7 @@ configureNifiTempate () {
 startConductorReporter() {
 	sleep 1
 	echo "*********************************Instantiating Historian Conductor Reporting Task..."
-	PAYLOAD=$(echo "{\"revision\":{\"version\":0},\"component\":{\"name\":\"HistorianDeanReporter\",\"type\":\"com.hortonworks.historian.nifi.reporter.HistorianDeanReporter\",\"properties\": {\"Tag Dimension Name\": \"function\",\"Atlas URL\":\"http://$ATLAS_HOST:21000\",\"Nifi URL\": \"http://$NIFI_HOST:9090\",\"Hive Server Connection String\": \"jdbc:hive2://$HIVESERVER_INTERACTIVE_HOST:10500/default\",\"Druid Broker HTTP endpoint\": \"http://$DRUID_BROKER:8082\"}}}")
+	PAYLOAD=$(echo "{\"revision\":{\"version\":0},\"component\":{\"name\":\"HistorianDeanReporter\",\"type\":\"com.hortonworks.historian.nifi.reporter.HistorianDeanReporter\",\"properties\": {\"Tag Dimension Name\": \"function\",\"Atlas URL\":\"http://$ATLAS_HOST:21000\",\"Nifi URL\": \"http://$NIFI_HOST:9090\",\"Hive Server Connection String\": \"jdbc:hive2://$HIVESERVER_INTERACTIVE_HOST:10500/default\",\"Name Node URL\": \"hdfs://NAMEHODE:8020\",\"Druid Broker HTTP endpoint\": \"http://$DRUID_BROKER:8082\",\"Druid Overlord HTTP endpoint\": \"http://$DRUID_OVERLORD:8090\"}}}")
 
 	REPORTING_TASK_ID=$(curl -d "$PAYLOAD" -H "Content-Type: application/json" -X POST http://$NIFI_HOST:9090/nifi-api/controller/reporting-tasks|grep -Po '("component":{"id":")([0-9a-zA-z\-]+)'| grep -Po '(:"[0-9a-zA-z\-]+)'| grep -Po '([0-9a-zA-z\-]+)')
 	
@@ -497,7 +509,9 @@ export ATLAS_HOST=$(getAtlasHost)
 export LIVY_HOST=$(getLivyHost)
 export REGISTRY_HOST=$(getRegistryHost)
 export NIFI_HOST=$(getNifiHost)
+export NAME_NODE=$(getNameNode)
 export DRUID_BROKER=$(getDruidBroker)
+export DRUID_OVERLORD=$(getDruidOverlord)
 export HIVESERVER_INTERACTIVE_HOST=$(getHiveInteractiveServerHost)
 
 createHistorianTagCacheTable
