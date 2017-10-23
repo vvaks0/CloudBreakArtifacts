@@ -41,9 +41,9 @@ class DemoControl(Script):
     if not os.path.exists(params.cronus_home_dir): 
         os.makedirs(params.cronus_home_dir)
     #shutil.rmtree(params.cronus_home_dir)
-    if not os.path.exists(params.cronus_dir+'/data'): 
+    if not os.path.exists(params.cronus_home_dir+'/data'): 
         shutil.copytree(params.cronus_dir+'/data', params.cronus_home_dir+'/data', False, None)
-    if not os.path.exists(params.cronus_dir+'/urls'): 
+    if not os.path.exists(params.cronus_home_dir+'/urls'): 
         shutil.copytree(params.cronus_dir+'/urls', params.cronus_home_dir+'/urls', False, None)
     if not os.path.exists(params.cronus_home_dir+'/scripts'): 
         shutil.copytree(params.cronus_dir+'/src/python/scripts', params.cronus_home_dir+'/scripts', False, None)
