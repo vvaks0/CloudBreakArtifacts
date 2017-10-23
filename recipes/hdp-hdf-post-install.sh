@@ -783,6 +783,8 @@ ln -s /usr/hdp/current/atlas-client/hook/storm/atlas-plugin-classloader-0.8.0.2.
 
 ln -s /usr/hdp/current/atlas-client/hook/storm/storm-bridge-shim-0.8.0.2.6.1.0-34.jar /usr/hdf/current/storm-client/lib/storm-bridge-shim.jar
 
+exit 0
+
 #export MYSQL_TEMP_PASSWORD=$(grep 'A temporary password' /var/log/mysqld.log |grep -Po ': .+'|grep -Po '[^: ].+')
 #mysqladmin -u root --password=$MYSQL_TEMP_PASSWORD password "Password!1"
 #export MYSQL_PASSWORD=Password!1

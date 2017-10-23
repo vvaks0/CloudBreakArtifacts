@@ -34,6 +34,8 @@ installUtils () {
 	service docker start
 	chkconfig --add docker
 	chkconfig docker on
+	service prometheus stop
+	chkconfig prometheus off
 }
 
 waitForAmbari () {
@@ -869,6 +871,8 @@ sleep 2
 configureHive
 sleep 2
 configureAtlas
+
+exit 0
 
 #export MYSQL_TEMP_PASSWORD=$(grep 'A temporary password' /var/log/mysqld.log |grep -Po ': .+'|grep -Po '[^: ].+')
 #mysqladmin -u root --password=$MYSQL_TEMP_PASSWORD password "Password!1"
