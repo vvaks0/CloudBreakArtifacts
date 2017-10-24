@@ -671,6 +671,10 @@ cp -Rf $ROOT_PATH/CloudBreakArtifacts/recipes/DEVICE_MANAGER_DEMO_CONTROL_SAM /v
 
 chmod 755 /var/lib/ambari-agent/cache/stacks/HDP/$VERSION/services/DEVICE_MANAGER_DEMO_CONTROL_SAM/package/scripts/device-manager-sam-install.sh
 
+echo "*********************************Install CREDIT_FRAUD_DEMO_CONTROL_SAM service..."
+cp -Rf $ROOT_PATH/CloudBreakArtifacts/recipes/CREDIT_FRAUD_DEMO_CONTROL_SAM /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/
+
+
 echo "*********************************Install HDF Management Pack..."
 instalHDFManagementPack 
 sleep 2
