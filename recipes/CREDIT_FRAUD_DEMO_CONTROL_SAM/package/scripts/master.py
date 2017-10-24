@@ -10,8 +10,8 @@ class DemoControl(Script):
     if not os.path.exists(params.install_dir):  
         os.makedirs(params.install_dir)
     os.chdir(params.install_dir)
-    Execute('git clone ' + params.device_manager_download_url)
-    Execute('git clone ' + params.sam_extensions_download_url)
+    Execute('git clone ' + params.democontrol.download_url)
+    Execute('git clone ' + params.democontrol.sam.extentions.git.url)
     if not os.path.exists(params.install_dir+'/CreditCardTransactionMonitor'):
         Execute('git clone ' + params.download_url)
     Execute(params.install_dir + '/CloudBreakArtifacts/recipes/credit-fraud-sam-install.sh ' + params.install_dir + ' '+ params.google_api_key)
