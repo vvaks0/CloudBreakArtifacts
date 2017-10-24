@@ -7,7 +7,7 @@ class DemoControl(Script):
     self.configure(env)
     import params
   
-    if not os.path.exists(params.install_dir):  
+    if not os.path.exists(params.install_dir):
         os.makedirs(params.install_dir)
     os.chdir(params.install_dir)
     Execute('git clone ' + params.democontrol.download_url)
