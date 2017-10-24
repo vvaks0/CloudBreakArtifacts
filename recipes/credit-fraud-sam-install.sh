@@ -283,10 +283,6 @@ captureEnvironment () {
 	. ~/.bash_profile
 }
 
-installDemoControl () {
-		
-}
-
 deployTemplateToNifi () {
        	TEMPLATE_DIR=$1
        	TEMPLATE_NAME=$2
@@ -573,12 +569,15 @@ deployContainers (){
 	
 	cd APP_DIR
 	mvn clean package
-	mvn docker:build
-	
+	#mvn docker:build
+	export HTTP_HOST=$NIFI_HOST
+  	export TOMCAT_PORT=8098
+  	export MAP_API_KEY=$GOOGLE_API_KEY
+
 	docker pull vvaks/cometd
 	docker run -d -p 8099:8091 vvaks/cometd
 	#docker run -d -e MAP_API_KEY=$GOOGLE_API_KEY -e ZK_HOST=$ZK_HOST -e COMETD_HOST=$COMETD_HOST -e COMETD_PORT=8099 -p 8098:8090 vvaks/mapui
-
+	java -jar  target/TransactionMonitorUI-jar-with-dependencies.jar
 }
 
 createHbaseTables () {
