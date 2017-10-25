@@ -572,6 +572,7 @@ deployContainers (){
 	#mvn docker:build
 	export HTTP_HOST=$NIFI_HOST
   	export TOMCAT_PORT=8098
+  	export COMETD_PORT=8099
   	export MAP_API_KEY=$GOOGLE_API_KEY
 
 	docker pull vvaks/cometd
@@ -582,7 +583,7 @@ deployContainers (){
 
 createHbaseTables () {
 	#Create Hbase Tables
-	echo "create 'history','0'" | hbase shell
+	echo "create 'HISTORY','0'" | hbase shell
 }
 
 createPhoenixTables () {

@@ -24,7 +24,7 @@ class DemoControl(Script):
     self.configure(env)
     import params
     Execute('echo Start Simulation')
-    Execute('nohup java -jar '+params.install_dir+'/CreditCardTransactionSimulator-0.0.1-SNAPSHOT-jar-with-dependencies.jar Customer 1000 Simulation '+params.nifi_host_ip+' > '+params.install_dir+'/CreditCardTransactionSim.log 2>&1 & echo $! > /var/run/CreditCardTransactionSim.pid')
+    Execute('nohup java -jar '+params.install_dir+'/CreditCardTransactionSimulator-0.0.1-SNAPSHOT-jar-with-dependencies.jar Customer 1000 Simulation '+params.nifi_host+' > '+params.install_dir+'/CreditCardTransactionSim.log 2>&1 & echo $! > /var/run/CreditCardTransactionSim.pid')
     
   def stop(self, env):
     self.configure(env)
