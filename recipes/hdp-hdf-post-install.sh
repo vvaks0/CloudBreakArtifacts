@@ -783,6 +783,8 @@ fi
 
 echo "********************************* Adding Symbolic Links to Atlas Client..."
 #Add symbolic links to Atlas Hooks
+rm -f /usr/hdf/current/storm-client/lib/atlas-plugin-classloader.jar
+rm -f /usr/hdf/current/storm-client/lib/storm-bridge-shim.jar
 
 export ATLAS_PLUGIN_CLASSLOADER=$(ls -l /usr/hdp/current/atlas-client/hook/storm/atlas-plugin-classloader*|grep -Po 'atlas-plugin-classloader-[\D\d]+')
 
