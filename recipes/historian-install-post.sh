@@ -787,7 +787,7 @@ export CLUSTER_NAME=$(curl -u admin:admin -X GET http://$AMBARI_HOST:8080/api/v1
 
 if [[ -z $CLUSTER_NAME ]]; then
         echo "Could not connect to Ambari Server. Please run the install script on the same host where Ambari Server is installed."
-        exit 1
+        exit 0
 else
        	echo "*********************************CLUSTER NAME IS: $CLUSTER_NAME"
 fi
