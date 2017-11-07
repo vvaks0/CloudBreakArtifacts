@@ -676,7 +676,7 @@ cp -Rf $ROOT_PATH/CloudBreakArtifacts/recipes/CREDIT_FRAUD_DEMO_CONTROL_SAM /var
 
 echo "*********************************Install ALARM_FATIGUE_DEMO_CONTROL_SAM service..."
 git clone https://github.com/ryancicak/northcentral_hackathon $ROOT_PATH/northcentral_hackathon
-cp -Rf $ROOT_PATH/northcentral_hackathon/CloudBreakArtifacts/recipes/ALARM_FATIGUE_DEMO_CONTROL/var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/
+cp -Rf $ROOT_PATH/northcentral_hackathon/CloudBreakArtifacts/recipes/ALARM_FATIGUE_DEMO_CONTROL var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/
 
 echo "*********************************Install HDF Management Pack..."
 instalHDFManagementPack 
