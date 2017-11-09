@@ -31,17 +31,7 @@ installUtils () {
 		service docker start
 		chkconfig --levels 3 dockerd on
 	else
-		echo " 				  *****************Adding Docker Yum Repo..."
-		tee /etc/yum.repos.d/docker.repo <<-'EOF'
-		[dockerrepo]
-		name=Docker Repository
-		baseurl=https://yum.dockerproject.org/repo/main/centos/$releasever/
-		enabled=1
-		gpgcheck=1
-		gpgkey=https://yum.dockerproject.org/gpg
-		EOF
-		rpm -iUvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-		yum install -y docker-io
+		yum install -y docker
 		systemctl start dockerd.service
 		systemctl enable dockerd.service
 	fi
@@ -89,27 +79,36 @@ mysql --execute="CREATE USER 'rangerdba'@'%' IDENTIFIED BY 'rangerdba';"
 mysql --execute="GRANT ALL PRIVILEGES ON *.* TO 'rangerdba'@'%';"
 mysql --execute="GRANT ALL PRIVILEGES ON *.* TO 'rangerdba'@'localhost' WITH GRANT OPTION;"
 mysql --execute="GRANT ALL PRIVILEGES ON *.* TO 'rangerdba'@'%' WITH GRANT OPTION;"
+mysql --execute="CREATE USER 'beacon'@'%' IDENTIFIED BY 'beacon';"
+mysql --execute="GRANT ALL PRIVILEGES ON beacon.* TO 'beacon'@'%' WITH GRANT OPTION;"
 mysql --execute="FLUSH PRIVILEGES;"
+mysql --execute="CREATE DATABASE beacon;"
 mysql --execute="COMMIT;"
 }
 
 installUtils
+sleep 2
 installMySQL
+sleep 2
 setupRangerDataStore
 
 wget http://private-repo-1.hortonworks.com/DLM/centos7/1.x/updates/1.0.0.0-81/tars/beacon/beacon-ambari-mpack-1.0.0.0-81.tar.gz
+sleep 2
 ambari-server install-mpack --mpack beacon-ambari-mpack-*.tar.gz --verbose
-ambari-server restart
-
+sleep 2
 git clone https://github.com/hortonworks/dataplane_profilers
+sleep 2
 cd dataplane_profilers/mpack
+sleep 2
 mvn clean install
+sleep 2
 ambari-server install-mpack --mpack=target/dpprofiler-ambari-mpack-1.0.0.tar.gz --verbose
+sleep 2
 ambari-server restart
+sleep 2
+#Use Ambari to install DSS Profiler and DLM Beacon
 
-Use Ambari to install DSS Profiler and DLM Beacon
-
-usermod -a -G hdfs beacon
+#usermod -a -G hdfs beacon
 setenforce 0
 sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/sysconfig/selinux
 
@@ -130,4 +129,6 @@ cd /root/dlm/bin
 ./dlmdeploy.sh load
 ./dlmdeploy.sh init  
 172.31.65.79
+
+172.18.0.3
 
