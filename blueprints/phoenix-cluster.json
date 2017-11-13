@@ -1,18 +1,50 @@
 {
     "configurations": [
         {
+            "yarn-site": {
+                "properties_attributes": {},
+                "properties": {
+             "yarn.scheduler.capacity.resource-calculator":"org.apache.hadoop.yarn.util.resource.DominantResourceCalculator"	
+                }
+            }
+        },
+        {
             "hbase-site": {
                 "properties_attributes": {},
                 "properties": {
                     "phoenix.query.timeoutMs": "60000",
-                    "phoenix.functions.allowUserDefinedFunctions": "true",
+					"hfile.block.cache.size":"0.2",
+					"hbase.regionserver.global.memstore.size":"0.6",
+					"hbase.regionserver.handler.count":"60",
+					"hbase.hregion.memstore.flush.size":"9830000000",
+					"hbase.hregion.max.filesize":"21474836480",
                     "hbase.regionserver.wal.codec": "org.apache.hadoop.hbase.regionserver.wal.IndexedWALEditCodec",
                     "hbase.defaults.for.version.skip": "true",
                     "hbase.region.server.rpc.scheduler.factory.class": "org.apache.hadoop.hbase.ipc.PhoenixRpcSchedulerFactory",
-                    "hbase.rpc.controllerfactory.class": "org.apache.hadoop.hbase.ipc.controller.ServerRpcControllerFactory"
+                    "hbase.rpc.controllerfactory.class": "org.apache.hadoop.hbase.ipc.controller.ServerRpcControllerFactory",
+                    "phoenix.functions.allowUserDefinedFunctions": "true"
                 }
             }
-        }
+        },
+        {
+			"hbase-env" : {
+        		"properties_attributes" : {},
+        		"properties" : {
+        			"hbase_java_io_tmpdir" : "/tmp",
+        			"hbase_log_dir" : "/var/log/hbase",
+        			"hbase_master_heapsize" : "1024m",
+        			"hbase_pid_dir" : "/var/run/hbase",
+        			"hbase_regionserver_heapsize" : "16384m",
+        			"hbase_regionserver_shutdown_timeout" : "30",
+        			"hbase_regionserver_xmn_max" : "16384",
+        			"hbase_regionserver_xmn_ratio" : "0.2",
+        			"hbase_user" : "hbase",
+        			"hbase_user_nofile_limit" : "32000",
+        			"hbase_user_nproc_limit" : "16000",
+        			"phoenix_sql_enabled" : "true"
+      			}
+        	}		
+    	}
     ],
     "host_groups": [
         {
