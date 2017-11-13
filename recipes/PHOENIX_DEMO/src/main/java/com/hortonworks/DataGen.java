@@ -14,7 +14,7 @@ public class DataGen {
 	
 public static void main(String[] args) throws IOException, ParseException {
 	 String outputPath = args[0];
-	 int recordCount = args[1];
+	 int recordCount = Integer.valueOf(args[1]);
 	 String csvFile = outputPath+"/aum.csv";
      //FileWriter w = new FileWriter(csvFile);
      PrintWriter writer = new PrintWriter(csvFile, "UTF-8");
