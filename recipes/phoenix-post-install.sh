@@ -26,9 +26,9 @@ export HADOOP_USER_NAME=hdfs
 echo "*********************************HADOOP_USER_NAME set to HDFS"
 
 javac -d .  $ROOT_PATH/CloudBreakArtifacts/recipes/PHOENIX_DEMO/src/main/java/com/hortonworks/DataGen.java
-java com/hortonworks/DataGen
+java com/hortonworks/DataGen /tmp/aum.csv 100000000
 hadoop fs -put /tmp/aum.csv /tmp/aum.csv
 
-$ROOT_PATH/CloudBreakArtifacts/recipes/PHOENIX_DEMO/configureZeppelin.py getZeppelinHost 9995
+$ROOT_PATH/CloudBreakArtifacts/recipes/PHOENIX_DEMO/configureZeppelin.py $(getZeppelinHost) 9995
 
 exit 0
