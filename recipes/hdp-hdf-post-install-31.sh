@@ -544,16 +544,16 @@ getHostByPosition (){
 }
 
 configureAmbariRepos (){
-	tee /etc/yum.repos.d/docker.repo <<-'EOF'
-	[HDF-3.0]
-	name=HDF-3.0
-	baseurl=http://public-repo-1.hortonworks.com/HDF/centos7/3.x/updates/3.0.0.0
-	path=/
-	enabled=1
-	gpgcheck=0
-	EOF
+	#tee /etc/yum.repos.d/docker.repo <<-'EOF'
+	#[HDF-3.1]
+	#name=HDF-3.1
+#baseurl=http://s3.amazonaws.com/dev.hortonworks.com/HDF/centos7/3.x/BUILDS/3.1.0.0-270
+	#path=/
+	#enabled=1
+	#gpgcheck=0
+	#EOF
 	
-	curl -u admin:admin -d @$ROOT_PATH/CloudBreakArtifacts/hdf-config/api-payload/repo_update.json -H "X-Requested-By: ambari" -X PUT http://$AMBARI_HOST:8080/api/v1/stacks/HDP/versions/2.6/repository_versions/1
+	curl -u admin:admin -d @$ROOT_PATH/CloudBreakArtifacts/hdf-config/api-payload/repo_update_2.6.3.json -H "X-Requested-By: ambari" -X PUT http://$AMBARI_HOST:8080/api/v1/stacks/HDP/versions/2.6/repository_versions/1
 }
 
 installMySQL (){
@@ -682,9 +682,9 @@ echo "*********************************Install HDF Management Pack..."
 instalHDFManagementPack 
 sleep 2
 
-#echo "*********************************Configure Ambari Repos"
-#configureAmbariRepos
-#sleep 2
+echo "*********************************Configure Ambari Repos"
+configureAmbariRepos
+sleep 2
 
 echo "*********************************Install Utilities..."
 installUtils
