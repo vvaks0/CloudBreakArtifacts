@@ -706,24 +706,24 @@ sleep 2
 #startService HBASE
 #sleep 2
 
-installDruidService
+#installDruidService
 
-sleep 2
-DRUID_STATUS=$(getServiceStatus DRUID)
-echo "*********************************Checking DRUID status..."
-if ! [[ $DRUID_STATUS == STARTED || $DRUID_STATUS == INSTALLED ]]; then
-       	echo "*********************************DRUID is in a transitional state, waiting..."
-       	waitForService DRUID
-       	echo "*********************************DRUID has entered a ready state..."
-fi
+#sleep 2
+#DRUID_STATUS=$(getServiceStatus DRUID)
+#echo "*********************************Checking DRUID status..."
+#if ! [[ $DRUID_STATUS == STARTED || $DRUID_STATUS == INSTALLED ]]; then
+#       	echo "*********************************DRUID is in a transitional state, #waiting..."
+#       	waitForService DRUID
+#       	echo "*********************************DRUID has entered a ready state..."
+#fi
 
-sleep 2
+#sleep 2
 
-if [[ $DRUID_STATUS == INSTALLED ]]; then
-       	startService DRUID
-else
-       	echo "*********************************DRUID Service Started..."
-fi
+#if [[ $DRUID_STATUS == INSTALLED ]]; then
+#       	startService DRUID
+#else
+#       	echo "*********************************DRUID Service Started..."
+#fi
 
 sleep 2
 installSchemaRegistryService
