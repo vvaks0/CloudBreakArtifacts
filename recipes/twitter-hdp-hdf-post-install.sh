@@ -698,6 +698,45 @@ enablePhoenix () {
 	/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hbase-site hbase.rpc.controllerfactory.class org.apache.hadoop.hbase.ipc.controller.ServerRpcControllerFactory
 }
 
+installSolr (){
+	yum install -y lucidworks-hdpsearch
+	#sudo -u hdfs hadoop fs -mkdir /user/solr
+	#sudo -u hdfs hadoop fs -chown solr /user/solr
+	cd /opt/lucidworks-hdpsearch/solr/server/solr/configsets/data_driven_schema_configs/conf
+	mv -f solrconfig.xml solrconfig_bk.xml
+
+	yum install -y wget
+	wget https://raw.githubusercontent.com/sujithasankuhdp/nifi-templates/master/templates/solrconfig.xml
+	cd /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/
+	mv -f default.json default.json.orig
+	wget https://raw.githubusercontent.com/abajwa-hw/ambari-nifi-service/master/demofiles/default.json
+	cd
+
+
+	/opt/lucidworks-hdpsearch/solr/bin/solr start -c -z $AMBARI_HOST:2181
+	/opt/lucidworks-hdpsearch/solr/bin/solr create -c tweets -d data_driven_schema_configs -s 1 -rf 1 
+	yum install -y ntp
+	service ntpd stop
+	ntpdate pool.ntp.org
+	service ntpd start
+	cd
+
+	sudo -u hdfs hadoop fs -mkdir /tmp/tweets_staging
+	sudo -u hdfs hadoop fs -chmod -R 777 /tmp/tweets_staging
+
+
+	#sudo -u hdfs hive -e 'create table if not exists tweets_text_partition(
+  	#tweet_id bigint, 
+  	#created_unixtime bigint, 
+  	#created_time string, 
+  	#displayname string, 
+ 	#msg string,
+ 	#fulltext string
+	#)
+	#row format delimited fields terminated by "|"
+	#location "/tmp/tweets_staging";'
+}
+
 #echo "*********************************Download Configurations"
 #git clone https://github.com/vakshorton/CloudBreakArtifacts
 #cd CloudBreakArtifacts
@@ -846,47 +885,8 @@ else
        	echo "*********************************STREAMLINE Service Started..."
 fi
 
-echo "***** INSTALLING SOLR"
+installSolr
 
-yum install -y lucidworks-hdpsearch
-#sudo -u hdfs hadoop fs -mkdir /user/solr
-#sudo -u hdfs hadoop fs -chown solr /user/solr
-cd /opt/lucidworks-hdpsearch/solr/server/solr/configsets/data_driven_schema_configs/conf
-mv -f solrconfig.xml solrconfig_bk.xml
-
-
-wget https://raw.githubusercontent.com/sujithasankuhdp/nifi-templates/master/templates/solrconfig.xml
-cd /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/
-mv -f default.json default.json.orig
-wget https://raw.githubusercontent.com/abajwa-hw/ambari-nifi-service/master/demofiles/default.json
-cd
-
-
-/opt/lucidworks-hdpsearch/solr/bin/solr start -c -z $AMBARI_HOST:2181
-/opt/lucidworks-hdpsearch/solr/bin/solr create -c tweets \
-   -d data_driven_schema_configs \
-   -s 1 \
-   -rf 1 
-yum install -y ntp
-service ntpd stop
-ntpdate pool.ntp.org
-service ntpd start
-cd
-
-sudo -u hdfs hadoop fs -mkdir /tmp/tweets_staging
-sudo -u hdfs hadoop fs -chmod -R 777 /tmp/tweets_staging
-
-
-sudo -u hdfs hive -e 'create table if not exists tweets_text_partition(
-  tweet_id bigint, 
-  created_unixtime bigint, 
-  created_time string, 
-  displayname string, 
-  msg string,
-  fulltext string
-)
-row format delimited fields terminated by "|"
-location "/tmp/tweets_staging";'
 
 sleep 2
 installNifiService
