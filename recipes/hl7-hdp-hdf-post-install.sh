@@ -698,6 +698,55 @@ enablePhoenix () {
 	/var/lib/ambari-server/resources/scripts/configs.sh set $AMBARI_HOST $CLUSTER_NAME hbase-site hbase.rpc.controllerfactory.class org.apache.hadoop.hbase.ipc.controller.ServerRpcControllerFactory
 }
 
+installSolr () {
+
+	yum install -y lucidworks-hdpsearch
+	#sudo -u hdfs hadoop fs -mkdir /user/solr
+	#sudo -u hdfs hadoop fs -chown solr /user/solr
+	cd /opt/lucidworks-hdpsearch/solr/server/solr/configsets/data_driven_schema_configs/conf
+	mv -f solrconfig.xml solrconfig_bk.xml
+
+	cat <<EOF > /opt/lucidworks-hdpsearch/solr/server/solr/configsets/data_driven_schema_configs/conf/stopwords.txt
+	adjustments
+	Admitted
+	because
+	blood
+	changes
+	complained
+	Discharged
+	Discussed
+	Drew
+	Evaluated
+	for
+	hospital
+	me
+	medication
+	of
+	patient
+	Performed
+	Prescribed
+	Reason
+	Recommended
+	Started
+	tests
+	The
+	to
+	treatment
+	visit
+	Visited
+	was
+	EOF
+
+
+	/opt/lucidworks-hdpsearch/solr/bin/solr start -c -z $AMBARI_HOST:2181
+	/opt/lucidworks-hdpsearch/solr/bin/solr create -c hl7_messages -d data_driven_schema_configs -s 1 -rf 1 
+	yum install -y ntp
+	service ntpd stop
+	ntpdate pool.ntp.org
+	service ntpd start
+	cd
+}
+
 #echo "*********************************Download Configurations"
 #git clone https://github.com/vakshorton/CloudBreakArtifacts
 #cd CloudBreakArtifacts
@@ -846,55 +895,7 @@ else
        	echo "*********************************STREAMLINE Service Started..."
 fi
 
-
-yum install -y lucidworks-hdpsearch
-#sudo -u hdfs hadoop fs -mkdir /user/solr
-#sudo -u hdfs hadoop fs -chown solr /user/solr
-cd /opt/lucidworks-hdpsearch/solr/server/solr/configsets/data_driven_schema_configs/conf
-mv -f solrconfig.xml solrconfig_bk.xml
-
-cat <<EOF > /opt/lucidworks-hdpsearch/solr/server/solr/configsets/data_driven_schema_configs/conf/stopwords.txt
-adjustments
-Admitted
-because
-blood
-changes
-complained
-Discharged
-Discussed
-Drew
-Evaluated
-for
-hospital
-me
-medication
-of
-patient
-Performed
-Prescribed
-Reason
-Recommended
-Started
-tests
-The
-to
-treatment
-visit
-Visited
-was
-EOF
-
-
-/opt/lucidworks-hdpsearch/solr/bin/solr start -c -z $AMBARI_HOST:2181
-/opt/lucidworks-hdpsearch/solr/bin/solr create -c hl7_messages \
-   -d data_driven_schema_configs \
-   -s 1 \
-   -rf 1 
-yum install -y ntp
-service ntpd stop
-ntpdate pool.ntp.org
-service ntpd start
-cd
+installSolr
 
 sleep 2
 installNifiService
