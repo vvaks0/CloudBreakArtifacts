@@ -725,16 +725,16 @@ installSolr (){
 	sudo -u hdfs hadoop fs -chmod -R 777 /tmp/tweets_staging
 
 
-	#sudo -u hdfs hive -e 'create table if not exists tweets_text_partition(
-  	#tweet_id bigint, 
-  	#created_unixtime bigint, 
-  	#created_time string, 
-  	#displayname string, 
- 	#msg string,
- 	#fulltext string
-	#)
-	#row format delimited fields terminated by "|"
-	#location "/tmp/tweets_staging";'
+	sudo -u hdfs hive -e 'create table if not exists tweets_text_partition(
+  	tweet_id bigint, 
+  	created_unixtime bigint, 
+  	created_time string, 
+  	displayname string, 
+ 	msg string,
+ 	fulltext string
+	)
+	row format delimited fields terminated by "|"
+	location "/tmp/tweets_staging";'
 }
 
 #echo "*********************************Download Configurations"
