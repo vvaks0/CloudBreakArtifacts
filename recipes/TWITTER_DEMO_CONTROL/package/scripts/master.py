@@ -12,18 +12,22 @@ class DemoControl(Script):
     os.chdir(params.install_dir)
     Execute(params.install_dir + '/CloudBreakArtifacts/recipes/twitter-install.sh ' + params.install_dir)
 
-  #def start(self, env):
-  #  self.configure(env)
-  #  import params
- 
-  #def stop(self, env):
-  #  self.configure(env)
-  #  import params
-    
-  #def status(self, env):
-  #  import params
-  #  env.set_params(params)
-    
+  def start(self, env):
+    self.configure(env)
+    import params
+    Execute( "touch /tmp/twitter_master.pid" )	 
+
+  def stop(self, env):
+    self.configure(env)
+    import params
+    Execute( "rm -f /tmp/twitter_master.pid" )    
+
+  def status(self, env):
+    import params
+    env.set_params(params)
+    twitter_master_pid_file="/tmp/twitter_master.pid"
+    Execute( format("cat {twitter_master_pid_file}") )
+
   def configure(self, env):
     import params
     env.set_params(params)
