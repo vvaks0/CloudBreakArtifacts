@@ -678,6 +678,9 @@ echo "*********************************Install ALARM_FATIGUE_DEMO_CONTROL_SAM se
 git clone https://github.com/ryancicak/northcentral_hackathon $ROOT_PATH/northcentral_hackathon
 cp -Rf $ROOT_PATH/northcentral_hackathon/CloudBreakArtifacts/recipes/ALARM_FATIGUE_DEMO_CONTROL /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/
 
+echo "*********************************Install TWITTER_DEMO_CONTROL service..."
+cp -Rf $ROOT_PATH/CloudBreakArtifacts/recipes/TWITTER_DEMO_CONTROL /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/
+
 echo "*********************************Install HDF Management Pack..."
 instalHDFManagementPack 
 sleep 2
