@@ -60,4 +60,4 @@ for dps_cluster in dps_clusters:
     dps_source_cluster_id = str(dps_cluster['id'])
 
 print 'Unregistering Cluster from Dataplane: ' + dps_url+dps_lakes_uri+'/'+dps_source_cluster_id
-requests.delete(url=dps_url+dps_lakes_uri+'/'+dps_source_cluster_id, cookies=cookie, data=payload, headers=headers, verify=False).content
+print 'Result: ' + requests.delete(url=dps_url+dps_lakes_uri+'/'+dps_source_cluster_id, cookies=cookie, data=payload, headers=headers, verify=False).content

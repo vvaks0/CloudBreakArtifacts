@@ -54,8 +54,6 @@ payload = json.dumps(target_policy)
 print 'Add Grant All on Hive Objects to Beacon user : ' + payload
 requests.put(url=ranger_url+ranger_policy_uri+'/'+target_policy_id, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False).content
 
-print 'Waiting...'
-time.sleep(3)
 dlm_clusters = json.loads(requests.get(url=dps_url+dlm_clusters_uri, cookies=cookie, data=payload, headers=headers, verify=False).content)
 
 for dlm_cluster in dlm_clusters['clusters']:
@@ -69,4 +67,4 @@ for dlm_cluster in dlm_clusters['clusters']:
 payload = '[{"clusterId": '+dlm_source_cluster_id+',"beaconUrl": "'+dlm_soruce_cluster_beacon+'"},{"clusterId": '+dlm_dest_cluster_id+',"beaconUrl": "'+dlm_dest_cluster_beacon+'"}]'
 print 'Pairing Cluster with Shared Services: ' + dps_url+dlm_pair_uri
 print 'Payload: ' + payload
-requests.post(url=dps_url+dlm_pair_uri, cookies=cookie, data=payload, headers=headers, verify=False).content
+print 'Result: ' + requests.post(url=dps_url+dlm_pair_uri, cookies=cookie, data=payload, headers=headers, verify=False).content
