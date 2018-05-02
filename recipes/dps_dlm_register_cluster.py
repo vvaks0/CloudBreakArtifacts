@@ -32,17 +32,6 @@ ranger_url = 'http://'+host_name+':'+ranger_port
 ambari_cluster_name = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri, auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_user)).content)['items'][0]['Clusters']['cluster_name']
 ranger_hive_service_name = ambari_cluster_name + '_hive'
 
-token = json.loads(requests.post(url = dps_url+dps_auth_uri, data = '{"username":"'+dps_admin_user+'","password":"'+dps_admin_password+'"}',verify=False).text)['token']
-cookie = {'dp_jwt':token}
-
-requests.get(url = dps_url+'/api/knox/status', cookies = cookie, verify=False).content
-
-headers={'content-type':'application/json'}
-payload = '{"dcName": "DC02","ambariUrl": "http://'+host_name+':'+ambari_port+'","description":" ","location": 7064,"isDatalake": true,"name": "'+ambari_cluster_name+'","state": "TO_SYNC","ambariIpAddress": "http://'+host_ip+':'+ambari_port+'","properties": {"tags": []}}'
-print 'Registering Cluster with Dataplane: ' + dps_url+dps_lakes_uri
-print 'Payload: ' + payload
-requests.post(url=dps_url+dps_lakes_uri, cookies=cookie, data=payload, headers=headers, verify=False).content
-
 payload = '{"name":"'+ranger_hive_service_name+'","description":"","isEnabled":true,"tagService":"","configs":{"username":"hive","password":"hive","jdbc.driverClassName":"org.apache.hive.jdbc.HiveDriver","jdbc.url":"jdbc:hive2://'+host_name+':2181/;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2","commonNameForCertificate":""},"type":"hive"}'
 ranger_hive_service = json.loads(requests.post(url=ranger_url+ranger_service_uri, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False).content)
 print 'Create Ranger Hive Service: ' + payload
@@ -56,6 +45,17 @@ print 'Result: ' + requests.put(url=ranger_url+ranger_policy_uri+'/'+target_poli
 
 print 'Waiting for Ranger Policy to take effect...'
 time.sleep(10)
+
+token = json.loads(requests.post(url = dps_url+dps_auth_uri, data = '{"username":"'+dps_admin_user+'","password":"'+dps_admin_password+'"}',verify=False).text)['token']
+cookie = {'dp_jwt':token}
+
+requests.get(url = dps_url+'/api/knox/status', cookies = cookie, verify=False).content
+
+headers={'content-type':'application/json'}
+payload = '{"dcName": "DC02","ambariUrl": "http://'+host_name+':'+ambari_port+'","description":" ","location": 7064,"isDatalake": true,"name": "'+ambari_cluster_name+'","state": "TO_SYNC","ambariIpAddress": "http://'+host_ip+':'+ambari_port+'","properties": {"tags": []}}'
+print 'Registering Cluster with Dataplane: ' + dps_url+dps_lakes_uri
+print 'Payload: ' + payload
+requests.post(url=dps_url+dps_lakes_uri, cookies=cookie, data=payload, headers=headers, verify=False).content
 
 dlm_clusters = json.loads(requests.get(url=dps_url+dlm_clusters_uri, cookies=cookie, data=payload, headers=headers, verify=False).content)
 
