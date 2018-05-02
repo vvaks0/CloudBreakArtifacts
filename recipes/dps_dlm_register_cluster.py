@@ -28,6 +28,7 @@ ambari_port = '8080'
 host_name = socket.getfqdn()
 host_ip = socket.gethostbyname(socket.gethostname())
 ranger_url = 'http://'+host_name+':'+ranger_port
+headers={'content-type':'application/json'}
 
 ambari_cluster_name = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri, auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_user)).content)['items'][0]['Clusters']['cluster_name']
 ranger_hive_service_name = ambari_cluster_name + '_hive'
@@ -51,7 +52,6 @@ cookie = {'dp_jwt':token}
 
 requests.get(url = dps_url+'/api/knox/status', cookies = cookie, verify=False).content
 
-headers={'content-type':'application/json'}
 payload = '{"dcName": "DC02","ambariUrl": "http://'+host_name+':'+ambari_port+'","description":" ","location": 7064,"isDatalake": true,"name": "'+ambari_cluster_name+'","state": "TO_SYNC","ambariIpAddress": "http://'+host_ip+':'+ambari_port+'","properties": {"tags": []}}'
 print 'Registering Cluster with Dataplane: ' + dps_url+dps_lakes_uri
 print 'Payload: ' + payload
