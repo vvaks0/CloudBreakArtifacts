@@ -1,0 +1,314 @@
+{
+  "configurations": [
+    {
+      "hadoop-env": {
+        "properties_attributes": {},
+        "properties": {
+          "dtnode_heapsize": "1024m",
+          "namenode_heapsize": "1024m",
+          "namenode_opt_maxpermsize": "256m",
+          "nfsgateway_heapsize": "1024m",
+          "namenode_opt_maxnewsize": "200m",
+          "namenode_opt_permsize": "128m"
+        }
+      }
+    },
+    {
+      "core-site": {
+        "properties_attributes": {},
+        "properties": {
+          "fs.defaultFS": "hdfs://%HOSTGROUP::master%:8020",
+          "hadoop.proxyuser.beacon.groups": "*"
+        }
+      }
+    },
+    {
+      "hive-site": {
+        "properties_attributes": {},
+        "properties": {
+          "hive.metastore.dlm.events": "true",
+          "hive.metastore.transactional.event.listeners": "org.apache.hive.hcatalog.listener.DbNotificationListener",
+          "hive.repl.cm.enabled": "true",
+          "hive.repl.cmrootdir": "/apps/hive/cmroot",
+          "hive.repl.rootdir": "/apps/hive/repl"
+        }
+      }
+    },
+    {
+      "admin-properties": {
+        "properties_attributes": {},
+        "properties": {
+          "DB_FLAVOR": "MYSQL",
+          "audit_db_name": "rangeraudit",
+          "db_name": "ranger",
+          "audit_db_user": "rangeraudit",
+          "SQL_CONNECTOR_JAR": "/usr/share/java/mysql-connector-java.jar",
+          "db_user": "ranger",
+          "policymgr_external_url": "http://localhost:6080",
+          "db_host": "localhost:3306",
+          "db_root_user": "rangerdba",
+          "db_root_password": "rangerdba",
+          "db_password": "ranger",
+          "audit_db_password": "ranger"
+        }
+      }
+    },
+    {
+      "ranger-admin-site": {
+        "properties_attributes": {},
+        "properties": {
+          "ranger.jpa.jdbc.url": "jdbc:mysql://localhost:3306/ranger",
+          "ranger.jpa.audit.jdbc.url": "jdbc:mysql://localhost:3306/rangeraudit"
+        }
+      }
+    },
+    {
+      "ranger-ugsync-site": {
+        "properties_attributes": {},
+        "properties": {}
+      }
+    },
+    {
+      "ranger-env": {
+        "properties_attributes": {},
+        "properties": {
+          "admin_password": "admin",
+          "ranger_admin_password": "admin",
+          "is_solrCloud_enabled": "true",
+          "xasecure.audit.destination.solr": "true",
+          "ranger-hdfs-plugin-enabled": "No",
+          "ranger-hive-plugin-enabled": "Yes",
+          "ranger-yarn-plugin-enabled": "No",
+          "ranger-atlas-plugin-enabled": "No"
+        }
+      }
+    },
+    {
+      "ranger-hive-plugin-properties": {
+        "properties_attributes": {},
+        "properties": {
+          "REPOSITORY_CONFIG_USERNAME": "hive",
+          "ranger-hive-plugin-enabled": "yes",
+          "common.name.for.certificate": "",
+          "policy_user": "ambari-qa",
+          "hadoop.rpc.protection": ""
+        }
+      }
+    },
+    {
+      "dpprofiler-env": {
+        "properties_attributes": {},
+        "properties": {
+          "dpprofiler.user": "dpprofiler",
+          "dpprofiler.group": "dpprofiler"
+        }
+      }
+    },
+    {
+      "dpprofiler-config": {
+        "properties_attributes": {},
+        "properties": {
+          "dpprofiler.db.database": "profileragent",
+          "dpprofiler.db.host": "localhost",
+          "dpprofiler.db.type": "h2",
+          "dpprofiler.db.driver": "org.h2.Driver",
+          "dpprofiler.db.slick.driver": "slick.driver.H2Driver$",
+          "dpprofiler.db.user": "profileragent",
+          "dpprofiler.db.password": "profileragent"
+        }
+      }
+    },
+    {
+      "beacon-security-site": {
+        "properties_attributes": {},
+        "properties": {
+          "beacon.username": "beacon",
+          "beacon.password": "beacon",
+          "beacon.ranger.user": "beacon_ranger"
+        }
+      }
+    },
+    {
+      "beacon-env": {
+        "properties_attributes": {},
+        "properties": {
+          "beacon_database": "New Derby Database",
+          "beacon_store_db_name": "beacon",
+          "beacon_group": "beacon",
+          "beacon_user": "beacon",
+          "beacon_store_user": "beacon",
+          "beacon_store_password": "beacon"
+        }
+      }
+    }
+  ],
+  "host_groups": [
+    {
+      "name": "master",
+      "cardinality": "1",
+      "components": [
+        {
+          "name": "ATLAS_SERVER"
+        },
+        {
+          "name": "RANGER_TAGSYNC"
+        },
+        {
+          "name": "RANGER_USERSYNC"
+        },
+        {
+          "name": "RANGER_ADMIN"
+        },
+        {
+          "name": "INFRA_SOLR"
+        },
+        {
+          "name": "HIVE_SERVER"
+        },
+        {
+          "name": "HIVE_METASTORE"
+        },
+        {
+          "name": "WEBHCAT_SERVER"
+        },
+        {
+          "name": "HBASE_MASTER"
+        },
+        {
+          "name": "KAFKA_BROKER"
+        },
+        {
+          "name": "ZOOKEEPER_SERVER"
+        },
+        {
+          "name": "NAMENODE"
+        },
+        {
+          "name": "SECONDARY_NAMENODE"
+        },
+        {
+          "name": "RESOURCEMANAGER"
+        },
+        {
+          "name": "HISTORYSERVER"
+        },
+        {
+          "name": "APP_TIMELINE_SERVER"
+        },
+        {
+          "name": "MYSQL_SERVER"
+        },
+        {
+          "name": "LIVY2_SERVER"
+        },
+        {
+          "name": "BEACON_SERVER"
+        },
+        {
+          "name": "SPARK2_CLIENT"
+        },
+        {
+          "name": "SPARK2_JOBHISTORYSERVER"
+        },
+        {
+          "name": "DATANODE"
+        },
+        {
+          "name": "HCAT"
+        },
+        {
+          "name": "PIG"
+        },
+        {
+          "name": "SLIDER"
+        },
+        {
+          "name": "YARN_CLIENT"
+        },
+        {
+          "name": "HDFS_CLIENT"
+        },
+        {
+          "name": "TEZ_CLIENT"
+        },
+        {
+          "name": "INFRA_SOLR_CLIENT"
+        },
+        {
+          "name": "ZOOKEEPER_CLIENT"
+        },
+        {
+          "name": "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name": "ATLAS_CLIENT"
+        },
+        {
+          "name": "HBASE_CLIENT"
+        },
+        {
+          "name": "HIVE_CLIENT"
+        }
+      ]
+    },
+    {
+      "name": "worker",
+      "cardinality": "1+",
+      "components": [
+        {
+          "name": "NODEMANAGER"
+        },
+        {
+          "name": "DATANODE"
+        },
+        {
+          "name": "HBASE_REGIONSERVER"
+        },
+        {
+          "name": "HCAT"
+        },
+        {
+          "name": "PIG"
+        },
+        {
+          "name": "SLIDER"
+        },
+        {
+          "name": "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name": "YARN_CLIENT"
+        },
+        {
+          "name": "HDFS_CLIENT"
+        },
+        {
+          "name": "SPARK2_CLIENT"
+        },
+        {
+          "name": "INFRA_SOLR_CLIENT"
+        },
+        {
+          "name": "TEZ_CLIENT"
+        },
+        {
+          "name": "ZOOKEEPER_CLIENT"
+        },
+        {
+          "name": "ATLAS_CLIENT"
+        },
+        {
+          "name": "HBASE_CLIENT"
+        },
+        {
+          "name": "HIVE_CLIENT"
+        }
+      ]
+    }
+  ],
+  "Blueprints": {
+    "blueprint_name": "shared-services",
+    "stack_name": "HDP",
+    "stack_version": "2.6"
+  }
+}
