@@ -1,4 +1,4 @@
-#!/bin/python
+#!/usr/bin/python
 
 import requests, json, socket
 from requests.auth import HTTPBasicAuth
