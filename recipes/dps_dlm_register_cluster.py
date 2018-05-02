@@ -45,7 +45,7 @@ print 'Add Grant All on Hive Objects to Beacon user : ' + payload
 print 'Result: ' + requests.put(url=ranger_url+ranger_policy_uri+'/'+target_policy_id, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False).content
 
 print 'Waiting for Ranger Policy to take effect...'
-time.sleep(10)
+time.sleep(5)
 
 token = json.loads(requests.post(url = dps_url+dps_auth_uri, data = '{"username":"'+dps_admin_user+'","password":"'+dps_admin_password+'"}',verify=False).text)['token']
 cookie = {'dp_jwt':token}
@@ -55,7 +55,10 @@ requests.get(url = dps_url+'/api/knox/status', cookies = cookie, verify=False).c
 payload = '{"dcName": "DC02","ambariUrl": "http://'+host_name+':'+ambari_port+'","description":" ","location": 7064,"isDatalake": true,"name": "'+ambari_cluster_name+'","state": "TO_SYNC","ambariIpAddress": "http://'+host_ip+':'+ambari_port+'","properties": {"tags": []}}'
 print 'Registering Cluster with Dataplane: ' + dps_url+dps_lakes_uri
 print 'Payload: ' + payload
-requests.post(url=dps_url+dps_lakes_uri, cookies=cookie, data=payload, headers=headers, verify=False).content
+print 'Result: ' + requests.post(url=dps_url+dps_lakes_uri, cookies=cookie, data=payload, headers=headers, verify=False).content
+
+print 'Waiting for DPS registration to take effect...'
+time.sleep(3)
 
 dlm_clusters = json.loads(requests.get(url=dps_url+dlm_clusters_uri, cookies=cookie, data=payload, headers=headers, verify=False).content)
 
