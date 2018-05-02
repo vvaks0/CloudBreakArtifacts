@@ -55,7 +55,7 @@ print 'Add Grant All on Hive Objects to Beacon user : ' + payload
 print 'Result: ' + requests.put(url=ranger_url+ranger_policy_uri+'/'+target_policy_id, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False).content
 
 print 'Waiting for Ranger Policy to take effect...'
-time.sleep(3)
+time.sleep(10)
 
 dlm_clusters = json.loads(requests.get(url=dps_url+dlm_clusters_uri, cookies=cookie, data=payload, headers=headers, verify=False).content)
 
