@@ -45,7 +45,7 @@ print 'Add Grant All on Hive Objects to Beacon user : ' + payload
 print 'Result: ' + requests.put(url=ranger_url+ranger_policy_uri+'/'+target_policy_id, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False).content
 
 print 'Waiting for Ranger Policy to take effect...'
-time.sleep(5)
+time.sleep(31)
 
 token = json.loads(requests.post(url = dps_url+dps_auth_uri, data = '{"username":"'+dps_admin_user+'","password":"'+dps_admin_password+'"}',verify=False).text)['token']
 cookie = {'dp_jwt':token}
