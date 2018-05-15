@@ -1,7 +1,10 @@
 #!/bin/bash
 echo "CREATE DATABASE ranger;" | sudo -u postgres psql -U postgres
 echo "CREATE USER rangerdba WITH PASSWORD 'rangerdba';" | sudo -u postgres psql -U postgres
+echo "CREATE USER rangeradmin WITH PASSWORD 'ranger'" | sudo -u postgres psql -U postgres
 echo "GRANT ALL PRIVILEGES ON DATABASE ranger TO rangerdba;" | sudo -u postgres psql -U postgres
+echo "GRANT ALL PRIVILEGES ON DATABASE ranger TO rangeradmin;" | sudo -u postgres psql -U postgres
+
 
 ambari-server setup --jdbc-db=postgres --jdbc-driver=/usr/share/java/postgresql-jdbc.jar
 
