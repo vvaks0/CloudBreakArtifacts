@@ -1,0 +1,352 @@
+{
+  "configurations": [
+    {
+      "yarn-site": {
+        "properties": {
+          "yarn.nodemanager.resource.cpu-vcores": "6",
+          "yarn.nodemanager.resource.memory-mb": "12288",
+          "yarn.scheduler.maximum-allocation-mb": "12288"
+        }
+      }
+    },
+    {
+      "capacity-scheduler": {
+        "properties": {
+          "yarn.scheduler.capacity.maximum-am-resource-percent": "0.5",
+          "yarn.scheduler.capacity.root.queues": "default,llap",
+          "yarn.scheduler.capacity.root.capacity": "100",
+          "yarn.scheduler.capacity.root.default.capacity": "50",
+          "yarn.scheduler.capacity.root.default.maximum-capacity": "100",
+          "yarn.scheduler.capacity.root.llap.maximum-capacity": "100",
+          "yarn.scheduler.capacity.root.llap.capacity": "50"
+        }
+      }
+    },
+    {
+      "core-site": {
+        "fs.trash.interval": "4320"
+      }
+    },
+    {
+      "hdfs-site": {
+        "dfs.namenode.safemode.threshold-pct": "0.99"
+      }
+    },
+    {
+      "mapred-site": {
+        "mapreduce.job.reduce.slowstart.completedmaps": "0.7",
+        "mapreduce.map.output.compress": "true",
+        "mapreduce.output.fileoutputformat.compress": "true"
+      }
+    },
+    {
+      "druid-common": {
+        "properties_attributes": {},
+        "properties": {
+          "druid.metadata.storage.type": "mysql",
+          "druid.metadata.storage.connector.user": "druid",
+          "druid.metadata.storage.connector.password": "druid",
+          "druid.metadata.storage.connector.connectURI": "jdbc:mysql://%HOSTGROUP::master%:3306/druid?createDatabaseIfNotExist=true",
+          "druid.extensions.loadList": "[\"mysql-metadata-storage\", \"druid-s3-extensions\", \"druid-datasketches\", \"druid-hdfs-storage\", \"druid-kafka-indexing-service\"]",
+          "druid.selectors.indexing.serviceName": "druid/overlord",
+          "druid.storage.type": "hdfs"
+        }
+      }
+    },
+    {
+      "druid-overlord": {
+        "properties_attributes": {},
+        "properties": {
+          "druid.indexer.storage.type": "metadata",
+          "druid.indexer.runner.type": "remote",
+          "druid.service": "druid/overlord",
+          "druid.port": "8090"
+        }
+      }
+    },
+    {
+      "druid-middlemanager": {
+        "properties_attributes": {},
+        "properties": {
+          "druid.server.http.numThreads": "50",
+          "druid.worker.capacity": "3",
+          "druid.processing.numThreads": "2",
+          "druid.indexer.runner.javaOpts": "-server -Xmx2g -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dhdp.version={{stack_version}} -Dhadoop.mapreduce.job.classloader=true",
+          "druid.service": "druid/middlemanager",
+          "druid.port": "8091"
+        }
+      }
+    },
+    {
+      "druid-coordinator": {
+        "properties_attributes": {},
+        "properties": {
+          "druid.coordinator.merge.on": "false",
+          "druid.port": "8081"
+        }
+      }
+    },
+    {
+      "druid-historical": {
+        "properties_attributes": {},
+        "properties": {
+          "druid.server.http.numThreads": "50",
+          "druid.processing.numThreads": "10",
+          "druid.service": "druid/historical",
+          "druid.port": "8083",
+          "druid.server.maxSize": "300000000000"
+        }
+      }
+    },
+    {
+      "druid-broker": {
+        "properties_attributes": {},
+        "properties": {
+          "druid.cache.type": "local",
+          "druid.server.http.numThreads": "50",
+          "druid.broker.http.numConnections": "5",
+          "druid.processing.numThreads": "2",
+          "druid.service": "druid/broker",
+          "druid.port": "8082"
+        }
+      }
+    },
+    {
+      "druid-router": {
+        "properties_attributes": {},
+        "properties": {}
+      }
+    },
+    {
+      "superset": {
+        "properties_attributes": {},
+        "properties": {
+          "SECRET_KEY": "123admin123",
+          "SUPERSET_DATABASE_TYPE": "sqlite"
+        }
+      }
+    },
+    {
+      "hive-interactive-env": {
+        "enable_hive_interactive": "true",
+        "num_llap_nodes": "1",
+        "num_llap_nodes_for_llap_daemons": "1"
+      }
+    },
+    {
+      "hive-interactive-site": {
+        "hive.tez.container.size": "3072",
+        "llap_heap_size": "8192",
+        "hive_heapsize": "2048",
+        "hive.llap.daemon.yarn.container.mb": "10240",
+        "hive.llap.daemon.num.executors": "6",
+        "hive.llap.io.threadpool.size": "6",
+        "hive.llap.io.memory.size": "1024",
+        "hive.exec.orc.split.strategy": "BI",
+        "hive.stats.fetch.bitvector": "true",
+        "hive.druid.metadata.uri": "jdbc:mysql://%HOSTGROUP::master%:3306/druid?createDatabaseIfNotExist=true",
+        "hive.metastore.rawstore.impl": "org.apache.hadoop.hive.metastore.cache.CachedStore"
+      }
+    },
+    {
+      "hive-site": {
+        "hive.exec.compress.output": "true",
+        "hive.merge.mapfiles": "true",
+        "hive.server2.tez.initialize.default.sessions": "true",
+        "hive.server2.transport.mode": "http"
+      }
+    },
+    {
+      "tez-site": {
+        "tez.runtime.shuffle.parallel.copies": "4",
+        "tez.runtime.enable.final-merge.in.output": "false",
+        "tez.am.am-rm.heartbeat.interval-ms.max": "2000"
+      }
+    },
+    {
+      "application-properties": {
+        "properties": {
+          "atlas.feature.taxonomy.enable": "true"
+        }
+      }
+    }
+  ],
+  "host_groups": [
+    {
+      "name": "master",
+      "cardinality": "1",
+      "components": [
+        {
+          "name": "DRUID_OVERLORD"
+        },
+        {
+          "name": "DRUID_COORDINATOR"
+        },
+        {
+          "name": "DRUID_BROKER"
+        },
+        {
+          "name": "DRUID_ROUTER"
+        },
+        {
+          "name": "SUPERSET"
+        },
+        {
+          "name": "LIVY2_SERVER"
+        },
+        {
+          "name": "SPARK2_JOBHISTORYSERVER"
+        },
+        {
+          "name": "ATLAS_SERVER"
+        },
+        {
+          "name": "INFRA_SOLR"
+        },
+        {
+          "name": "HIVE_SERVER"
+        },
+        {
+          "name": "HIVE_SERVER_INTERACTIVE"
+        },
+        {
+          "name": "HIVE_METASTORE"
+        },
+        {
+          "name": "WEBHCAT_SERVER"
+        },
+        {
+          "name": "HBASE_MASTER"
+        },
+        {
+          "name": "KAFKA_BROKER"
+        },
+        {
+          "name": "ZOOKEEPER_SERVER"
+        },
+        {
+          "name": "NAMENODE"
+        },
+        {
+          "name": "SECONDARY_NAMENODE"
+        },
+        {
+          "name": "RESOURCEMANAGER"
+        },
+        {
+          "name": "HISTORYSERVER"
+        },
+        {
+          "name": "APP_TIMELINE_SERVER"
+        },
+        {
+          "name": "DATANODE"
+        },
+        {
+          "name": "HCAT"
+        },
+        {
+          "name": "PIG"
+        },
+        {
+          "name": "SLIDER"
+        },
+        {
+          "name": "YARN_CLIENT"
+        },
+        {
+          "name": "HDFS_CLIENT"
+        },
+        {
+          "name": "TEZ_CLIENT"
+        },
+        {
+          "name": "INFRA_SOLR_CLIENT"
+        },
+        {
+          "name": "ZOOKEEPER_CLIENT"
+        },
+        {
+          "name": "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name": "SPARK2_CLIENT"
+        },
+        {
+          "name": "ATLAS_CLIENT"
+        },
+        {
+          "name": "HBASE_CLIENT"
+        },
+        {
+          "name": "HIVE_CLIENT"
+        }
+      ]
+    },
+    {
+      "name": "worker",
+      "cardinality": "1+",
+      "components": [
+        {
+          "name": "NODEMANAGER"
+        },
+        {
+          "name": "DATANODE"
+        },
+        {
+          "name": "HBASE_REGIONSERVER"
+        },
+        {
+          "name": "DRUID_HISTORICAL"
+        },
+        {
+          "name": "DRUID_MIDDLEMANAGER"
+        },
+        {
+          "name": "HCAT"
+        },
+        {
+          "name": "PIG"
+        },
+        {
+          "name": "SLIDER"
+        },
+        {
+          "name": "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name": "YARN_CLIENT"
+        },
+        {
+          "name": "HDFS_CLIENT"
+        },
+        {
+          "name": "INFRA_SOLR_CLIENT"
+        },
+        {
+          "name": "TEZ_CLIENT"
+        },
+        {
+          "name": "ZOOKEEPER_CLIENT"
+        },
+        {
+          "name": "SPARK2_CLIENT"
+        },
+        {
+          "name": "ATLAS_CLIENT"
+        },
+        {
+          "name": "HBASE_CLIENT"
+        },
+        {
+          "name": "HIVE_CLIENT"
+        }
+      ]
+    }
+  ],
+  "Blueprints": {
+    "blueprint_name": "historian-multi-node",
+    "stack_name": "HDP",
+    "stack_version": "2.6"
+  }
+}

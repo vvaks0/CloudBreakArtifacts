@@ -1,0 +1,257 @@
+{
+  "configurations": [
+    {
+      "hbase-site": {
+        "properties_attributes": {},
+        "properties": {
+          "phoenix.query.timeoutMs": "60000",
+          "phoenix.functions.allowUserDefinedFunctions": "true",
+          "hbase.regionserver.wal.codec": "org.apache.hadoop.hbase.regionserver.wal.IndexedWALEditCodec",
+          "hbase.defaults.for.version.skip": "true",
+          "hbase.region.server.rpc.scheduler.factory.class": "org.apache.hadoop.hbase.ipc.PhoenixRpcSchedulerFactory",
+          "hbase.rpc.controllerfactory.class": "org.apache.hadoop.hbase.ipc.controller.ServerRpcControllerFactory"
+        }
+      }
+    },
+    {
+      "hive-site": {
+        "properties_attributes": {},
+        "properties": {
+          "hive_txn_acid": "on",
+          "hive.support.concurrency": "true",
+          "hive.compactor.initiator.on": "true",
+          "hive.compactor.worker.threads": "1",
+          "hive.exec.dynamic.partition.mode": "nonstrict",
+          "hive.txn.manager": "org.apache.hadoop.hive.ql.lockmgr.DbTxnManager"
+        }
+      }
+    },
+    {
+      "druid-overlord": {
+        "properties_attributes": {},
+        "properties": {
+          "druid.indexer.storage.type": "metadata",
+          "druid.indexer.runner.type": "remote",
+          "druid.service": "druid/overlord",
+          "druid.port": "8090"
+        }
+      }
+    },
+    {
+      "druid-middlemanager": {
+        "properties_attributes": {},
+        "properties": {
+          "druid.server.http.numThreads": "50",
+          "druid.worker.capacity": "3",
+          "druid.processing.numThreads": "2",
+          "druid.indexer.runner.javaOpts": "-server -Xmx2g -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dhdp.version={{stack_version}} -Dhadoop.mapreduce.job.classloader=true",
+          "druid.service": "druid/middlemanager",
+          "druid.port": "8091"
+        }
+      }
+    },
+    {
+      "druid-coordinator": {
+        "properties_attributes": {},
+        "properties": {
+          "druid.coordinator.merge.on": "false",
+          "druid.port": "8081"
+        }
+      }
+    },
+    {
+      "druid-historical": {
+        "properties_attributes": {},
+        "properties": {
+          "druid.server.http.numThreads": "50",
+          "druid.processing.numThreads": "10",
+          "druid.service": "druid/historical",
+          "druid.port": "8083",
+          "druid.server.maxSize": "300000000000"
+        }
+      }
+    },
+    {
+      "druid-broker": {
+        "properties_attributes": {},
+        "properties": {
+          "druid.cache.type": "local",
+          "druid.server.http.numThreads": "50",
+          "druid.broker.http.numConnections": "5",
+          "druid.processing.numThreads": "2",
+          "druid.service": "druid/broker",
+          "druid.port": "8082"
+        }
+      }
+    },
+    {
+      "druid-router": {
+        "properties_attributes": {},
+        "properties": {}
+      }
+    },
+    {
+      "superset": {
+        "properties_attributes": {},
+        "properties": {
+          "SECRET_KEY": "123admin123",
+          "SUPERSET_DATABASE_TYPE": "sqlite"
+        }
+      }
+    }
+  ],
+  "host_groups": [
+    {
+      "name": "master",
+      "cardinality": "1",
+      "components": [
+        {
+          "name": "NODEMANAGER"
+        },
+        {
+          "name": "DATANODE"
+        },
+        {
+          "name": "HISTORYSERVER"
+        },
+        {
+          "name": "NAMENODE"
+        },
+        {
+          "name": "SECONDARY_NAMENODE"
+        },
+        {
+          "name": "HIVE_SERVER"
+        },
+        {
+          "name": "HIVE_METASTORE"
+        },
+        {
+          "name": "WEBHCAT_SERVER"
+        },
+        {
+          "name": "ATLAS_SERVER"
+        },
+        {
+          "name": "INFRA_SOLR"
+        },
+        {
+          "name": "ZOOKEEPER_SERVER"
+        },
+        {
+          "name": "APP_TIMELINE_SERVER"
+        },
+        {
+          "name": "RESOURCEMANAGER"
+        },
+        {
+          "name": "HBASE_MASTER"
+        },
+        {
+          "name": "PHOENIX_QUERY_SERVER"
+        },
+        {
+          "name": "KAFKA_BROKER"
+        },
+        {
+          "name": "AMBARI_SERVER"
+        },
+        {
+          "name": "TEZ_CLIENT"
+        },
+        {
+          "name": "ZOOKEEPER_CLIENT"
+        },
+        {
+          "name": "YARN_CLIENT"
+        },
+        {
+          "name": "HDFS_CLIENT"
+        },
+        {
+          "name": "INFRA_SOLR_CLIENT"
+        },
+        {
+          "name": "HCAT"
+        },
+        {
+          "name": "PIG"
+        },
+        {
+          "name": "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name": "SLIDER"
+        },
+        {
+          "name": "ZOOKEEPER_SERVER"
+        },
+        {
+          "name": "ATLAS_CLIENT"
+        },
+        {
+          "name": "HBASE_CLIENT"
+        },
+        {
+          "name": "HIVE_CLIENT"
+        }
+      ]
+    },
+    {
+      "name": "worker",
+      "cardinality": "1+",
+      "components": [
+        {
+          "name": "NODEMANAGER"
+        },
+        {
+          "name": "YARN_CLIENT"
+        },
+        {
+          "name": "HDFS_CLIENT"
+        },
+        {
+          "name": "INFRA_SOLR_CLIENT"
+        },
+        {
+          "name": "TEZ_CLIENT"
+        },
+        {
+          "name": "ZOOKEEPER_CLIENT"
+        },
+        {
+          "name": "HCAT"
+        },
+        {
+          "name": "PIG"
+        },
+        {
+          "name": "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name": "SLIDER"
+        },
+        {
+          "name": "ATLAS_CLIENT"
+        },
+        {
+          "name": "HBASE_REGIONSERVER"
+        },
+        {
+          "name": "DATANODE"
+        },
+        {
+          "name": "HBASE_CLIENT"
+        },
+        {
+          "name": "HIVE_CLIENT"
+        }
+      ]
+    }
+  ],
+  "Blueprints": {
+    "blueprint_name": "connected-platform",
+    "stack_name": "HDP",
+    "stack_version": "2.6"
+  }
+}
