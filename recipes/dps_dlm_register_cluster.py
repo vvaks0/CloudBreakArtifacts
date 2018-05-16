@@ -14,7 +14,7 @@ ambari_admin_password = 'admin'
 ranger_admin_user = 'admin'
 ranger_admin_password = 'admin'
 
-dps_url = sys.argv[1]
+dps_url = 'https://' + sys.argv[1]
 dps_auth_uri = '/auth/in'
 dps_lakes_uri = '/api/lakes'
 dlm_clusters_uri = '/dlm/api/clusters'
@@ -63,7 +63,7 @@ print 'Waiting for DPS registration to take effect...'
 time.sleep(3)
 
 if len(sys.argv) == 3:
-  target_cluster_name = 'https://'+sys.argv[2]
+  target_cluster_name = sys.argv[2]
   dlm_clusters = json.loads(requests.get(url=dps_url+dlm_clusters_uri, cookies=cookie, data=payload, headers=headers, verify=False).content)
 
   for dlm_cluster in dlm_clusters['clusters']:
