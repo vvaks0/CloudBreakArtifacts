@@ -3,8 +3,8 @@
 import requests, json, socket, time, sys
 from requests.auth import HTTPBasicAuth
 
-if len(sys.argv) == 2:
-  print 'Need two arguments [dps_host_name] and [target_cluster_name]'
+if len(sys.argv) == 0:
+  print 'Need at least 1 argument [dps_host_name] and at most 2 arguments [target_cluster_name]'
   exit(1)
 
 dps_admin_user = 'admin'
