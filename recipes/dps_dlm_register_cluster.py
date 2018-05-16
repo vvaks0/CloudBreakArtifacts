@@ -1,7 +1,11 @@
 #!/usr/bin/python
 
-import requests, json, socket, time
+import requests, json, socket, time, sys
 from requests.auth import HTTPBasicAuth
+
+if len(sys.argv) == 2:
+  print 'Need two arguments [dps_host_name] and [target_cluster_name]'
+  exit(1)
 
 dps_admin_user = 'admin'
 dps_admin_password = 'admin'
@@ -10,7 +14,7 @@ ambari_admin_password = 'admin'
 ranger_admin_user = 'admin'
 ranger_admin_password = 'admin'
 
-dps_url = 'https://ec2-34-198-128-111.compute-1.amazonaws.com'
+dps_url = sys.argv[0]
 dps_auth_uri = '/auth/in'
 dps_lakes_uri = '/api/lakes'
 dlm_clusters_uri = '/dlm/api/clusters'
@@ -20,7 +24,7 @@ ranger_service_uri = '/service/public/v2/api/service'
 ranger_policy_uri = '/service/public/v2/api/policy'
 ranger_hive_allpolicy_search_string = 'all%20-%20database,%20table,%20column'
 
-shared_services_cluster_name = 'sharedservices'
+target_cluster_name = sys.argv[1]
 
 ranger_port = '6080'
 ambari_port = '8080'
@@ -60,17 +64,18 @@ print 'Result: ' + requests.post(url=dps_url+dps_lakes_uri, cookies=cookie, data
 print 'Waiting for DPS registration to take effect...'
 time.sleep(3)
 
-dlm_clusters = json.loads(requests.get(url=dps_url+dlm_clusters_uri, cookies=cookie, data=payload, headers=headers, verify=False).content)
+if len(sys.argv) == 2:
+  dlm_clusters = json.loads(requests.get(url=dps_url+dlm_clusters_uri, cookies=cookie, data=payload, headers=headers, verify=False).content)
 
-for dlm_cluster in dlm_clusters['clusters']:
-  if dlm_cluster['name'] == ambari_cluster_name:
-    dlm_source_cluster_id = str(dlm_cluster['id'])
-    dlm_soruce_cluster_beacon = dlm_cluster['beaconUrl']
-  elif dlm_cluster['name'] == shared_services_cluster_name:
-    dlm_dest_cluster_id = str(dlm_cluster['id'])
-    dlm_dest_cluster_beacon = dlm_cluster['beaconUrl']
+  for dlm_cluster in dlm_clusters['clusters']:
+    if dlm_cluster['name'] == ambari_cluster_name:
+      dlm_source_cluster_id = str(dlm_cluster['id'])
+      dlm_soruce_cluster_beacon = dlm_cluster['beaconUrl']
+    elif dlm_cluster['name'] == target_cluster_cluster_name:
+      dlm_dest_cluster_id = str(dlm_cluster['id'])
+      dlm_dest_cluster_beacon = dlm_cluster['beaconUrl']
 
-payload = '[{"clusterId": '+dlm_source_cluster_id+',"beaconUrl": "'+dlm_soruce_cluster_beacon+'"},{"clusterId": '+dlm_dest_cluster_id+',"beaconUrl": "'+dlm_dest_cluster_beacon+'"}]'
-print 'Pairing Cluster with Shared Services: ' + dps_url+dlm_pair_uri
-print 'Payload: ' + payload
-print 'Result: ' + requests.post(url=dps_url+dlm_pair_uri, cookies=cookie, data=payload, headers=headers, verify=False).content
+  payload = '[{"clusterId": '+dlm_source_cluster_id+',"beaconUrl": "'+dlm_soruce_cluster_beacon+'"},{"clusterId": '+dlm_dest_cluster_id+',"beaconUrl": "'+dlm_dest_cluster_beacon+'"}]'
+  print 'Pairing Cluster with Shared Services: ' + dps_url+dlm_pair_uri
+  print 'Payload: ' + payload
+  print 'Result: ' + requests.post(url=dps_url+dlm_pair_uri, cookies=cookie, data=payload, headers=headers, verify=False).content
