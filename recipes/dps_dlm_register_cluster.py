@@ -63,7 +63,7 @@ print 'Waiting for DPS registration to take effect...'
 time.sleep(3)
 
 if len(sys.argv) == 3:
-  target_cluster_name = 'https://'sys.argv[2]
+  target_cluster_name = 'https://'+sys.argv[2]
   dlm_clusters = json.loads(requests.get(url=dps_url+dlm_clusters_uri, cookies=cookie, data=payload, headers=headers, verify=False).content)
 
   for dlm_cluster in dlm_clusters['clusters']:
