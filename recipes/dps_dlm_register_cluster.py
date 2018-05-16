@@ -3,7 +3,7 @@
 import requests, json, socket, time, sys
 from requests.auth import HTTPBasicAuth
 
-if len(sys.argv) == 0:
+if len(sys.argv) < 2:
   print 'Need at least 1 argument [dps_host_name] and at most 2 arguments [target_cluster_name]'
   exit(1)
 
@@ -14,7 +14,7 @@ ambari_admin_password = 'admin'
 ranger_admin_user = 'admin'
 ranger_admin_password = 'admin'
 
-dps_url = sys.argv[0]
+dps_url = sys.argv[1]
 dps_auth_uri = '/auth/in'
 dps_lakes_uri = '/api/lakes'
 dlm_clusters_uri = '/dlm/api/clusters'
@@ -24,7 +24,7 @@ ranger_service_uri = '/service/public/v2/api/service'
 ranger_policy_uri = '/service/public/v2/api/policy'
 ranger_hive_allpolicy_search_string = 'all%20-%20database,%20table,%20column'
 
-target_cluster_name = sys.argv[1]
+target_cluster_name = sys.argv[2]
 
 ranger_port = '6080'
 ambari_port = '8080'
