@@ -24,8 +24,6 @@ ranger_service_uri = '/service/public/v2/api/service'
 ranger_policy_uri = '/service/public/v2/api/policy'
 ranger_hive_allpolicy_search_string = 'all%20-%20database,%20table,%20column'
 
-target_cluster_name = sys.argv[2]
-
 ranger_port = '6080'
 ambari_port = '8080'
 
@@ -64,7 +62,8 @@ print 'Result: ' + requests.post(url=dps_url+dps_lakes_uri, cookies=cookie, data
 print 'Waiting for DPS registration to take effect...'
 time.sleep(3)
 
-if len(sys.argv) == 2:
+if len(sys.argv) == 3:
+  target_cluster_name = sys.argv[2]
   dlm_clusters = json.loads(requests.get(url=dps_url+dlm_clusters_uri, cookies=cookie, data=payload, headers=headers, verify=False).content)
 
   for dlm_cluster in dlm_clusters['clusters']:
