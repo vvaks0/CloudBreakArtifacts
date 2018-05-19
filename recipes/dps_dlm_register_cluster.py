@@ -19,6 +19,7 @@ dps_auth_uri = '/auth/in'
 dps_lakes_uri = '/api/lakes'
 dlm_clusters_uri = '/dlm/api/clusters'
 dlm_pair_uri = '/dlm/api/pair'
+dlm_pair_uri = '/dlm/api/pair'
 ambari_clusters_uri = '/api/v1/clusters'
 ranger_service_uri = '/service/public/v2/api/service'
 ranger_policy_uri = '/service/public/v2/api/policy'
@@ -69,17 +70,28 @@ time.sleep(3)
 
 if len(sys.argv) == 4:
   target_cluster_name = sys.argv[2]
+  target_dataset_name = sys.argv[3]
   dlm_clusters = json.loads(requests.get(url=dps_url+dlm_clusters_uri, cookies=cookie, data=payload, headers=headers, verify=False).content)
 
   for dlm_cluster in dlm_clusters['clusters']:
     if dlm_cluster['name'] == ambari_cluster_name:
-      dlm_source_cluster_id = str(dlm_cluster['id'])
-      dlm_soruce_cluster_beacon = dlm_cluster['beaconUrl']
-    elif dlm_cluster['name'] == target_cluster_name:
       dlm_dest_cluster_id = str(dlm_cluster['id'])
+      dlm_dest_cluster_name = str(dlm_cluster['name'])
       dlm_dest_cluster_beacon = dlm_cluster['beaconUrl']
+      dlm_dest_cluster_dc = dlm_cluster['dataCenter']
+    elif dlm_cluster['name'] == target_cluster_name:
+      dlm_source_cluster_id = str(dlm_cluster['id'])
+      dlm_source_cluster_name = str(dlm_cluster['name'])
+      dlm_source_cluster_beacon = dlm_cluster['beaconUrl']
+      dlm_source_cluster_dc = dlm_cluster['dataCenter']
 
   payload = '[{"clusterId": '+dlm_source_cluster_id+',"beaconUrl": "'+dlm_soruce_cluster_beacon+'"},{"clusterId": '+dlm_dest_cluster_id+',"beaconUrl": "'+dlm_dest_cluster_beacon+'"}]'
   print 'Pairing Cluster with Shared Services: ' + dps_url+dlm_pair_uri
   print 'Payload: ' + payload
   print 'Result: ' + requests.post(url=dps_url+dlm_pair_uri, cookies=cookie, data=payload, headers=headers, verify=False).content
+
+  replicationPolicyName = 'hive-'+target_dataset-name+'-'+dlm_source_cluster_name+'-'+dlm_source_dest_dc
+  payload = '{"policyDefinition": {"name": "'+replicationPolicyName+'","type": "HIVE","sourceCluster": "'+dlm_source_cluster_dc+'$'+dlm_source_cluster_name+'","targetCluster": "'+dlm_source_cluster_dc+'$'+dlm_source_cluster_name+'","frequencyInSec": 3600,"sourceDataset": "'+target_dataset_name+'"},"submitType": "SUBMIT_AND_SCHEDULE"}'
+  print 'Enabling replication policy: ' + replicationPolicyName + ' to: '+dps_url+dlm_clusters_uri+'/'+dlm_dest_cluster_id+'/policy/'+replicationPolicyName+'/submit'
+  print 'Payload: ' + payload
+  print 'Result: ' + requests.post(url=dps_url+dlm_clusters_uri, cookies=cookie, data=payload, headers=headers, verify=False).content
