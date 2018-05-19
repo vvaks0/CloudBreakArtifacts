@@ -41,7 +41,7 @@ ranger_update_result = requests.post(url=ranger_url+ranger_service_uri, auth=HTT
 
 if ranger_update_result == 400:
   print json.loads(ranger_update_result.content)['msgDesc']
-else
+else:
   ranger_hive_service = json.loads(ranger_update_result.content)
   print 'Create Ranger Hive Service: ' + payload
   ranger_hive_service_id = str(ranger_hive_service['id'])
