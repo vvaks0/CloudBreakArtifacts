@@ -67,7 +67,7 @@ print 'Result: ' + requests.post(url=dps_url+dps_lakes_uri, cookies=cookie, data
 print 'Waiting for DPS registration to take effect...'
 time.sleep(3)
 
-if len(sys.argv) == 3:
+if len(sys.argv) == 4:
   target_cluster_name = sys.argv[2]
   dlm_clusters = json.loads(requests.get(url=dps_url+dlm_clusters_uri, cookies=cookie, data=payload, headers=headers, verify=False).content)
 
