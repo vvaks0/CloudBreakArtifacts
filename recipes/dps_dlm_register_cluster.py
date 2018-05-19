@@ -38,7 +38,7 @@ ranger_hive_service_name = ambari_cluster_name + '_hive'
 payload = '{"name":"'+ranger_hive_service_name+'","description":"","isEnabled":true,"tagService":"","configs":{"username":"hive","password":"hive","jdbc.driverClassName":"org.apache.hive.jdbc.HiveDriver","jdbc.url":"jdbc:hive2://'+host_name+':2181/;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2","commonNameForCertificate":""},"type":"hive"}'
 
 ranger_update_result = requests.post(url=ranger_url+ranger_service_uri, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False)
-
+print ranger_update_result
 if ranger_update_result == '400':
   print json.loads(ranger_update_result.content)['msgDesc']
 else:
