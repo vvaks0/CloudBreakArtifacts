@@ -36,18 +36,23 @@ ambari_cluster_name = json.loads(requests.get('http://'+host_name+':'+ambari_por
 ranger_hive_service_name = ambari_cluster_name + '_hive'
 
 payload = '{"name":"'+ranger_hive_service_name+'","description":"","isEnabled":true,"tagService":"","configs":{"username":"hive","password":"hive","jdbc.driverClassName":"org.apache.hive.jdbc.HiveDriver","jdbc.url":"jdbc:hive2://'+host_name+':2181/;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2","commonNameForCertificate":""},"type":"hive"}'
-ranger_hive_service = json.loads(requests.post(url=ranger_url+ranger_service_uri, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False).content)
-print 'Create Ranger Hive Service: ' + payload
-ranger_hive_service_id = str(ranger_hive_service['id'])
-target_policy = json.loads(requests.get(url=ranger_url+ranger_service_uri+'/'+ranger_hive_service_name+'/policy?policyName='+ranger_hive_allpolicy_search_string, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False).content)[0]
-target_policy['policyItems'][0]['users'].append('beacon')
-target_policy_id = str( target_policy['id'])
-payload = json.dumps(target_policy)
-print 'Add Grant All on Hive Objects to Beacon user : ' + payload
-print 'Result: ' + requests.put(url=ranger_url+ranger_policy_uri+'/'+target_policy_id, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False).content
 
-print 'Waiting for Ranger Policy to take effect...'
-time.sleep(31)
+ranger_update_result = requests.post(url=ranger_url+ranger_service_uri, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False)
+
+if ranger_update_result == 400:
+  print json.loads(ranger_update_result.content)['msgDesc']
+else
+  ranger_hive_service = json.loads(ranger_update_result.content)
+  print 'Create Ranger Hive Service: ' + payload
+  ranger_hive_service_id = str(ranger_hive_service['id'])
+  target_policy = json.loads(requests.get(url=ranger_url+ranger_service_uri+'/'+ranger_hive_service_name+'/policy?policyName='+ranger_hive_allpolicy_search_string, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False).content)[0]
+  target_policy['policyItems'][0]['users'].append('beacon')
+  target_policy_id = str( target_policy['id'])
+  payload = json.dumps(target_policy)
+  print 'Add Grant All on Hive Objects to Beacon user : ' + payload
+  print 'Result: ' + requests.put(url=ranger_url+ranger_policy_uri+'/'+target_policy_id, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False).content
+  print 'Waiting for Ranger Policy to take effect...'
+  time.sleep(31)
 
 token = json.loads(requests.post(url = dps_url+dps_auth_uri, data = '{"username":"'+dps_admin_user+'","password":"'+dps_admin_password+'"}',verify=False).text)['token']
 cookie = {'dp_jwt':token}
