@@ -94,4 +94,4 @@ if len(sys.argv) == 4:
   payload = '{"policyDefinition": {"name": "'+replicationPolicyName+'","type": "HIVE","sourceCluster": "'+dlm_source_cluster_dc+'$'+dlm_source_cluster_name+'","targetCluster": "'+dlm_dest_cluster_dc+'$'+dlm_dest_cluster_name+'","frequencyInSec": 3600,"sourceDataset": "'+target_dataset_name+'"},"submitType": "SUBMIT_AND_SCHEDULE"}'
   print 'Enabling replication policy: ' + replicationPolicyName + ' to: '+dps_url+dlm_clusters_uri+'/'+dlm_dest_cluster_id+'/policy/'+replicationPolicyName+'/submit'
   print 'Payload: ' + payload
-  print 'Result: ' + requests.post(url=dps_url+dps_url+dlm_clusters_uri+'/'+dlm_dest_cluster_id+'/policy/'+replicationPolicyName+'/submit', cookies=cookie, data=payload, headers=headers, verify=False).content
+  print 'Result: ' + requests.post(url=dps_url+dlm_clusters_uri+'/'+dlm_dest_cluster_id+'/policy/'+replicationPolicyName+'/submit', cookies=cookie, data=payload, headers=headers, verify=False).content
