@@ -85,7 +85,7 @@ if len(sys.argv) == 4:
       dlm_source_cluster_beacon = dlm_cluster['beaconUrl']
       dlm_source_cluster_dc = dlm_cluster['dataCenter']
 
-  payload = '[{"clusterId": '+dlm_source_cluster_id+',"beaconUrl": "'+dlm_soruce_cluster_beacon+'"},{"clusterId": '+dlm_dest_cluster_id+',"beaconUrl": "'+dlm_dest_cluster_beacon+'"}]'
+  payload = '[{"clusterId": '+dlm_source_cluster_id+',"beaconUrl": "'+dlm_source_cluster_beacon+'"},{"clusterId": '+dlm_dest_cluster_id+',"beaconUrl": "'+dlm_dest_cluster_beacon+'"}]'
   print 'Pairing Cluster with Shared Services: ' + dps_url+dlm_pair_uri
   print 'Payload: ' + payload
   print 'Result: ' + requests.post(url=dps_url+dlm_pair_uri, cookies=cookie, data=payload, headers=headers, verify=False).content
