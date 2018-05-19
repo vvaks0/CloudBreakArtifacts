@@ -75,7 +75,7 @@ if len(sys.argv) == 4:
     if dlm_cluster['name'] == ambari_cluster_name:
       dlm_source_cluster_id = str(dlm_cluster['id'])
       dlm_soruce_cluster_beacon = dlm_cluster['beaconUrl']
-    elif dlm_cluster['name'] == target_cluster_cluster_name:
+    elif dlm_cluster['name'] == target_cluster_name:
       dlm_dest_cluster_id = str(dlm_cluster['id'])
       dlm_dest_cluster_beacon = dlm_cluster['beaconUrl']
 
