@@ -39,7 +39,7 @@ payload = '{"name":"'+ranger_hive_service_name+'","description":"","isEnabled":t
 
 ranger_update_result = requests.post(url=ranger_url+ranger_service_uri, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False)
 print ranger_update_result
-if ranger_update_result == '400':
+if ranger_update_result.status_code == 400:
   print json.loads(ranger_update_result.content)['msgDesc']
 else:
   ranger_hive_service = json.loads(ranger_update_result.content)
