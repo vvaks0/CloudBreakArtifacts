@@ -36,7 +36,7 @@ ranger_url = 'http://'+host_name+':'+ranger_port
 
 ambari_cluster_name = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri, auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_user)).content)['items'][0]['Clusters']['cluster_name']
 
-token = json.loads(requests.post(url = dps_url+dps_auth_uri, data = '{"username":"'+dps_admin_user+'","password":"'+dps_admin_password+'"}',verify=False).text)['token']
+token = json.loads(requests.post(url = dps_url+dps_auth_uri, data = '{"username":"'+dps_admin_user+'","password":"'+dps_admin_password+'"}', headers=headers, verify=False).text)['token']
 cookie = {'dp_jwt':token}
 headers={'content-type':'application/json'}
 
