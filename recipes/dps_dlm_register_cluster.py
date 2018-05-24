@@ -3,8 +3,8 @@
 import requests, json, socket, time, sys
 from requests.auth import HTTPBasicAuth
 
-if len(sys.argv) < 2:
-  print 'Need at least 1 argument [dps_host_name] and at most 2 arguments [target_cluster_name]'
+if (len(sys.argv) < 3) or (len(sys.argv) == 4):
+  print 'Need at least 2 argument [is_shared_services, dps_host_name] and at most 4 arguments [target_cluster_name, target_dataset_name]'
   exit(1)
 
 dps_admin_user = 'admin'
@@ -14,7 +14,7 @@ ambari_admin_password = 'admin'
 ranger_admin_user = 'admin'
 ranger_admin_password = 'admin'
 
-dps_url = 'https://' + sys.argv[1]
+dps_url = 'https://' + sys.argv[2]
 dps_auth_uri = '/auth/in'
 dps_lakes_uri = '/api/lakes'
 dlm_clusters_uri = '/dlm/api/clusters'
@@ -61,7 +61,11 @@ cookie = {'dp_jwt':token}
 
 requests.get(url = dps_url+'/api/knox/status', cookies = cookie, verify=False).content
 
-payload = '{"allowUntrusted":true,"behindGateway":false,"dcName": "DC02","ambariUrl": "http://'+host_name+':'+ambari_port+'","description":" ","location": 7064,"isDatalake": true,"name": "'+ambari_cluster_name+'","state": "TO_SYNC","ambariIpAddress": "http://'+host_ip+':'+ambari_port+'","properties": {"tags": []}}'
+tags = ''
+if sys.argv[1] == 'true':
+  tags = '{name: "shared-services"}'
+
+payload = '{"allowUntrusted":true,"behindGateway":false,"dcName": "DC02","ambariUrl": "http://'+host_name+':'+ambari_port+'","description":" ","location": 7064,"isDatalake": true,"name": "'+ambari_cluster_name+'","state": "TO_SYNC","ambariIpAddress": "http://'+host_ip+':'+ambari_port+'","properties": {"tags": ['+tags+']}}'
 print 'Registering Cluster with Dataplane: ' + dps_url+dps_lakes_uri
 print 'Payload: ' + payload
 print 'Result: ' + requests.post(url=dps_url+dps_lakes_uri, cookies=cookie, data=payload, headers=headers, verify=False).content
@@ -69,9 +73,9 @@ print 'Result: ' + requests.post(url=dps_url+dps_lakes_uri, cookies=cookie, data
 print 'Waiting for DPS registration to take effect...'
 time.sleep(3)
 
-if len(sys.argv) == 4:
-  target_cluster_name = sys.argv[2]
-  target_dataset_name = sys.argv[3]
+if len(sys.argv) > 4:
+  target_cluster_name = sys.argv[3]
+  target_dataset_name = sys.argv[4]
   dlm_clusters = json.loads(requests.get(url=dps_url+dlm_clusters_uri, cookies=cookie, data=payload, headers=headers, verify=False).content)
 
   for dlm_cluster in dlm_clusters['clusters']:
