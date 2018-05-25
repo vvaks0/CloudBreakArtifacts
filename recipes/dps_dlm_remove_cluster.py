@@ -33,12 +33,13 @@ ambari_port = '8080'
 host_name = socket.getfqdn()
 host_ip = socket.gethostbyname(socket.gethostname())
 ranger_url = 'http://'+host_name+':'+ranger_port
+headers={'content-type':'application/json'}
 
 ambari_cluster_name = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri, auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_user)).content)['items'][0]['Clusters']['cluster_name']
 
-token = json.loads(requests.post(url = dps_url+dps_auth_uri, data = '{"username":"'+dps_admin_user+'","password":"'+dps_admin_password+'"}', headers=headers, verify=False).text)['token']
+#token = json.loads(requests.post(url = dps_url+dps_auth_uri, data = '{"username":"'+dps_admin_user+'","password":"'+dps_admin_password+'"}', headers=headers, verify=False).text)['token']
+token = requests.post(url = dps_url+dps_auth_uri, data = '{"username":"'+dps_admin_user+'","password":"'+dps_admin_password+'"}', headers=headers, verify=False).cookies.pop('dp_jwt')
 cookie = {'dp_jwt':token}
-headers={'content-type':'application/json'}
 
 print "Knox Status: " + requests.get(url = dps_url+'/api/knox/status', cookies = cookie, verify=False).content
 
@@ -82,4 +83,4 @@ for dps_cluster in dps_clusters:
     dps_source_cluster_id = str(dps_cluster['id'])
 
 print 'Unregistering Cluster from DPS: ' + dps_url+dps_lakes_uri+'/'+dps_source_cluster_id
-print 'Result: ' + requests.delete(url=dps_url+dps_lakes_uri+'/'+dps_source_cluster_id, cookies=cookie, data=payload, headers=headers, verify=False).content
+print 'Result: ' + requests.delete(url=dps_url+dps_lakes_uri+'/'+dps_source_cluster_id, cookies=cookie, headers=headers, verify=False).content
