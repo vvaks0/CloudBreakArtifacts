@@ -27,6 +27,7 @@ ranger_hive_allpolicy_search_string = 'all%20-%20database,%20table,%20column'
 
 ranger_port = '6080'
 ambari_port = '8080'
+namenode_port = '8020'
 
 host_name = socket.getfqdn()
 host_ip = socket.gethostbyname(socket.gethostname())
@@ -35,6 +36,7 @@ headers={'content-type':'application/json'}
 
 ambari_cluster_name = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri, auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_user)).content)['items'][0]['Clusters']['cluster_name']
 ranger_hive_service_name = ambari_cluster_name + '_hive'
+ranger_hdfs_service_name = ambari_cluster_name + '_hdfs'
 
 payload = '{"name":"'+ranger_hive_service_name+'","description":"","isEnabled":true,"tagService":"","configs":{"username":"hive","password":"hive","jdbc.driverClassName":"org.apache.hive.jdbc.HiveDriver","jdbc.url":"jdbc:hive2://'+host_name+':2181/;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2","commonNameForCertificate":""},"type":"hive"}'
 
@@ -52,8 +54,22 @@ else:
   payload = json.dumps(target_policy)
   print 'Add Grant All on Hive Objects to Beacon user : ' + payload
   print 'Result: ' + requests.put(url=ranger_url+ranger_policy_uri+'/'+target_policy_id, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False).content
-  print 'Waiting for Ranger Policy to take effect...'
-  time.sleep(31)
+  
+payload = '{"name":"'+ranger_hdfs_service_name+'","description":"","isEnabled":true,"tagService":"","configs":{"username":"hdfs","password":"hdfs","fs.default.name":"hdfs://'+host_name+':'+namenode_port+'","hadoop.security.authorization":true,"hadoop.security.authentication":"simple","hadoop.security.auth_to_local":"","dfs.datanode.kerberos.principal":"","dfs.namenode.kerberos.principal":"","dfs.secondary.namenode.kerberos.principal":"","hadoop.rpc.protection":"authentication","commonNameForCertificate":""},"type":"hdfs"}'
+
+ranger_update_result = requests.post(url=ranger_url+ranger_service_uri, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False)
+print ranger_update_result
+if ranger_update_result.status_code == 400:
+  print json.loads(ranger_update_result.content)['msgDesc']
+else:
+  ranger_hdfs_service = json.loads(ranger_update_result.content)
+  print 'Create Ranger HDFS Service: ' + payload
+  payload = '{"policyType":"0","name":"dpprofiler-audit-read","isEnabled":true,"isAuditEnabled":true,"description":"","resources":{"path":{"values":["/ranger/audit","dpprofiler_default"],"isRecursive":true}},"policyItems":[{"users":["dpprofiler"],"accesses":[{"type":"read","isAllowed":true},{"type":"execute","isAllowed":true}]}],"denyPolicyItems":[],"allowExceptions":[],"denyExceptions":[],"service":"'+ranger_hdfs_service_name+'"}'
+  print 'Create dpprofiler-audit-read policy: ' + payload
+  print 'Result: ' + requests.post(url=ranger_url+ranger_policy_uri, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False).content
+
+print 'Waiting for Ranger Policy to take effect...'
+time.sleep(31)
 
 #token = json.loads(requests.post(url = dps_url+dps_auth_uri, data = '{"username":"'+dps_admin_user+'","password":"'+dps_admin_password+'"}', headers=headers, verify=False).text)['token']
 token = requests.post(url = dps_url+dps_auth_uri, data = '{"username":"'+dps_admin_user+'","password":"'+dps_admin_password+'"}', headers=headers, verify=False).cookies.pop('dp_jwt')
