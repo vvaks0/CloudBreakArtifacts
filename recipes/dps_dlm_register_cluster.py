@@ -36,7 +36,7 @@ headers={'content-type':'application/json'}
 
 ambari_cluster_name = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri, auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_user)).content)['items'][0]['Clusters']['cluster_name']
 ranger_hive_service_name = ambari_cluster_name + '_hive'
-ranger_hdfs_service_name = ambari_cluster_name + '_hdfs'
+ranger_hdfs_service_name = ambari_cluster_name + '_hadoop'
 
 payload = '{"name":"'+ranger_hive_service_name+'","description":"","isEnabled":true,"tagService":"","configs":{"username":"hive","password":"hive","jdbc.driverClassName":"org.apache.hive.jdbc.HiveDriver","jdbc.url":"jdbc:hive2://'+host_name+':2181/;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2","commonNameForCertificate":""},"type":"hive"}'
 
