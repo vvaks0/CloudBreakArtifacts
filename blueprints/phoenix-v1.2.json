@@ -1,0 +1,184 @@
+{
+  "configurations": [
+    {
+      "core-site": {
+        "properties_attributes": {},
+        "properties": {
+          "fs.s3a.threads.max": "1000",
+          "fs.s3a.threads.core": "500",
+          "fs.s3a.max.total.tasks": "1000",
+          "fs.s3a.connection.maximum": "1500"
+        }
+      }
+    },
+    {
+      "yarn-site": {
+        "properties_attributes": {},
+        "properties": {
+          "yarn.scheduler.capacity.resource-calculator": "org.apache.hadoop.yarn.util.resource.DominantResourceCalculator"
+        }
+      }
+    },
+    {
+      "capacity-scheduler": {
+        "properties_attributes": {},
+        "properties": {
+          "yarn.scheduler.capacity.resource-calculator": "org.apache.hadoop.yarn.util.resource.DominantResourceCalculator"
+        }
+      }
+    },
+    {
+      "hbase-site": {
+        "properties_attributes": {},
+        "properties": {
+          "phoenix.query.timeoutMs": "60000",
+          "hfile.block.cache.size": "0.4",
+          "hbase.regionserver.global.memstore.size": "0.4",
+          "hbase.regionserver.handler.count": "60",
+          "hbase.hregion.memstore.flush.size": "536870912",
+          "hbase.hregion.max.filesize": "21474836480",
+          "hbase.regionserver.wal.codec": "org.apache.hadoop.hbase.regionserver.wal.IndexedWALEditCodec",
+          "hbase.defaults.for.version.skip": "true",
+          "hbase.region.server.rpc.scheduler.factory.class": "org.apache.hadoop.hbase.ipc.PhoenixRpcSchedulerFactory",
+          "hbase.rpc.controllerfactory.class": "org.apache.hadoop.hbase.ipc.controller.ServerRpcControllerFactory",
+          "phoenix.functions.allowUserDefinedFunctions": "true",
+          "hbase.bucketcache.size": "24000",
+          "hbase.bucketcache.ioengine": "file:/hbase/cache",
+          "hbase.bucketcache.combinedcache.enabled": "true",
+          "hbase.rs.cacheblocksonwrite": "true",
+          "hfile.block.bloom.cacheonwrite": "true",
+          "hfile.block.index.cacheonwrite": "true",
+          "hbase.client.scanner.caching": "10000"
+        }
+      }
+    },
+    {
+      "hbase-env": {
+        "properties_attributes": {},
+        "properties": {
+          "hbase_java_io_tmpdir": "/tmp",
+          "hbase_log_dir": "/var/log/hbase",
+          "hbase_master_heapsize": "1024m",
+          "hbase_pid_dir": "/var/run/hbase",
+          "hbase_regionserver_heapsize": "16384m",
+          "hbase_regionserver_shutdown_timeout": "30",
+          "hbase_regionserver_xmn_max": "16384",
+          "hbase_regionserver_xmn_ratio": "0.2",
+          "hbase_user": "hbase",
+          "hbase_user_nofile_limit": "32000",
+          "hbase_user_nproc_limit": "16000",
+          "phoenix_sql_enabled": "true"
+        }
+      }
+    }
+  ],
+  "host_groups": [
+    {
+      "name": "master",
+      "cardinality": "1",
+      "components": [
+        {
+          "name": "HBASE_MASTER"
+        },
+        {
+          "name": "HISTORYSERVER"
+        },
+        {
+          "name": "APP_TIMELINE_SERVER"
+        },
+        {
+          "name": "NAMENODE"
+        },
+        {
+          "name": "SECONDARY_NAMENODE"
+        },
+        {
+          "name": "RESOURCEMANAGER"
+        },
+        {
+          "name": "ZEPPELIN_MASTER"
+        },
+        {
+          "name": "SPARK_JOBHISTORYSERVER"
+        },
+        {
+          "name": "ZOOKEEPER_SERVER"
+        },
+        {
+          "name": "PHOENIX_QUERY_SERVER"
+        },
+        {
+          "name": "METRICS_MONITOR"
+        },
+        {
+          "name": "METRICS_COLLECTOR"
+        },
+        {
+          "name": "METRICS_GRAFANA"
+        },
+        {
+          "name": "YARN_CLIENT"
+        },
+        {
+          "name": "HDFS_CLIENT"
+        },
+        {
+          "name": "SPARK_CLIENT"
+        },
+        {
+          "name": "ZOOKEEPER_CLIENT"
+        },
+        {
+          "name": "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name": "DATANODE"
+        },
+        {
+          "name": "HBASE_CLIENT"
+        }
+      ]
+    },
+    {
+      "name": "worker",
+      "cardinality": "1",
+      "components": [
+        {
+          "name": "NODEMANAGER"
+        },
+        {
+          "name": "YARN_CLIENT"
+        },
+        {
+          "name": "HDFS_CLIENT"
+        },
+        {
+          "name": "SPARK_CLIENT"
+        },
+        {
+          "name": "ZOOKEEPER_CLIENT"
+        },
+        {
+          "name": "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name": "HBASE_REGIONSERVER"
+        },
+        {
+          "name": "METRICS_MONITOR"
+        },
+        {
+          "name": "DATANODE"
+        },
+        {
+          "name": "HBASE_CLIENT"
+        }
+      ]
+    }
+  ],
+  "Blueprints": {
+    "blueprint_name": "phoenix",
+    "stack_name": "HDP",
+    "stack_version": "2.6"
+  }
+}

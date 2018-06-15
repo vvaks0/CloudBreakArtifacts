@@ -1,0 +1,188 @@
+{
+  "configurations": [
+    {
+      "hive-env": {
+        "properties": {
+          "hive_security_authorization": "Ranger",
+          "hive.atlas.hook": "true"
+        }
+      }
+    },
+    {
+      "hive-site": {
+        "properties": {
+          "atlas.hook.hive.minThreads": "1",
+          "atlas.hook.hive.maxThreads": "1"
+        }
+      }
+    },
+    {
+      "hive-atlas-application.properties": {
+        "properties": {
+          "atlas.hook.hive.maxThreads": "5",
+          "atlas.hook.hive.keepAliveTime": "10",
+          "atlas.hook.hive.synchronous": "false",
+          "atlas.hook.hive.minThreads": "5",
+          "atlas.hook.hive.numRetries": "3",
+          "atlas.hook.hive.queueSize": "1000"
+        }
+      }
+    },
+    {
+      "ranger-hive-plugin-properties": {
+        "properties": {
+          "external_admin_username": "admin",
+          "external_admin_password": "admin",
+          "external_ranger_admin_username": "admin",
+          "external_ranger_admin_password": "admin"
+        }
+      }
+    },
+    {
+      "ranger-hive-security": {
+        "properties": {
+          "ranger.plugin.hive.policy.rest.url": "http://localhost:6080",
+          "ranger.plugin.hive.service.name": "{{{ REMOTE_CLUSTER_NAME }}}_hive"
+        }
+      }
+    },
+    {
+      "ranger-hive-plugin-properties": {
+        "properties": {
+          "external_admin_username": "admin",
+          "external_admin_password": "admin",
+          "external_ranger_admin_username": "admin",
+          "external_ranger_admin_password": "admin"
+        }
+      }
+    },
+    {
+      "application-properties": {
+        "properties": {
+          "atlas.notification.topics": "ATLAS_HOOK,ATLAS_ENTITIES"
+        }
+      }
+    }
+  ],
+  "host_groups": [
+    {
+      "name": "master",
+      "cardinality": "1",
+      "components": [
+        {
+          "name": "HIVE_SERVER"
+        },
+        {
+          "name": "HIVE_METASTORE"
+        },
+        {
+          "name": "WEBHCAT_SERVER"
+        },
+        {
+          "name": "ZOOKEEPER_SERVER"
+        },
+        {
+          "name": "NAMENODE"
+        },
+        {
+          "name": "SECONDARY_NAMENODE"
+        },
+        {
+          "name": "RESOURCEMANAGER"
+        },
+        {
+          "name": "HISTORYSERVER"
+        },
+        {
+          "name": "APP_TIMELINE_SERVER"
+        },
+        {
+          "name": "LIVY2_SERVER"
+        },
+        {
+          "name": "SPARK2_CLIENT"
+        },
+        {
+          "name": "SPARK2_JOBHISTORYSERVER"
+        },
+        {
+          "name": "DATANODE"
+        },
+        {
+          "name": "HCAT"
+        },
+        {
+          "name": "PIG"
+        },
+        {
+          "name": "SLIDER"
+        },
+        {
+          "name": "YARN_CLIENT"
+        },
+        {
+          "name": "HDFS_CLIENT"
+        },
+        {
+          "name": "TEZ_CLIENT"
+        },
+        {
+          "name": "ZOOKEEPER_CLIENT"
+        },
+        {
+          "name": "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name": "HIVE_CLIENT"
+        }
+      ]
+    },
+    {
+      "name": "worker",
+      "cardinality": "1+",
+      "components": [
+        {
+          "name": "NODEMANAGER"
+        },
+        {
+          "name": "DATANODE"
+        },
+        {
+          "name": "HCAT"
+        },
+        {
+          "name": "PIG"
+        },
+        {
+          "name": "SLIDER"
+        },
+        {
+          "name": "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name": "YARN_CLIENT"
+        },
+        {
+          "name": "HDFS_CLIENT"
+        },
+        {
+          "name": "SPARK2_CLIENT"
+        },
+        {
+          "name": "TEZ_CLIENT"
+        },
+        {
+          "name": "ZOOKEEPER_CLIENT"
+        },
+        {
+          "name": "HIVE_CLIENT"
+        }
+      ]
+    }
+  ],
+  "Blueprints": {
+    "blueprint_name": "ephemeral",
+    "stack_name": "HDP",
+    "stack_version": "2.6"
+  }
+}
