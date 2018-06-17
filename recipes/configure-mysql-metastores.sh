@@ -1,4 +1,8 @@
 #!/bin/bash	
+
+	#disable ambari ldap pagination to avoid NPE on sync
+	echo "authentication.ldap.pagination.enabled=false" >> /etc/ambari-server/conf/ambari.properties
+
 	yum remove -y mysql57-community*
 	yum remove -y mysql56-server*
 	yum remove -y mysql-community*

@@ -1,4 +1,8 @@
 #!/bin/bash
+
+#disable ambari ldap pagination to avoid NPE on sync
+echo "authentication.ldap.pagination.enabled=false" >> /etc/ambari-server/conf/ambari.properties
+
 echo "CREATE DATABASE ranger;" | sudo -u postgres psql -U postgres
 echo "CREATE USER rangerdba WITH PASSWORD 'rangerdba';" | sudo -u postgres psql -U postgres
 echo "CREATE USER rangeradmin WITH PASSWORD 'ranger'" | sudo -u postgres psql -U postgres
