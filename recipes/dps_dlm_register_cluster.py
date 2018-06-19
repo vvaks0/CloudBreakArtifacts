@@ -34,7 +34,7 @@ host_ip = socket.gethostbyname(socket.gethostname())
 ranger_url = 'http://'+host_name+':'+ranger_port
 headers={'content-type':'application/json'}
 
-ambari_cluster_name = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri, auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_user)).content)['items'][0]['Clusters']['cluster_name']
+ambari_cluster_name = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri, auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password)).content)['items'][0]['Clusters']['cluster_name']
 ranger_hive_service_name = ambari_cluster_name + '_hive'
 ranger_hdfs_service_name = ambari_cluster_name + '_hadoop'
 
