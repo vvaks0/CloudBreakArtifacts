@@ -12,9 +12,9 @@ dps_url = 'https://' + sys.argv[1]
 dps_admin_user = 'admin'
 dps_admin_password = 'admin'
 ambari_admin_user = 'admin'
-ambari_admin_password = 'admin'
+ambari_admin_password = 'admin-password'
 ranger_admin_user = 'admin'
-ranger_admin_password = 'admin'
+ranger_admin_password = 'admin-password'
 
 dps_auth_uri = '/auth/in'
 dps_lakes_uri = '/api/lakes'
