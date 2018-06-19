@@ -118,4 +118,4 @@ if len(sys.argv) > 4:
   print 'Result: ' + requests.post(url=dps_url+dlm_clusters_uri+'/'+dlm_dest_cluster_id+'/policy/'+replicationPolicyName+'/submit', cookies=cookie, data=payload, headers=headers, verify=False).content
 
 if sys.argv[1] == 'false':
-  subprocess.call("~/CloudBreakArtifacts/recipes/load-logistics-dataset.sh")
+  subprocess.call("CloudBreakArtifacts/recipes/load-logistics-dataset.sh")
