@@ -22,6 +22,7 @@ dps_auth_uri = '/auth/in'
 dps_lakes_uri = '/api/lakes'
 dlm_clusters_uri = '/dlm/api/clusters'
 dlm_pairs_uri = '/dlm/api/pairs'
+dlm_pair_uri = '/dlm/api/pair'
 dlm_unpair_uri = '/dlm/api/unpair'
 dlm_policies_uri = '/dlm/api/policies?numResults=200'
 ambari_clusters_uri = '/api/v1/clusters'
@@ -210,7 +211,7 @@ if len(sys.argv) > 4:
   dlm_clusters = json.loads(requests.get(url=dps_url+dlm_clusters_uri, cookies=cookie, data=payload, headers=headers, verify=False).content)
 
   for dlm_cluster in dlm_clusters['clusters']:
-    if dlm_cluster['name'] == ambari_cluster_name:
+    if] dlm_cluster['name'] == ambari_cluster_name:
       dlm_dest_cluster_id = str(dlm_cluster['id'])
       dlm_dest_cluster_name = str(dlm_cluster['name'])
       dlm_dest_cluster_beacon = dlm_cluster['beaconUrl']
@@ -221,6 +222,7 @@ if len(sys.argv) > 4:
       dlm_source_cluster_beacon = dlm_cluster['beaconUrl']
       dlm_source_cluster_dc = dlm_cluster['dataCenter']
 
+  headers={'content-type':'application/json'}
   payload = '[{"clusterId": '+dlm_source_cluster_id+',"beaconUrl": "'+dlm_source_cluster_beacon+'"},{"clusterId": '+dlm_dest_cluster_id+',"beaconUrl": "'+dlm_dest_cluster_beacon+'"}]'
   print 'Pairing Cluster with Shared Services: ' + dps_url+dlm_pair_uri
   print 'Payload: ' + payload
