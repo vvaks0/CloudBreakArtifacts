@@ -211,7 +211,7 @@ if len(sys.argv) > 4:
   dlm_clusters = json.loads(requests.get(url=dps_url+dlm_clusters_uri, cookies=cookie, data=payload, headers=headers, verify=False).content)
 
   for dlm_cluster in dlm_clusters['clusters']:
-    if] dlm_cluster['name'] == ambari_cluster_name:
+    if dlm_cluster['name'] == ambari_cluster_name:
       dlm_dest_cluster_id = str(dlm_cluster['id'])
       dlm_dest_cluster_name = str(dlm_cluster['name'])
       dlm_dest_cluster_beacon = dlm_cluster['beaconUrl']
