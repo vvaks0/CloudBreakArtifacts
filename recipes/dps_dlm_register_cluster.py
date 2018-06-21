@@ -173,10 +173,12 @@ else:
   print 'Restarting Atlas to activate changes...'
   payload = '{"RequestInfo": {"context": "Stop ATLAS"}, "ServiceInfo": {"state": "INSTALLED"}}'
   result = json.loads(requests.put('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name+'/services/ATLAS', auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password), data=payload, headers=headers, verify=False).content)
+  print result
   stop_request_id = result['Requests']['id']
   time.sleep(3)
   payload = '{"RequestInfo": {"context": "Start ATLAS"}, "ServiceInfo": {"state": "STARTED"}}'
   result = json.loads(requests.put('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name+'/services/ATLAS', auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password), data=payload, headers=headers, verify=False).content)
+  print result
   start_request_id = result['Requests']['id']
 
 if len(sys.argv) > 4:
