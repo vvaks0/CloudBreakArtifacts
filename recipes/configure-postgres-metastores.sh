@@ -51,7 +51,7 @@ echo "
          <param>
             <name>sso.token.verification.pem</name>
             <value>
-$(echo "" | openssl s_client -showcerts -connect $DPS_HOST | openssl x509 -outform pem)
+$(echo "" | openssl s_client -showcerts -connect $DPS_HOST:443 | openssl x509 -outform pem)
 			</value>
          </param>
       </provider>
