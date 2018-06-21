@@ -44,6 +44,7 @@ knox_public_url = json.loads(requests.get('http://'+host_name+':'+ambari_port+am
 ambari_public_url = knox_public_url + '/' + knox_topology + '/ambari'
 
 ranger_hive_service_name = ambari_cluster_name + '_hive'
+ranger_knox_service_name = ambari_cluster_name + '_knox'
 ranger_hdfs_service_name = ambari_cluster_name + '_hadoop'
 
 payload = '{"name":"'+ranger_hive_service_name+'","description":"","isEnabled":true,"tagService":"","configs":{"username":"hive","password":"hive","jdbc.driverClassName":"org.apache.hive.jdbc.HiveDriver","jdbc.url":"jdbc:hive2://'+host_name+':2181/;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2","commonNameForCertificate":""},"type":"hive"}'
@@ -75,6 +76,15 @@ else:
   payload = '{"policyType":"0","name":"dpprofiler-audit-read","isEnabled":true,"isAuditEnabled":true,"description":"","resources":{"path":{"values":["/ranger/audit","dpprofiler_default"],"isRecursive":true}},"policyItems":[{"users":["dpprofiler"],"accesses":[{"type":"read","isAllowed":true},{"type":"execute","isAllowed":true}]}],"denyPolicyItems":[],"allowExceptions":[],"denyExceptions":[],"service":"'+ranger_hdfs_service_name+'"}'
   print 'Create dpprofiler-audit-read policy: ' + payload
   print 'Result: ' + requests.post(url=ranger_url+ranger_policy_uri, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False).content
+
+payload = '{"name":"'+ranger_knox_service_name+'","description":"","isEnabled":true,"tagService":"","configs":{"username":"knox","password":"knox","knox.url":"https://'+hostname+':8443","commonNameForCertificate":""},"type":"knox"}"
+ranger_update_result = requests.post(url=ranger_url+ranger_service_uri, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False)
+print ranger_update_result
+if ranger_update_result.status_code == 400:
+  print json.loads(ranger_update_result.content)['msgDesc']
+else:
+  ranger_knox_service = json.loads(ranger_update_result.content)
+  print 'Created Ranger Knox Service...'
 
 print 'Waiting for Ranger Policy to take effect...'
 time.sleep(31)
