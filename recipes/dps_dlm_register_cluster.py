@@ -30,9 +30,12 @@ ranger_service_uri = '/service/public/v2/api/service'
 ranger_policy_uri = '/service/public/v2/api/policy'
 ranger_hive_allpolicy_search_string = 'all%20-%20database,%20table,%20column'
 
+zk_port = '2181'
+knox_port = '8443'
 ranger_port = '6080'
 ambari_port = '8080'
 namenode_port = '8020'
+
 
 host_name = socket.getfqdn()
 host_ip = socket.gethostbyname(socket.gethostname())
@@ -47,7 +50,7 @@ ranger_hive_service_name = ambari_cluster_name + '_hive'
 ranger_knox_service_name = ambari_cluster_name + '_knox'
 ranger_hdfs_service_name = ambari_cluster_name + '_hadoop'
 
-payload = '{"name":"'+ranger_hive_service_name+'","description":"","isEnabled":true,"tagService":"","configs":{"username":"hive","password":"hive","jdbc.driverClassName":"org.apache.hive.jdbc.HiveDriver","jdbc.url":"jdbc:hive2://'+host_name+':2181/;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2","commonNameForCertificate":""},"type":"hive"}'
+payload = '{"name":"'+ranger_hive_service_name+'","description":"","isEnabled":true,"tagService":"","configs":{"username":"hive","password":"hive","jdbc.driverClassName":"org.apache.hive.jdbc.HiveDriver","jdbc.url":"jdbc:hive2://'+host_name+':'+zk_port+'/;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2","commonNameForCertificate":""},"type":"hive"}'
 
 ranger_update_result = requests.post(url=ranger_url+ranger_service_uri, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False)
 print ranger_update_result
@@ -77,7 +80,7 @@ else:
   print 'Create dpprofiler-audit-read policy: ' + payload
   print 'Result: ' + requests.post(url=ranger_url+ranger_policy_uri, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False).content
 
-payload = '{"name":"'+ranger_knox_service_name+'","description":"","isEnabled":true,"tagService":"","configs":{"username":"knox","password":"knox","knox.url":"https://'+hostname+':8443","commonNameForCertificate":""},"type":"knox"}'
+payload = '{"name":"'+ranger_knox_service_name+'","description":"","isEnabled":true,"tagService":"","configs":{"username":"knox","password":"knox","knox.url":"https://'+host_name+':'+knox_port+'","commonNameForCertificate":""},"type":"knox"}'
 ranger_update_result = requests.post(url=ranger_url+ranger_service_uri, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False)
 print ranger_update_result
 if ranger_update_result.status_code == 400:
