@@ -171,15 +171,38 @@ if atlas_update_result.status_code == 400:
 else:
   print 'Atlas LDAP config updated...'
   print 'Restarting Atlas to activate changes...'
-  payload = '{"RequestInfo": {"context": "Stop ATLAS"}, "ServiceInfo": {"state": "INSTALLED"}}'
-  result = json.loads(requests.put('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name+'/services/ATLAS', auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password), data=payload, headers=headers, verify=False).content)
-  print result
-  stop_request_id = result['Requests']['id']
-  time.sleep(3)
-  payload = '{"RequestInfo": {"context": "Start ATLAS"}, "ServiceInfo": {"state": "STARTED"}}'
-  result = json.loads(requests.put('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name+'/services/ATLAS', auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password), data=payload, headers=headers, verify=False).content)
-  print result
-  start_request_id = result['Requests']['id']
+  print 'Restarting ATLAS'
+  result = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name+'/services/ATLAS', auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password), headers=headers, verify=False).content)
+
+  if result['ServiceInfo']['state'] == 'STARTED' :
+    print 'Requesting STOP task'
+    print 'Current Service State: ' + result['ServiceInfo']['state']
+    payload = '{"RequestInfo": {"context": "Stop ATLAS"}, "ServiceInfo": {"state": "INSTALLED"}}'
+    result = json.loads(requests.put('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name+'/services/ATLAS', auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password), data=payload, headers=headers, verify=False).content)
+    print result
+    stop_request_id = str(result['Requests']['id'])
+    result = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name+'/requests/' + stop_request_id, auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password), data=payload, headers=headers, verify=False).content)
+    print 'Current Task Status: ' + result['Requests']['request_status']
+    while result['Requests']['request_status'] == 'IN_PROGRESS':
+      stop_request_id = str(result['Requests']['id'])
+      result = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name+'/requests/' + stop_request_id, auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password), data=payload, headers=headers, verify=False).content)
+      print 'Current Task Status: ' + result['Requests']['request_status']
+      time.sleep(2)
+ 
+  result = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name+'/services/ATLAS', auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password), headers=headers, verify=False).content)
+  if result['ServiceInfo']['state'] == 'INSTALLED' :
+    print 'Requesting START task'
+    payload = '{"RequestInfo": {"context": "Start ATLAS"}, "ServiceInfo": {"state": "STARTED"}}'
+    result = json.loads(requests.put('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name+'/services/ATLAS', auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password), data=payload, headers=headers, verify=False).content)
+    print result
+    start_request_id = str(result['Requests']['id'])
+    result = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name+'/requests/' + start_request_id, auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password), data=payload, headers=headers, verify=False).content)
+    print 'Current Task Status: ' + result['Requests']['request_status']
+    while result['Requests']['request_status'] == 'IN_PROGRESS':
+      start_request_id = str(result['Requests']['id'])
+      result = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name+'/requests/' + start_request_id, auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password), data=payload, headers=headers, verify=False).content)
+      print 'Current Task Status: ' + result['Requests']['request_status']    
+      time.sleep(2)
 
 if len(sys.argv) > 4:
   target_cluster_name = sys.argv[3]
