@@ -1,8 +1,11 @@
 #!/bin/bash
 
+export DPS_HOST=$1
+
 #disable ambari ldap pagination to avoid NPE on sync
 echo "authentication.ldap.pagination.enabled=false" >> /etc/ambari-server/conf/ambari.properties
 
+#configure metastore users and permissions on local ambari database
 echo "CREATE DATABASE ranger;" | sudo -u postgres psql -U postgres
 echo "CREATE USER rangerdba WITH PASSWORD 'rangerdba';" | sudo -u postgres psql -U postgres
 echo "CREATE USER rangeradmin WITH PASSWORD 'ranger'" | sudo -u postgres psql -U postgres
@@ -29,3 +32,54 @@ else
 	
 	sudo -u postgres pg_ctl -D /var/lib/pgsql/data/ reload
 fi
+
+#create sso token topology to enable synch with dps
+
+echo "
+<topology>
+   <uri>https://$(hostname -f):8443/gateway/token</uri>
+   <name>token</name>
+   <gateway>
+      <provider>
+         <role>federation</role>
+         <name>SSOCookieProvider</name>
+         <enabled>true</enabled>
+         <param>
+            <name>sso.authentication.provider.url</name>
+            <value>https://$(hostname -f):8443/gateway/knoxsso/api/v1/websso</value>
+         </param>
+         <param>
+            <name>sso.token.verification.pem</name>
+            <value>
+$(echo "" | openssl s_client -showcerts -connect $DPS_HOST | openssl x509 -outform pem)
+			</value>
+         </param>
+      </provider>
+      <provider>
+         <role>identity-assertion</role>
+         <name>HadoopGroupProvider</name>
+         <enabled>true</enabled>
+      </provider>
+      <provider>
+         <role>authorization</role>
+         <name>XASecurePDPKnox</name>
+         <enabled>true</enabled>
+      </provider>
+   </gateway>
+
+   <service>
+      <role>KNOXTOKEN</role>
+      <param>
+         <name>knox.token.ttl</name>
+         <value>500000</value>
+      </param>
+      <param>
+         <name>knox.token.client.data</name>
+         <value>cookie.name=hadoop-jwt</value>
+      </param>
+      <param>
+         <name>main.ldapRealm.authorizationEnabled</name>
+         <value>true</value>
+      </param>
+   </service>
+</topology>" | sed 's/-----BEGIN CERTIFICATE-----//' | sed 's/-----END CERTIFICATE-----//' | tee /etc/knox/conf/topologies/token.xml
