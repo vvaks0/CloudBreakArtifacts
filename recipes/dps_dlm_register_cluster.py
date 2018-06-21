@@ -30,6 +30,7 @@ ranger_hive_allpolicy_search_string = 'all%20-%20database,%20table,%20column'
 
 ranger_port = '6080'
 ambari_port = '8080'
+namenode_port = '8020'
 
 host_name = socket.getfqdn()
 host_ip = socket.gethostbyname(socket.gethostname())
