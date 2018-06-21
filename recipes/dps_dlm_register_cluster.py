@@ -34,8 +34,8 @@ zk_port = '2181'
 knox_port = '8443'
 ranger_port = '6080'
 ambari_port = '8080'
+atlas_port = '21000'
 namenode_port = '8020'
-
 
 host_name = socket.getfqdn()
 host_ip = socket.gethostbyname(socket.gethostname())
@@ -49,6 +49,7 @@ ambari_public_url = knox_public_url + '/' + knox_topology + '/ambari'
 ranger_hive_service_name = ambari_cluster_name + '_hive'
 ranger_knox_service_name = ambari_cluster_name + '_knox'
 ranger_hdfs_service_name = ambari_cluster_name + '_hadoop'
+ranger_atlas_service_name = ambari_cluster_name + '_atlas'
 
 payload = '{"name":"'+ranger_hive_service_name+'","description":"","isEnabled":true,"tagService":"","configs":{"username":"hive","password":"hive","jdbc.driverClassName":"org.apache.hive.jdbc.HiveDriver","jdbc.url":"jdbc:hive2://'+host_name+':'+zk_port+'/;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2","commonNameForCertificate":""},"type":"hive"}'
 
@@ -89,6 +90,15 @@ else:
   ranger_knox_service = json.loads(ranger_update_result.content)
   print 'Created Ranger Knox Service...'
 
+payload = '{"name":"'+ranger_atlas_service_name+'","description":"","isEnabled":true,"tagService":"","configs":{"username":"admin","password":"admin","atlas.rest.url":"https://'+host_name+':'+atlas_port+'","commonNameForCertificate":""},"type":"atlas"}'
+ranger_update_result = requests.post(url=ranger_url+ranger_service_uri, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False)
+print ranger_update_result
+if ranger_update_result.status_code == 400:
+  print json.loads(ranger_update_result.content)['msgDesc']
+else:
+  ranger_atlas_service = json.loads(ranger_update_result.content)
+  print 'Created Ranger Atlas Service...'
+
 print 'Waiting for Ranger Policy to take effect...'
 time.sleep(31)
 
@@ -111,6 +121,63 @@ print 'Result: ' + requests.post(url=dps_url+dps_lakes_uri, cookies=cookie, data
 
 print 'Waiting for DPS registration to take effect...'
 time.sleep(3)
+
+#Configure Atlas for LDAP
+headers={'content-type':'application/x-www-form-urlencoded','X-Requested-By':'ambari'}
+
+#json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name+'/configurations/service_config_versions?service_name=ATLAS', auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password)).content)['items'][1]['configurations']
+#latest_version = len(json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name+'/configurations?type=application-properties', auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password)).content)['items'])-1
+#tag = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name+'/configurations?type=application-properties', auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password)).content)['items'][latest_version]['tag']
+
+tag = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name+'?fields=Clusters/desired_configs', auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password)).content)['Clusters']['desired_configs']['application-properties']['tag']
+atlas_config = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name+'/configurations?type=application-properties&tag='+tag, auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password)).content)['items'][0]['properties']
+
+epoch = str(int(round(time.time() * 1000)))
+payload = json.loads('[{"Clusters":{"desired_config":[{"type":"application-properties","tag":"version'+epoch+'","properties":{},"service_config_version_note":"Atlas LDAP Config"}]}}]')
+
+ldap_url = atlas_config['atlas.authentication.method.ldap.ad.url']
+ldap_base_dn = atlas_config['atlas.authentication.method.ldap.ad.base.dn']
+ldap_bind_dn = atlas_config['atlas.authentication.method.ldap.ad.bind.dn']
+ldap_bind_pass = atlas_config['atlas.authentication.method.ldap.ad.bind.password']
+ldap_user_DNpattern = 'uid={0}'
+ldap_user_filter = '(&(objectClass=person)(member={0}))'
+ldap_group_filter = '(&(objectClass=groupofnames)(member={0}))'
+ldap_group_searchBase = 'ou=people,dc=hadoop,dc=apache,dc=org'
+
+atlas_config['atlas.authentication.method.ldap.url'] = ldap_url
+atlas_config['atlas.authentication.method.ldap.base.dn'] = ldap_base_dn
+atlas_config['atlas.authentication.method.ldap.bind.dn'] = ldap_bind_dn
+atlas_config['atlas.authentication.method.ldap.bind.password'] = ldap_bind_pass
+atlas_config['atlas.authentication.method.ldap.userDNpattern'] = ldap_user_DNpattern
+atlas_config['atlas.authentication.method.ldap.user.searchfilter'] = ldap_user_filter
+atlas_config['atlas.authentication.method.ldap.groupSearchFilter'] = ldap_group_filter
+atlas_config['atlas.authentication.method.ldap.groupSearchBase'] = ldap_group_searchBase
+
+#atlas_config_update = {'atlas.authentication.method.ldap.url':''+ldap_url+'',
+#'atlas.authentication.method.ldap.base.dn':''+ldap_base_dn+'',
+#'atlas.authentication.method.ldap.bind.dn':''+ldap_bind_dn+'',
+#'atlas.authentication.method.ldap.bind.password':''+ldap_bind_pass+'',
+#'atlas.authentication.method.ldap.userDNpattern':''+ldap_user_DNpattern+'',
+#'atlas.authentication.method.ldap.user.searchfilter':''+ldap_user_filter+'',
+#'atlas.authentication.method.ldap.groupSearchFilter':''+ldap_group_filter+'',
+#'atlas.authentication.method.ldap.groupSearchBase':''+ldap_group_searchBase+''}
+
+payload[0]['Clusters']['desired_config'][0]['properties'] = atlas_config
+payload = json.dumps(payload)
+atlas_update_result = json.loads(requests.put('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name, auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password), data=payload, headers=headers, verify=False).content)
+print atlas_update_result
+if atlas_update_result.status_code == 400:
+  print json.loads(atlas_update_result.content)['msgDesc']
+else:
+  print 'Atlas LDAP config updated... 
+  print 'Restarting Atlas to activate changes...''
+  payload = '{"RequestInfo": {"context": "Stop ATLAS"}, "ServiceInfo": {"state": "INSTALLED"}}'
+  result = json.loads(requests.put('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name+'/services/ATLAS', auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password), data=payload, headers=headers, verify=False).content)
+  stop_request_id = result['Requests']['id']
+  time.sleep(3)
+  payload = '{"RequestInfo": {"context": "Start ATLAS"}, "ServiceInfo": {"state": "STARTED"}}'
+  result = json.loads(requests.put('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name+'/services/ATLAS', auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password), data=payload, headers=headers, verify=False).content)
+  start_request_id = result['Requests']['id']
 
 if len(sys.argv) > 4:
   target_cluster_name = sys.argv[3]
