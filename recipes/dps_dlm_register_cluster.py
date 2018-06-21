@@ -164,7 +164,7 @@ atlas_config['atlas.authentication.method.ldap.groupSearchBase'] = ldap_group_se
 
 payload[0]['Clusters']['desired_config'][0]['properties'] = atlas_config
 payload = json.dumps(payload)
-atlas_update_result = json.loads(requests.put('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name, auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password), data=payload, headers=headers, verify=False).content)
+atlas_update_result = json.loads(requests.put('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name, auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password), data=payload, headers=headers, verify=False))
 print atlas_update_result
 if atlas_update_result.status_code == 400:
   print json.loads(atlas_update_result.content)['msgDesc']
