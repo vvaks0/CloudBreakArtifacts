@@ -10,9 +10,9 @@ if (len(sys.argv) < 3) or (len(sys.argv) == 4):
 dps_admin_user = 'admin'
 dps_admin_password = 'admin'
 ambari_admin_user = 'admin'
-ambari_admin_password = 'admin-password'
+ambari_admin_password = 'admin-password1'
 ranger_admin_user = 'admin'
-ranger_admin_password = 'admin-password'
+ranger_admin_password = 'admin-password1'
 
 knox_topology = 'dp-proxy'
 
