@@ -14,20 +14,22 @@ ambari_admin_password = 'admin-password'
 ranger_admin_user = 'admin'
 ranger_admin_password = 'admin-password'
 
-dps_url = 'https://' + sys.argv[2]
+knox_topology = 'dp-proxy'
+
 dps_auth_uri = '/auth/in'
 dps_lakes_uri = '/api/lakes'
 dlm_clusters_uri = '/dlm/api/clusters'
-dlm_pair_uri = '/dlm/api/pair'
-dlm_pair_uri = '/dlm/api/pair'
+dlm_pairs_uri = '/dlm/api/pairs'
+dlm_unpair_uri = '/dlm/api/unpair'
+dlm_policies_uri = '/dlm/api/policies?numResults=200'
 ambari_clusters_uri = '/api/v1/clusters'
+ambari_services_uri = '/api/v1/services'
 ranger_service_uri = '/service/public/v2/api/service'
 ranger_policy_uri = '/service/public/v2/api/policy'
 ranger_hive_allpolicy_search_string = 'all%20-%20database,%20table,%20column'
 
 ranger_port = '6080'
 ambari_port = '8080'
-namenode_port = '8020'
 
 host_name = socket.getfqdn()
 host_ip = socket.gethostbyname(socket.gethostname())
@@ -35,6 +37,9 @@ ranger_url = 'http://'+host_name+':'+ranger_port
 headers={'content-type':'application/json'}
 
 ambari_cluster_name = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri, auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password)).content)['items'][0]['Clusters']['cluster_name']
+knox_public_url = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_services_uri+'/AMBARI/components/AMBARI_SERVER', auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password)).content)['RootServiceComponents']['properties']['authentication.jwt.providerUrl'].split(ambari_cluster_name)[0] + ambari_cluster_name
+ambari_public_url = knox_public_url + '/' + knox_topology + '/ambari'
+
 ranger_hive_service_name = ambari_cluster_name + '_hive'
 ranger_hdfs_service_name = ambari_cluster_name + '_hadoop'
 
@@ -81,7 +86,9 @@ tags = ''
 if sys.argv[1] == 'true':
   tags = '{"name": "shared-services"}'
 
-payload = '{"allowUntrusted":true,"behindGateway":false,"dcName": "DC02","ambariUrl": "http://'+host_name+':'+ambari_port+'","description":" ","location": 7064,"isDatalake": true,"name": "'+ambari_cluster_name+'","state": "TO_SYNC","ambariIpAddress": "http://'+host_ip+':'+ambari_port+'","properties": {"tags": ['+tags+']}}'
+#payload = '{"allowUntrusted":true,"behindGateway":false,"dcName": "DC02","ambariUrl": "http://'+host_name+':'+ambari_port+'","description":" ","location": 7064,"isDatalake": true,"name": "'+ambari_cluster_name+'","state": "TO_SYNC","ambariIpAddress": "http://'+host_ip+':'+ambari_port+'","properties": {"tags": ['+tags+']}}'
+payload = '{"allowUntrusted":true,"behindGateway":true,"dcName": "DC02","ambariUrl": '+ambari_public_url+',"description":" ","location": 7064,"isDatalake": true,"name": "'+ambari_cluster_name+'","state": "TO_SYNC","ambariIpAddress": "'+ambari_public_url+'", "knoxEnabled": true, "knoxUrl": "'+knox_public_url+'","properties": {"tags": ['+tags+']}}'
+
 print 'Registering Cluster with Dataplane: ' + dps_url+dps_lakes_uri
 print 'Payload: ' + payload
 print 'Result: ' + requests.post(url=dps_url+dps_lakes_uri, cookies=cookie, data=payload, headers=headers, verify=False).content

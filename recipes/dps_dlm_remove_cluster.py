@@ -12,9 +12,11 @@ dps_url = 'https://' + sys.argv[1]
 dps_admin_user = 'admin'
 dps_admin_password = 'admin'
 ambari_admin_user = 'admin'
-ambari_admin_password = 'admin-password'
+ambari_admin_password = 'admin-password1'
 ranger_admin_user = 'admin'
-ranger_admin_password = 'admin-password'
+ranger_admin_password = 'admin-password1'
+
+knox_topology = 'dp-proxy'
 
 dps_auth_uri = '/auth/in'
 dps_lakes_uri = '/api/lakes'
@@ -23,6 +25,7 @@ dlm_pairs_uri = '/dlm/api/pairs'
 dlm_unpair_uri = '/dlm/api/unpair'
 dlm_policies_uri = '/dlm/api/policies?numResults=200'
 ambari_clusters_uri = '/api/v1/clusters'
+ambari_services_uri = '/api/v1/services'
 ranger_service_uri = '/service/public/v2/api/service'
 ranger_policy_uri = '/service/public/v2/api/policy'
 ranger_hive_allpolicy_search_string = 'all%20-%20database,%20table,%20column'
@@ -36,6 +39,8 @@ ranger_url = 'http://'+host_name+':'+ranger_port
 headers={'content-type':'application/json'}
 
 ambari_cluster_name = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri, auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password)).content)['items'][0]['Clusters']['cluster_name']
+knox_public_url = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_services_uri+'/AMBARI/components/AMBARI_SERVER', auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password)).content)['RootServiceComponents']['properties']['authentication.jwt.providerUrl'].split(ambari_cluster_name)[0] + ambari_cluster_name
+ambari_public_url = knox_public_url + '/' + knox_topology + '/ambari'
 
 #token = json.loads(requests.post(url = dps_url+dps_auth_uri, data = '{"username":"'+dps_admin_user+'","password":"'+dps_admin_password+'"}', headers=headers, verify=False).text)['token']
 token = requests.post(url = dps_url+dps_auth_uri, data = '{"username":"'+dps_admin_user+'","password":"'+dps_admin_password+'"}', headers=headers, verify=False).cookies.pop('dp_jwt')
