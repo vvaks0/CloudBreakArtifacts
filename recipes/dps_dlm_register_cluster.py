@@ -169,8 +169,8 @@ print atlas_update_result
 if atlas_update_result.status_code == 400:
   print json.loads(atlas_update_result.content)['msgDesc']
 else:
-  print 'Atlas LDAP config updated... 
-  print 'Restarting Atlas to activate changes...''
+  print 'Atlas LDAP config updated...'
+  print 'Restarting Atlas to activate changes...'
   payload = '{"RequestInfo": {"context": "Stop ATLAS"}, "ServiceInfo": {"state": "INSTALLED"}}'
   result = json.loads(requests.put('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name+'/services/ATLAS', auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password), data=payload, headers=headers, verify=False).content)
   stop_request_id = result['Requests']['id']
