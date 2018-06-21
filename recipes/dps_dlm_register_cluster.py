@@ -77,7 +77,7 @@ else:
   print 'Create dpprofiler-audit-read policy: ' + payload
   print 'Result: ' + requests.post(url=ranger_url+ranger_policy_uri, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False).content
 
-payload = '{"name":"'+ranger_knox_service_name+'","description":"","isEnabled":true,"tagService":"","configs":{"username":"knox","password":"knox","knox.url":"https://'+hostname+':8443","commonNameForCertificate":""},"type":"knox"}"
+payload = '{"name":"'+ranger_knox_service_name+'","description":"","isEnabled":true,"tagService":"","configs":{"username":"knox","password":"knox","knox.url":"https://'+hostname+':8443","commonNameForCertificate":""},"type":"knox"}'
 ranger_update_result = requests.post(url=ranger_url+ranger_service_uri, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False)
 print ranger_update_result
 if ranger_update_result.status_code == 400:
