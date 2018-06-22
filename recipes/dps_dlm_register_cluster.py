@@ -91,7 +91,7 @@ else:
   ranger_knox_service = json.loads(ranger_update_result.content)
   print 'Created Ranger Knox Service...'
 
-payload = '{"name":"'+ranger_atlas_service_name+'","description":"","isEnabled":true,"tagService":"","configs":{"username":"admin","password":"admin","atlas.rest.url":"https://'+host_name+':'+atlas_port+'","commonNameForCertificate":""},"type":"atlas"}'
+payload = '{"name":"'+ranger_atlas_service_name+'","description":"","isEnabled":true,"tagService":"","configs":{"username":"admin","password":"admin","atlas.rest.address":"https://'+host_name+':'+atlas_port+'","commonNameForCertificate":""},"type":"atlas"}'
 ranger_update_result = requests.post(url=ranger_url+ranger_service_uri, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False)
 print ranger_update_result
 if ranger_update_result.status_code == 400:
@@ -110,11 +110,19 @@ cookie = {'dp_jwt':token}
 requests.get(url = dps_url+'/api/knox/status', cookies = cookie, verify=False).content
 
 tags = ''
+datacenter = 'DC01'
+location = '7064'
 if sys.argv[1] == 'true':
   tags = '{"name": "shared-services"}'
+  datacenter = 'DC02'
+  location = '7069'
+
+if len(sys.argv) > 4:
+  datacenter = 'DC03'
+  location = '7072'
 
 #payload = '{"allowUntrusted":true,"behindGateway":false,"dcName": "DC02","ambariUrl": "http://'+host_name+':'+ambari_port+'","description":" ","location": 7064,"isDatalake": true,"name": "'+ambari_cluster_name+'","state": "TO_SYNC","ambariIpAddress": "http://'+host_ip+':'+ambari_port+'","properties": {"tags": ['+tags+']}}'
-payload = '{"allowUntrusted":true,"behindGateway":true,"dcName": "DC02","ambariUrl": "'+ambari_public_url+'","description":" ","location": 7064,"isDatalake": true,"name": "'+ambari_cluster_name+'","state": "TO_SYNC","ambariIpAddress": "'+ambari_public_url+'", "knoxEnabled": true, "knoxUrl": "'+knox_public_url+'","properties": {"tags": ['+tags+']}}'
+payload = '{"allowUntrusted":true,"behindGateway":true,"dcName": "'+datacenter+'","ambariUrl": "'+ambari_public_url+'","description":" ","location": '+location+',"isDatalake": true,"name": "'+ambari_cluster_name+'","state": "TO_SYNC","ambariIpAddress": "'+ambari_public_url+'", "knoxEnabled": true, "knoxUrl": "'+knox_public_url+'","properties": {"tags": ['+tags+']}}'
 
 print 'Registering Cluster with Dataplane: ' + dps_url+dps_lakes_uri
 print 'Payload: ' + payload
@@ -234,5 +242,6 @@ if len(sys.argv) > 4:
   print 'Payload: ' + payload
   print 'Result: ' + requests.post(url=dps_url+dlm_clusters_uri+'/'+dlm_dest_cluster_id+'/policy/'+replicationPolicyName+'/submit', cookies=cookie, data=payload, headers=headers, verify=False).content
 
-if sys.argv[1] == 'false':
-  subprocess.call("CloudBreakArtifacts/recipes/load-logistics-dataset.sh")
+else:
+  if sys.argv[1] == 'false':
+    subprocess.call("CloudBreakArtifacts/recipes/load-logistics-dataset.sh")
