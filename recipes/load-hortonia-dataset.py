@@ -14,17 +14,20 @@ ranger_service_uri = '/service/public/v2/api/service'
 ranger_policy_uri = '/service/public/v2/api/policy'
 ranger_hive_allpolicy_search_string = 'all%20-%20database,%20table,%20column'
 ranger_import_uri = '/service/plugins/policies/importPoliciesFromFile?isOverride=true&serviceType='
+rm_apps_uri = '/ws/v1/cluster/apps'
 
 home_dir = '/tmp/'
 tag_policy_import_path = home_dir+'masterclass/ranger-atlas/Scripts/ranger-policies-tags.json'
 hive_policy_import_path = home_dir+'masterclass/ranger-atlas/Scripts/ranger-policies.json'
 
 zk_port = '2181'
+rm_port = '8088'
 ranger_port = '6080'
 ambari_port = '8080'
 
 host_name = socket.getfqdn()
 host_ip = socket.gethostbyname(socket.gethostname())
+rm_url = 'http://'+host_name+':'+rm_port
 ranger_url = 'http://'+host_name+':'+ranger_port
 
 #download hortonia scripts
@@ -104,22 +107,25 @@ print requests.put(url=ranger_url+ranger_policy_uri+'/'+target_policy_id, auth=H
 
 # data to HDFS
 os.chdir(home_dir+'masterclass/ranger-atlas/HortoniaMunichSetup')
+print 'Creat Classifications... '
 output = subprocess.check_output(["./typedefs_create.sh","data/classifications.json"])
+print 'Create HDFS users and folders...'
 output = subprocess.check_output(["su","hdfs","-c","./05-create-hdfs-user-folders.sh"])
+print 'Copy data to HDFS...'
 output = subprocess.check_output(["su","hdfs","-c","./06-copy-data-to-hdfs.sh"])
 
-#create Hive tables
+print 'Create Hive tables...'
 beeline_url='jdbc:hive2://'+host_name+':'+zk_port+'/;serviceDiscoveryMode=zooKeeper;zooKeeperNamespace=hiveserver2'
 output = subprocess.check_output(["beeline","-u",beeline_url,"-n","hive","-f","data/HiveSchema.hsql"])
 #output = subprocess.check_output(["beeline","-u",beeline_url,"-n","hive","-f","data/TransSchema.hsql"])
 
-#kill any previous Hive/tez apps to clear queue before hading cluster to end user
-apps = json.loads(requests.get(url='http://'+host_name+':8088/ws/v1/cluster/apps', auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), verify=False).content)['apps']['app']
+print 'Terminate remaining Hive/Tez apps to clear queue...'
+apps = json.loads(requests.get(url=rm_url+rm_apps_uri, auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), verify=False).content)['apps']['app']
 for app in apps:
   if app['applicationType'] == 'TEZ' and (app['state'] == 'RUNNING' or app['state'] == 'ACCEPTED'):
     print 'Terminating YARN application ' + app['id'] + ' of type ' + app['applicationType']
     payload = '{"state":"KILLED"}'
-    result = requests.put(url='http://'+host_name+':8088/ws/v1/cluster/apps/'+app['id']+'/state', auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False)
+    result = requests.put(url=rm_url+rm_apps_uri+'/'+app['id']+'/state', auth=HTTPBasicAuth(ranger_admin_user, ranger_admin_password), data=payload, headers=headers, verify=False)
     print result
 
 #create kafka topics and populate data - do it after kerberos to ensure Kafka Ranger plugin enabled

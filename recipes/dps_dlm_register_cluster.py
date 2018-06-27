@@ -245,4 +245,4 @@ if len(sys.argv) > 4:
 else:
   if sys.argv[1] == 'false':
     subprocess.call("CloudBreakArtifacts/recipes/load-logistics-dataset.sh")
-    subprocess.call("CloudBreakArtifacts/recipes/load-hortonia-dataset.sh")
+    subprocess.call("CloudBreakArtifacts/recipes/load-hortonia-dataset.py")
