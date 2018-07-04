@@ -126,10 +126,16 @@ payload = '{"allowUntrusted":true,"behindGateway":true,"dcName": "'+datacenter+'
 
 print 'Registering Cluster with Dataplane: ' + dps_url+dps_lakes_uri
 print 'Payload: ' + payload
-print 'Result: ' + requests.post(url=dps_url+dps_lakes_uri, cookies=cookie, data=payload, headers=headers, verify=False).content
+result = requests.post(url=dps_url+dps_lakes_uri, cookies=cookie, data=payload, headers=headers, verify=False).content
+print 'Result: ' + result
 
 print 'Waiting for DPS registration to take effect...'
 time.sleep(3)
+
+newClusterid = result['id']
+result = requests.get(url=dps_url+dps_lakes_uri + '/'+ newClusterId, cookies=cookie, headers=headers, verify=False).content
+
+print "Result: " + result
 
 #Configure Atlas for LDAP
 headers={'content-type':'application/x-www-form-urlencoded','X-Requested-By':'ambari'}
