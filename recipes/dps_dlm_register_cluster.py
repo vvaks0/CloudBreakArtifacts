@@ -132,11 +132,10 @@ print 'Result: ' + result
 print 'Waiting for DPS registration to take effect...'
 time.sleep(3)
 
-newClusterid = str(result['id'])
-result = requests.get(url=dps_url+dps_lakes_uri + '/'+ newClusterId, cookies=cookie, headers=headers, verify=False).content
-print "Result: " + result
-result = requests.get(url=dps_url+dps_lakes_uri + '/'+ newClusterId + '/servicesDetails', cookies=cookie, headers=headers, verify=False).content
-print "Result: " + result
+newClusterId = str(json.loads(result)['id'])
+payload = '{}'
+result = requests.post(url=dps_url+dps_lakes_uri + '/'+ newClusterId + '/sync', data=payload, cookies=cookie, headers=headers, verify=False).content
+print "Sync Result: " + result
 
 #Configure Atlas for LDAP
 headers={'content-type':'application/x-www-form-urlencoded','X-Requested-By':'ambari'}
