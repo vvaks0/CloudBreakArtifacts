@@ -1,16 +1,19 @@
 #!/usr/bin/python
 
-import requests, json, socket, time, sys, subprocess
-from requests.auth import HTTPBasicAuth
+#import requests, json, socket, time, sys, subprocess
+#from requests.auth import HTTPBasicAuth
 
 if (len(sys.argv) < 3) or (len(sys.argv) == 4):
   print 'Need at least 2 argument [is_shared_services, dps_host_name] and at most 4 arguments [target_cluster_name, target_dataset_name]'
   exit(1)
 
-dps_url = 'https://' + sys.argv[2]
+import requests, json, socket, time, sys, subprocess
+from requests.auth import HTTPBasicAuth
+
+#dps_url = 'https://' + sys.argv[2]
 
 dps_admin_user = 'admin'
-dps_admin_password = 'admin'
+dps_admin_password = 'admin-password1'
 ambari_admin_user = 'admin'
 ambari_admin_password = 'admin-password1'
 ranger_admin_user = 'admin'
@@ -19,7 +22,9 @@ ranger_admin_password = 'admin-password1'
 knox_topology = 'dp-proxy'
 
 dps_auth_uri = '/auth/in'
+dps_identity_uri = '/api/identity'
 dps_lakes_uri = '/api/lakes'
+dps_sso_provider = '/knox/gateway/knoxsso/api/v1/websso?originalUrl='
 dlm_clusters_uri = '/dlm/api/clusters'
 dlm_pairs_uri = '/dlm/api/pairs'
 dlm_pair_uri = '/dlm/api/pair'
@@ -46,6 +51,11 @@ headers={'content-type':'application/json'}
 ambari_cluster_name = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri, auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password)).content)['items'][0]['Clusters']['cluster_name']
 knox_public_url = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_services_uri+'/AMBARI/components/AMBARI_SERVER', auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password)).content)['RootServiceComponents']['properties']['authentication.jwt.providerUrl'].split(ambari_cluster_name)[0] + ambari_cluster_name
 ambari_public_url = knox_public_url + '/' + knox_topology + '/ambari'
+
+tag = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name+'?fields=Clusters/desired_configs', auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password)).content)['Clusters']['desired_configs']['hive-site']['tag']
+hive_config = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name+'/configurations?type=hive-site&tag='+tag, auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password)).content)
+
+dps_url = 'https://'+ hive_config['items'][0]['properties']['dps.host']
 
 ranger_hive_service_name = ambari_cluster_name + '_hive'
 ranger_knox_service_name = ambari_cluster_name + '_knox'
@@ -104,8 +114,12 @@ print 'Waiting for Ranger Policy to take effect...'
 time.sleep(31)
 
 #token = json.loads(requests.post(url = dps_url+dps_auth_uri, data = '{"username":"'+dps_admin_user+'","password":"'+dps_admin_password+'"}', headers=headers, verify=False).text)['token']
-token = requests.post(url = dps_url+dps_auth_uri, data = '{"username":"'+dps_admin_user+'","password":"'+dps_admin_password+'"}', headers=headers, verify=False).cookies.pop('dp_jwt')
-cookie = {'dp_jwt':token}
+#token = requests.post(url = dps_url+dps_auth_uri, data = '{"username":"'+dps_admin_user+'","password":"'+dps_admin_password+'"}', headers=headers, verify=False).cookies.pop('dp_jwt')
+#/knox/gateway/knoxsso/api/v1/websso?original?originalUrl=
+token = requests.post(url = dps_url+dps_sso_provider+dps_url, auth=HTTPBasicAuth(dps_admin_user,dps_admin_password), headers=headers, allow_redirects=False, verify=False).cookies.pop('hadoop-jwt')
+cookie = {'hadoop-jwt':token}
+#token = requests.get(url = dps_url+dps_identity_uri, cookies=cookie, headers=headers, verify=False).cookies.pop('dp_jwt')
+#cookie = {'dp_jwt':token}
 
 requests.get(url = dps_url+'/api/knox/status', cookies = cookie, verify=False).content
 
