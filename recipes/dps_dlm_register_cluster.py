@@ -2,12 +2,13 @@
 
 #import requests, json, socket, time, sys, subprocess
 #from requests.auth import HTTPBasicAuth
+import sys
 
 if (len(sys.argv) < 3) or (len(sys.argv) == 4):
   print 'Need at least 2 argument [is_shared_services, dps_host_name] and at most 4 arguments [target_cluster_name, target_dataset_name]'
   exit(1)
 
-import requests, json, socket, time, sys, subprocess
+import requests, json, socket, time, subprocess
 from requests.auth import HTTPBasicAuth
 
 #dps_url = 'https://' + sys.argv[2]
