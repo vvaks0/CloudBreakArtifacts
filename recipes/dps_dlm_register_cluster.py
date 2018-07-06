@@ -37,7 +37,7 @@ ranger_service_uri = '/service/public/v2/api/service'
 ranger_policy_uri = '/service/public/v2/api/policy'
 ranger_hive_allpolicy_search_string = 'all%20-%20database,%20table,%20column'
 
-dps_host_config_file = 'beacon-env'
+dps_host_config_file = 'beacon-security-site'
 
 zk_port = '2181'
 knox_port = '8443'
