@@ -2,11 +2,11 @@
 
 #import requests, json, socket, time, sys, subprocess
 #from requests.auth import HTTPBasicAuth
-import sys
+#import sys
 
-if (len(sys.argv) < 3) or (len(sys.argv) == 4):
-  print 'Need at least 2 argument [is_shared_services, dps_host_name] and at most 4 arguments [target_cluster_name, target_dataset_name]'
-  exit(1)
+#if (len(sys.argv) < 3) or (len(sys.argv) == 4):
+#  print 'Need at least 2 argument [is_shared_services, dps_host_name] and at most 4 arguments [target_cluster_name, target_dataset_name]'
+#  exit(1)
 
 import requests, json, socket, time, subprocess
 from requests.auth import HTTPBasicAuth
@@ -21,6 +21,11 @@ ranger_admin_user = 'admin'
 ranger_admin_password = 'admin-password1'
 
 knox_topology = 'dp-proxy'
+
+isDatalake_argument_name = 'dps.cluster.is.datalake'
+dpsHost_argument_name = 'dps.host'
+partner_cluster_argument_name = ''
+initial_dataset_argument_name = ''
 
 dps_auth_uri = '/auth/in'
 dps_identity_uri = '/api/identity'
@@ -134,7 +139,6 @@ def get_latest_config(config_name):
     return config
 
 def configure_atlas():
-    #Configure Atlas for LDAP
     headers={'content-type':'application/x-www-form-urlencoded','X-Requested-By':'ambari'}
     change_description = 'Atlas LDAP Config' 
     target_config_name = 'application-properties'
@@ -159,15 +163,6 @@ def configure_atlas():
     config['atlas.authentication.method.ldap.user.searchfilter'] = ldap_user_filter
     config['atlas.authentication.method.ldap.groupSearchFilter'] = ldap_group_filter
     config['atlas.authentication.method.ldap.groupSearchBase'] = ldap_group_searchBase
-    
-    #atlas_config_update = {'atlas.authentication.method.ldap.url':''+ldap_url+'',
-    #'atlas.authentication.method.ldap.base.dn':''+ldap_base_dn+'',
-    #'atlas.authentication.method.ldap.bind.dn':''+ldap_bind_dn+'',
-    #'atlas.authentication.method.ldap.bind.password':''+ldap_bind_pass+'',
-    #'atlas.authentication.method.ldap.userDNpattern':''+ldap_user_DNpattern+'',
-    #'atlas.authentication.method.ldap.user.searchfilter':''+ldap_user_filter+'',
-    #'atlas.authentication.method.ldap.groupSearchFilter':''+ldap_group_filter+'',
-    #'atlas.authentication.method.ldap.groupSearchBase':''+ldap_group_searchBase+''}
     
     payload[0]['Clusters']['desired_config'][0]['properties'] = config
     payload = json.dumps(payload)
@@ -258,17 +253,32 @@ def dps_register_cluster():
     result = requests.post(url=dps_url+dps_lakes_uri + '/'+ newClusterId + '/sync', data=payload, cookies=cookie, headers=headers, verify=False).content
     print "Sync Result: " + result
 
-def dlm_pair_clusters():
+def get_dlm_cluster_details(target_cluser_name):
+    dlm_clusters = json.loads(requests.get(url=dps_url+dlm_clusters_uri, cookies=cookie, headers=headers, verify=False).content)
+    for dlm_cluster in dlm_clusters['clusters']:
+        if dlm_cluster['name'] == target_cluser_name:
+            return dlm_cluster
+        else:
+            return None
+    
+def dlm_pair_clusters(source_cluster, destination_cluster):
     headers={'content-type':'application/json'}
-    payload = '[{"clusterId": '+dlm_source_cluster_id+',"beaconUrl": "'+dlm_source_cluster_beacon+'"},{"clusterId": '+dlm_dest_cluster_id+',"beaconUrl": "'+dlm_dest_cluster_beacon+'"}]'
+    payload = '[{"clusterId": '+str(source_cluster['id'])+',"beaconUrl": "'+source_cluster['beaconUrl']+'"},{"clusterId": '+str(destination_cluster['id'])+',"beaconUrl": "'+destination_cluster['beaconUrl']+'"}]'
     print 'Payload: ' + payload
     print 'Result: ' + requests.post(url=dps_url+dlm_pair_uri, cookies=cookie, data=payload, headers=headers, verify=False).content
 
-def dlm_create_policy():
+def dlm_create_policy(source_cluster, destination_cluster, dataset_name, replicationPolicyName):
     headers={'content-type':'application/json'}
-    payload = '{"policyDefinition": {"name": "'+replicationPolicyName+'","type": "HIVE","sourceCluster": "'+dlm_source_cluster_dc+'$'+dlm_source_cluster_name+'","targetCluster": "'+dlm_dest_cluster_dc+'$'+dlm_dest_cluster_name+'","frequencyInSec": 3600,"sourceDataset": "'+target_dataset_name+'"},"submitType": "SUBMIT_AND_SCHEDULE"}' 
+    payload = '{"policyDefinition": {"name": "'+replicationPolicyName+'","type": "HIVE","sourceCluster": "'+source_cluster['dataCenter']+'$'+source_cluster['name']+'","targetCluster": "'+destination_cluster['dataCenter']+'$'+destination_cluster['name']+'","frequencyInSec": 3600,"sourceDataset": "'+dataset_name+'"},"submitType": "SUBMIT_AND_SCHEDULE"}' 
     print 'Payload: ' + payload
-    print 'Result: ' + requests.post(url=dps_url+dlm_clusters_uri+'/'+dlm_dest_cluster_id+'/policy/'+replicationPolicyName+'/submit', cookies=cookie, data=payload, headers=headers, verify=False).content
+    print 'Result: ' + requests.post(url=dps_url+dlm_clusters_uri+'/'+destination_cluster['id']+'/policy/'+replicationPolicyName+'/submit', cookies=cookie, data=payload, headers=headers, verify=False).content
+
+def check_external_argument(argument_name):
+    if get_latest_config(dps_host_config_file)[argument_name] == None or get_latest_config(dps_host_config_file)[argument_name] == '':
+        print argument_name + ' is null, make sure the proprety has been configured in Ambari under ' + dps_host_config_file
+        return False
+    else:
+        return True
 
 ##################################################
 
@@ -284,13 +294,19 @@ if atlas_update_result.status_code == 400:
     print json.loads(atlas_update_result.content)['msgDesc']
 else:
     restart_service('ATLAS')
+ 
+if not check_external_argument(isDatalake_argument_name):
+    exit(1)
 
 print 'Cluster is Datalake? ' 
 is_datalake = get_latest_config(dps_host_config_file)['dps.cluster.is.datalake']
 print is_datalake
 
+if not check_external_argument(dpsHost_argument_name):
+    exit(1)
+
 print 'Getting Auth Token from DPS...'
-dps_url = 'https://'+ get_latest_config(dps_host_config_file)['dps.host']
+dps_url = 'https://'+ get_latest_config(dps_host_config_file)[external_argument]
 cookie = get_dps_token()
 
 print 'Verifying Token is Valid...'
@@ -299,38 +315,31 @@ requests.get(url = dps_url+'/api/knox/status', cookies = cookie, verify=False).c
 print 'Registering Cluster with Dataplane: ' + dps_url+dps_lakes_uri
 dps_register_cluster()
 
-if len(sys.argv) > 4:
-  #target_cluster_name = sys.argv[3]
-  #target_dataset_name = sys.argv[4]
-  
-  target_cluster_name = get_latest_config(dps_host_config_file)['dlm.initial.partner.cluster']
-  target_dataset_name = get_latest_config(dps_host_config_file)['dlm.initial.policy.dataset']  
-  
-  headers={'content-type':'application/json'}
-  
-  print 'Getting Cluster Information from DLM... '
-  payload=''
-  dlm_clusters = json.loads(requests.get(url=dps_url+dlm_clusters_uri, cookies=cookie, data=payload, headers=headers, verify=False).content)
-  for dlm_cluster in dlm_clusters['clusters']:
-    if dlm_cluster['name'] == ambari_cluster_name:
-      dlm_dest_cluster_id = str(dlm_cluster['id'])
-      dlm_dest_cluster_name = str(dlm_cluster['name'])
-      dlm_dest_cluster_beacon = dlm_cluster['beaconUrl']
-      dlm_dest_cluster_dc = dlm_cluster['dataCenter']
-    elif dlm_cluster['name'] == target_cluster_name:
-      dlm_source_cluster_id = str(dlm_cluster['id'])
-      dlm_source_cluster_name = str(dlm_cluster['name'])
-      dlm_source_cluster_beacon = dlm_cluster['beaconUrl']
-      dlm_source_cluster_dc = dlm_cluster['dataCenter']
-  
-  print 'Pairing Cluster with Shared Services: ' + dps_url+dlm_pair_uri
-  dlm_pair_clusters()
-  
-  replicationPolicyName = 'hive-'+target_dataset_name+'-'+dlm_source_cluster_name+'-'+dlm_dest_cluster_name
-  print 'Enabling replication policy: ' + replicationPolicyName + ' to: '+dps_url+dlm_clusters_uri+'/'+dlm_dest_cluster_id+'/policy/'+replicationPolicyName+'/submit'
-  dlm_create_policy()
-  
+if check_external_argument(partner_cluster_argument_name) or check_external_argument(initial_dataset_argument_name):
+    
+    partner_cluster_name= get_latest_config(dps_host_config_file)[partner_cluster_argument_name]
+    initial_dataset_name = get_latest_config(dps_host_config_file)[initial_dataset_argument_name]
+    
+    headers={'content-type':'application/json'}
+    print 'Getting Cluster Information from DLM... '
+    
+    partner_cluster = get_dlm_cluster_details(ambari_cluster_name)
+    if partner_cluster == None:
+        print ambari_cluster_name + ' not found in DLM... cannot complete pairing and replication scheduling'
+        exit(1) 
+        
+    destination_cluster = get_dlm_cluster_details(target_cluster_name)
+    if destination_cluster == None:  
+        print destintation_cluster['name'] + ' not found in DLM... cannot complete pairing and replication scheduling'
+        exit(1)
+        
+    print 'Pairing Cluster with Shared Services: ' + dps_url+dlm_pair_uri
+    dlm_pair_clusters(partner_cluster, destination_cluster)
+    
+    replicationPolicyName = 'hive-'+initial_dataset_name+'-'+partner_cluster['name']+'-'+source_cluster['name']
+    print 'Enabling replication policy: ' + replicationPolicyName + ' to: '+dps_url+dlm_clusters_uri+'/'+dlm_dest_cluster_id+'/policy/'+replicationPolicyName+'/submit'
+    dlm_create_policy(source_cluster, destination_cluster, initial_dataset_name, replicationPolicyName)
 else:
-  if sys.argv[1] == 'false':
-    subprocess.call("CloudBreakArtifacts/recipes/load-logistics-dataset.sh")
-    subprocess.call("CloudBreakArtifacts/recipes/load-hortonia-dataset.py")
+    if is_datalake == 'false':
+        subprocess.call("CloudBreakArtifacts/recipes/load-logistics-dataset.sh")
+        subprocess.call("CloudBreakArtifacts/recipes/load-hortonia-dataset.py")
