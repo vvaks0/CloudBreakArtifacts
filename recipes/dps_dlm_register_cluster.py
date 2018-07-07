@@ -24,8 +24,8 @@ knox_topology = 'dp-proxy'
 
 isDatalake_argument_name = 'dps.cluster.is.datalake'
 dpsHost_argument_name = 'dps.host'
-partner_cluster_argument_name = ''
-initial_dataset_argument_name = ''
+partner_cluster_argument_name = 'dlm.initial.partner.cluster'
+initial_dataset_argument_name = 'dlm.initial.policy.dataset'
 
 dps_auth_uri = '/auth/in'
 dps_identity_uri = '/api/identity'
