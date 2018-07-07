@@ -177,7 +177,7 @@ def configure_atlas():
     return update_result
 
 def stop_service(service_name):
-    headers={'content-type':'application/json','X-Requested-By':'ambari'}
+    headers={'content-type':'application/x-www-form-urlencoded','X-Requested-By':'ambari'}
     result = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name+'/services/'+service_name, auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password), headers=headers, verify=False).content)
     
     if result['ServiceInfo']['state'] == 'STARTED' :
@@ -196,7 +196,7 @@ def stop_service(service_name):
         time.sleep(2)
 
 def start_service(service_name):
-    headers={'content-type':'application/json','X-Requested-By':'ambari'}
+    headers={'content-type':'application/x-www-form-urlencoded','X-Requested-By':'ambari'}
     result = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name+'/services/'+service_name, auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password), headers=headers, verify=False).content)
     
     if result['ServiceInfo']['state'] == 'INSTALLED' :
