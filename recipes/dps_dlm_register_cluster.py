@@ -287,6 +287,7 @@ else:
 
 print 'Cluster is Datalake? ' 
 is_datalake = 'https://'+ get_latest_config(dps_host_config_file)['dps.cluster.is.datalake']
+print is_datalake
 
 print 'Getting Auth Token from DPS...'
 dps_url = 'https://'+ get_latest_config(dps_host_config_file)['dps.host']
