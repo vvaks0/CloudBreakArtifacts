@@ -277,7 +277,7 @@ enable_ranger_special_policies()
 #configure_ranger()
 
 print 'Configuring Atlas for LDAP...'
-atlas_udate_result = configure_atlas()
+atlas_update_result = configure_atlas()
 
 if atlas_update_result.status_code == 400:
     print json.loads(atlas_update_result.content)['msgDesc']
