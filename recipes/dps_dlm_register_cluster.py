@@ -286,7 +286,7 @@ else:
     restart_service('ATLAS')
 
 print 'Cluster is Datalake? ' 
-is_datalake = 'https://'+ get_latest_config(dps_host_config_file)['dps.cluster.is.datalake']
+is_datalake = get_latest_config(dps_host_config_file)['dps.cluster.is.datalake']
 print is_datalake
 
 print 'Getting Auth Token from DPS...'
