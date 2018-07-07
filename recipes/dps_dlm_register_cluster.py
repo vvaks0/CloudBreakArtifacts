@@ -228,12 +228,12 @@ def dps_register_cluster():
     tags = ''
     datacenter = 'DC01'
     location = '7064'
-    if sys.argv[1] == 'true':
+    if is_datalake == 'true':
       tags = '{"name": "shared-services"}'
       datacenter = 'DC02'
       location = '7069'
     
-    if len(sys.argv) > 4:
+    if check_external_argument(partner_cluster_argument_name) and check_external_argument(initial_dataset_argument_name):
       datacenter = 'DC03'
       location = '7072'
     
@@ -315,7 +315,7 @@ requests.get(url = dps_url+'/api/knox/status', cookies = cookie, verify=False).c
 print 'Registering Cluster with Dataplane: ' + dps_url+dps_lakes_uri
 dps_register_cluster()
 
-if check_external_argument(partner_cluster_argument_name) or check_external_argument(initial_dataset_argument_name):
+if check_external_argument(partner_cluster_argument_name) and check_external_argument(initial_dataset_argument_name):
     
     partner_cluster_name= get_latest_config(dps_host_config_file)[partner_cluster_argument_name]
     initial_dataset_name = get_latest_config(dps_host_config_file)[initial_dataset_argument_name]
