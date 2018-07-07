@@ -253,10 +253,11 @@ def dps_register_cluster():
     result = requests.post(url=dps_url+dps_lakes_uri + '/'+ newClusterId + '/sync', data=payload, cookies=cookie, headers=headers, verify=False).content
     print "Sync Result: " + result
 
-def get_dlm_cluster_details(target_cluser_name):
+def get_dlm_cluster_details(target_cluster_name):
     dlm_clusters = json.loads(requests.get(url=dps_url+dlm_clusters_uri, cookies=cookie, headers=headers, verify=False).content)
     for dlm_cluster in dlm_clusters['clusters']:
-        if dlm_cluster['name'] == target_cluser_name:
+        print dlm_cluster['name'] +' ? '+ target_cluster_name
+        if dlm_cluster['name'] == target_cluster_name:
             return dlm_cluster
         else:
             return None
