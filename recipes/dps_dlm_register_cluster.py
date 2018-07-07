@@ -306,7 +306,7 @@ if not check_external_argument(dpsHost_argument_name):
     exit(1)
 
 print 'Getting Auth Token from DPS...'
-dps_url = 'https://'+ get_latest_config(dps_host_config_file)[external_argument]
+dps_url = 'https://'+ get_latest_config(dps_host_config_file)[dpsHost_argument_name]
 cookie = get_dps_token()
 
 print 'Verifying Token is Valid...'
