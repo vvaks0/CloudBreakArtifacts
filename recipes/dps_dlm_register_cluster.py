@@ -309,6 +309,7 @@ if len(sys.argv) > 4:
   headers={'content-type':'application/json'}
   
   print 'Getting Cluster Information from DLM... '
+  payload=''
   dlm_clusters = json.loads(requests.get(url=dps_url+dlm_clusters_uri, cookies=cookie, data=payload, headers=headers, verify=False).content)
   for dlm_cluster in dlm_clusters['clusters']:
     if dlm_cluster['name'] == ambari_cluster_name:
