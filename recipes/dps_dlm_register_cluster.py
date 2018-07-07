@@ -332,7 +332,7 @@ if check_external_argument(partner_cluster_argument_name) and check_external_arg
         
     destination_cluster = get_dlm_cluster_details(target_cluster_name)
     if destination_cluster == None:  
-        print destintation_cluster['name'] + ' not found in DLM... cannot complete pairing and replication scheduling'
+        print destination_cluster['name'] + ' not found in DLM... cannot complete pairing and replication scheduling'
         exit(1)
         
     print 'Pairing Cluster with Shared Services: ' + dps_url+dlm_pair_uri
