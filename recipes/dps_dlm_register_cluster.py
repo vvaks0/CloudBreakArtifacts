@@ -274,7 +274,7 @@ def dlm_create_policy(source_cluster, destination_cluster, dataset_name, replica
     print 'Result: ' + requests.post(url=dps_url+dlm_clusters_uri+'/'+destination_cluster['id']+'/policy/'+replicationPolicyName+'/submit', cookies=cookie, data=payload, headers=headers, verify=False).content
 
 def check_external_argument(argument_name):
-    if get_latest_config(dps_host_config_file)[argument_name] == None or get_latest_config(dps_host_config_file)[argument_name] == '':
+    if get_latest_config(dps_host_config_file)[argument_name] == None or not get_latest_config(dps_host_config_file)[argument_name]:
         print argument_name + ' is null, make sure the proprety has been configured in Ambari under ' + dps_host_config_file
         return False
     else:
