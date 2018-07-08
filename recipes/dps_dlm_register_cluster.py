@@ -280,7 +280,7 @@ def check_external_argument(argument_name):
         get_latest_config(dps_host_config_file)[argument_name]
         return True
     except KeyError, e:
-        print argument_name + ' is null, make sure the property has been configured in Ambari under ' + dps_host_config_file
+        print argument_name + ' is null'  #make sure the property has been configured in Ambari under ' + dps_host_config_file
         return False
 
 ##################################################
@@ -343,6 +343,7 @@ if check_external_argument(partner_cluster_argument_name) and check_external_arg
     print 'Enabling replication policy: ' + replicationPolicyName + ' to: '+dps_url+dlm_clusters_uri+'/'+str(destination_cluster['id'])+'/policy/'+replicationPolicyName+'/submit'
     dlm_create_policy(partner_cluster, destination_cluster, initial_dataset_name, replicationPolicyName)
 else:
+    print 'Partner Cluster and Initial Dataset NOT defined... skipping DLM configurations'
     if is_datalake == 'false':
         subprocess.call("CloudBreakArtifacts/recipes/load-logistics-dataset.sh")
         subprocess.call("CloudBreakArtifacts/recipes/load-hortonia-dataset.py")
