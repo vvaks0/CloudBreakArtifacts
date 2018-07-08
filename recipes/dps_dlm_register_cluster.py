@@ -273,7 +273,7 @@ def dlm_create_policy(source_cluster, destination_cluster, dataset_name, replica
     headers={'content-type':'application/json'}
     payload = '{"policyDefinition": {"name": "'+replicationPolicyName+'","type": "HIVE","sourceCluster": "'+source_cluster['dataCenter']+'$'+source_cluster['name']+'","targetCluster": "'+destination_cluster['dataCenter']+'$'+destination_cluster['name']+'","frequencyInSec": 3600,"sourceDataset": "'+dataset_name+'"},"submitType": "SUBMIT_AND_SCHEDULE"}' 
     print 'Payload: ' + payload
-    print 'Result: ' + requests.post(url=dps_url+dlm_clusters_uri+'/'+destination_cluster['id']+'/policy/'+replicationPolicyName+'/submit', cookies=cookie, data=payload, headers=headers, verify=False).content
+    print 'Result: ' + requests.post(url=dps_url+dlm_clusters_uri+'/'+str(destination_cluster['id'])+'/policy/'+replicationPolicyName+'/submit', cookies=cookie, data=payload, headers=headers, verify=False).content
 
 def check_external_argument(argument_name):
     if get_latest_config(dps_host_config_file)[argument_name] == None or not get_latest_config(dps_host_config_file)[argument_name]:
