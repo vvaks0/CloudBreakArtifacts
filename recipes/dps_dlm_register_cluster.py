@@ -330,7 +330,7 @@ if check_external_argument(partner_cluster_argument_name) and check_external_arg
         print ambari_cluster_name + ' not found in DLM... cannot complete pairing and replication scheduling'
         exit(1) 
         
-    destination_cluster = get_dlm_cluster_details(target_cluster_name)
+    destination_cluster = get_dlm_cluster_details(partner_cluster_name)
     if destination_cluster == None:  
         print destination_cluster['name'] + ' not found in DLM... cannot complete pairing and replication scheduling'
         exit(1)
