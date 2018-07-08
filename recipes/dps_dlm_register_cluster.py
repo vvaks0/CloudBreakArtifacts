@@ -345,5 +345,6 @@ if check_external_argument(partner_cluster_argument_name) and check_external_arg
 else:
     print 'Partner Cluster and Initial Dataset NOT defined... skipping DLM configurations'
     if is_datalake == 'false':
+        print 'Loading Standard Datasets...'
         subprocess.call("CloudBreakArtifacts/recipes/load-logistics-dataset.sh")
         subprocess.call("CloudBreakArtifacts/recipes/load-hortonia-dataset.py")
