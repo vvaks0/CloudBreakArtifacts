@@ -294,7 +294,7 @@ atlas_update_result = configure_atlas()
 
 if atlas_update_result.status_code == 400:
     print json.loads(atlas_update_result.content)['msgDesc']
-#else:
+else:
     restart_service('ATLAS')
  
 if not check_external_argument(isDatalake_argument_name):
