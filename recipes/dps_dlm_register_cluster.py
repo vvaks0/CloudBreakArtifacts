@@ -340,7 +340,7 @@ if check_external_argument(partner_cluster_argument_name) and check_external_arg
     
     replicationPolicyName = 'hive-'+initial_dataset_name+'-'+partner_cluster['name']+'-'+destination_cluster['name']
     print 'Enabling replication policy: ' + replicationPolicyName + ' to: '+dps_url+dlm_clusters_uri+'/'+str(destination_cluster['id'])+'/policy/'+replicationPolicyName+'/submit'
-    dlm_create_policy(source_cluster, destination_cluster, initial_dataset_name, replicationPolicyName)
+    dlm_create_policy(partner_cluster, destination_cluster, initial_dataset_name, replicationPolicyName)
 else:
     if is_datalake == 'false':
         subprocess.call("CloudBreakArtifacts/recipes/load-logistics-dataset.sh")
