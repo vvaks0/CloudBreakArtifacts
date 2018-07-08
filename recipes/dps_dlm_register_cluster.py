@@ -338,8 +338,8 @@ if check_external_argument(partner_cluster_argument_name) and check_external_arg
     print 'Pairing Cluster with Shared Services: ' + dps_url+dlm_pair_uri
     dlm_pair_clusters(partner_cluster, destination_cluster)
     
-    replicationPolicyName = 'hive-'+initial_dataset_name+'-'+partner_cluster['name']+'-'+source_cluster['name']
-    print 'Enabling replication policy: ' + replicationPolicyName + ' to: '+dps_url+dlm_clusters_uri+'/'+dlm_dest_cluster_id+'/policy/'+replicationPolicyName+'/submit'
+    replicationPolicyName = 'hive-'+initial_dataset_name+'-'+partner_cluster['name']+'-'+destination_cluster['name']
+    print 'Enabling replication policy: ' + replicationPolicyName + ' to: '+dps_url+dlm_clusters_uri+'/'+destination_cluster['id']+'/policy/'+replicationPolicyName+'/submit'
     dlm_create_policy(source_cluster, destination_cluster, initial_dataset_name, replicationPolicyName)
 else:
     if is_datalake == 'false':
