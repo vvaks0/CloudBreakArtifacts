@@ -1,0 +1,145 @@
+{
+  "configurations": [
+    {
+      "hive-env": {
+        "properties": {
+          "hive.atlas.hook": "true"
+        }
+      }
+    },
+    {
+      "hive-site": {
+        "properties": {
+          "atlas.rest.address": "http://{{{ datalake.master.node}}}:21000"
+        }
+      }
+    },
+    {
+      "hive-atlas-application.properties": {
+        "properties": {
+          "atlas.kafka.bootstrap.servers": "{{{ datalake.master.node}}}:6667"
+        }
+      }
+    },
+    {
+      "ranger-hive-audit": {
+        "properties_attributes": {},
+        "properties": {
+          "xasecure.audit.destination.hdfs.file.rollover.sec": "60"
+        }
+      }
+    }
+  ],
+  "host_groups": [
+    {
+      "name": "master",
+      "cardinality": "1",
+      "components": [
+        {
+          "name": "HIVE_SERVER"
+        },
+        {
+          "name": "HIVE_METASTORE"
+        },
+        {
+          "name": "WEBHCAT_SERVER"
+        },
+        {
+          "name": "ZOOKEEPER_SERVER"
+        },
+        {
+          "name": "NAMENODE"
+        },
+        {
+          "name": "SECONDARY_NAMENODE"
+        },
+        {
+          "name": "RESOURCEMANAGER"
+        },
+        {
+          "name": "HISTORYSERVER"
+        },
+        {
+          "name": "APP_TIMELINE_SERVER"
+        },
+        {
+          "name": "LIVY2_SERVER"
+        },
+        {
+          "name": "SPARK2_CLIENT"
+        },
+        {
+          "name": "SPARK2_JOBHISTORYSERVER"
+        },
+        {
+          "name": "DATANODE"
+        },
+        {
+          "name": "HCAT"
+        },
+        {
+          "name": "SLIDER"
+        },
+        {
+          "name": "YARN_CLIENT"
+        },
+        {
+          "name": "HDFS_CLIENT"
+        },
+        {
+          "name": "TEZ_CLIENT"
+        },
+        {
+          "name": "ZOOKEEPER_CLIENT"
+        },
+        {
+          "name": "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name": "HIVE_CLIENT"
+        }
+      ]
+    },
+    {
+      "name": "worker",
+      "cardinality": "1+",
+      "components": [
+        {
+          "name": "NODEMANAGER"
+        },
+        {
+          "name": "DATANODE"
+        },
+        {
+          "name": "SLIDER"
+        },
+        {
+          "name": "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name": "YARN_CLIENT"
+        },
+        {
+          "name": "HDFS_CLIENT"
+        },
+        {
+          "name": "SPARK2_CLIENT"
+        },
+        {
+          "name": "TEZ_CLIENT"
+        },
+        {
+          "name": "ZOOKEEPER_CLIENT"
+        },
+        {
+          "name": "HIVE_CLIENT"
+        }
+      ]
+    }
+  ],
+  "Blueprints": {
+    "blueprint_name": "ephemeral",
+    "stack_name": "HDP",
+    "stack_version": "2.6"
+  }
+}

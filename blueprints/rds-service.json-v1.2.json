@@ -1,0 +1,28 @@
+
+{
+  "Blueprints": {
+    "blueprint_name": "rds-metastore",
+    "stack_name": "HDP",
+    "stack_version": "2.6"
+  },
+  "settings": [],
+  "configurations": [],
+  "host_groups": [
+    {
+      "name": "master",
+      "configurations": [],
+      "components": [
+        {
+          "name": "HIVE_CLIENT"
+        },
+        {
+          "name": "HIVE_METASTORE"
+        },
+        {
+          "name": "KNOX_GATEWAY"
+        }
+      ],
+      "cardinality": "1"
+    }
+  ]
+}

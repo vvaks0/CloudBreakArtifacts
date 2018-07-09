@@ -1,0 +1,517 @@
+{
+    
+   "settings": [
+    {
+      "recovery_settings": []
+    },
+    {
+      "service_settings": [
+        {
+          "name": "HIVE",
+          "credential_store_enabled": "false"
+        }
+      ]
+    },
+    {
+      "component_settings": []
+    }
+  ],
+  "configurations": [
+    {
+      "yarn-site": {
+        "properties_attributes": {},
+        "properties": {
+          "yarn.nodemanager.resource.memory-mb": "13568",
+          "yarn.nodemanager.resource.cpu-vcores": "6"
+        }
+      }
+    },
+    {
+      "ranger-hive-audit": {
+        "properties_attributes": {},
+        "properties": {
+          "xasecure.audit.destination.hdfs.file.rollover.sec": "600"
+        }
+      }
+    },
+    {
+      "beacon-security-site": {
+        "properties_attributes": {},
+        "properties": {
+          "beacon.username": "beacon",
+          "beacon.password": "beacon",
+          "beacon.ranger.user": "beacon_ranger"
+        }
+      }
+    },
+    {
+      "beacon-env": {
+        "properties_attributes": {},
+        "properties": {
+          "beacon_database": "New Derby Database",
+          "beacon_store_db_name": "beacon",
+          "beacon_group": "beacon",
+          "beacon_user": "beacon",
+          "beacon_store_user": "beacon",
+          "beacon_store_password": "beacon"
+        }
+      }
+    },
+    {
+      "kafka-broker": {
+        "properties_attributes": {},
+        "properties": {
+          "default.replication.factor": "1",
+          "offsets.topic.replication.factor": "1"
+        }
+      }
+    },
+    {
+      "dpprofiler-config": {
+        "properties_attributes": {},
+        "properties": {
+          "dpprofiler.db.host": "localhost",
+          "dpprofiler.profiler.autoregister": "true",
+          "dpprofiler.profiler.hdfs.dir": "/apps/dpprofiler/profilers",
+          "dpprofiler.db.user": "profileragent",
+          "dpprofiler.cluster.config.keys": "atlasUrl=application-properties/atlas.rest.address;rangerAuditDir=ranger-env/xasecure.audit.destination.hdfs.dir;metastoreUrl=hive-site/hive.metastore.uris;metastoreKeytab=hive-site/hive.metastore.kerberos.keytab.file;metastorePrincipal=hive-site/hive.metastore.kerberos.principal",
+          "dpprofiler.db.database": "profileragent",
+          "dpprofiler.db.type": "h2",
+          "dpprofiler.db.jdbc.url": "jdbc:h2:/var/lib/profiler_agent/h2/profileragent;DATABASE_TO_UPPER=false;DB_CLOSE_DELAY=-1",
+          "dpprofiler.db.driver": "org.h2.Driver",
+          "dpprofiler.db.slick.driver": "slick.driver.H2Driver$"
+        }
+      }
+    },
+    {
+        "hive-site": {
+          "hive.repl.replica.functions.root.dir":"s3a://{{{ S3_BUCKET }}}/{{{ CLUSTER_NAME }}}"
+        }
+    },
+    {
+      "application-properties": {
+        "properties": {
+          "atlas.authentication.method.ldap.url":"{{{ LDAP_CONNECTION_URL }}}",
+          "atlas.authentication.method.ldap.bind.user":"{{{ LDAP_BIND_DN }}}",
+          "atlas.authentication.method.ldap.bind.password":"{{{ LDAP_BIND_PASSWORD}}}",
+          "atlas.authentication.method.ldap.groupSearchBase": "{{{ LDAP_GROUP_SEARCHBASE }}}",
+          "atlas.authentication.method.ldap.groupSearchFilter": "(&(objectClass={{{ LDAP_GROUP_OBJECT_CLASS }}})({{{ LDAP_GROUP_MEMBER_ATTRIBUTE }}}={0}))",
+          "atlas.authentication.method.ldap.base.dn": "{{{ LDAP_USER_SEARCHBASE }}}",
+          "atlas.authentication.method.ldap.userDNpattern": "{{{ LDAP_USERNAME_ATTRIBUTE }}}",
+          "atlas.authentication.method.ldap.user.searchfilter": "(&(objectClass={{{ LDAP_USER_OBJECT_CLASS }}})({{{ LDAP_USERNAME_ATTRIBUTE }}}={0}))",
+          "atlas.authentication.method.ldap.type": "{{{ LDAP_DIRECTORY_TYPE }}}"
+    	}
+  	  }
+    }
+  ],
+  "host_groups": [
+    {
+      "name": "master",
+      "cardinality": "1",
+      "components": [
+        {
+          "name": "ATLAS_SERVER"
+        },
+        {
+          "name": "RANGER_TAGSYNC"
+        },
+        {
+          "name": "RANGER_USERSYNC"
+        },
+        {
+          "name": "RANGER_ADMIN"
+        },
+        {
+          "name": "INFRA_SOLR"
+        },
+        {
+          "name": "HIVE_METASTORE"
+        },
+        {
+          "name": "HBASE_MASTER"
+        },
+        {
+          "name": "KAFKA_BROKER"
+        },
+        {
+          "name": "ZOOKEEPER_SERVER"
+        },
+        {
+          "name": "NAMENODE"
+        },
+        {
+          "name": "SECONDARY_NAMENODE"
+        },
+        {
+          "name": "RESOURCEMANAGER"
+        },
+        {
+          "name": "HISTORYSERVER"
+        },
+        {
+          "name": "APP_TIMELINE_SERVER"
+        },
+        {
+          "name": "LIVY2_SERVER"
+        },
+        {
+          "name": "BEACON_SERVER"
+        },
+        {
+          "name": "DP_PROFILER_AGENT"
+        },
+        {
+          "name": "SPARK2_JOBHISTORYSERVER"
+        },
+        {
+          "name": "KNOX_GATEWAY"
+        },
+        {
+          "name": "DATANODE"
+        },
+        {
+          "name": "YARN_CLIENT"
+        },
+        {
+          "name": "HDFS_CLIENT"
+        },
+        {
+          "name": "SPARK2_CLIENT"
+        },
+        {
+          "name": "INFRA_SOLR_CLIENT"
+        },
+        {
+          "name": "ZOOKEEPER_CLIENT"
+        },
+        {
+          "name": "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name": "ATLAS_CLIENT"
+        },
+        {
+          "name": "HBASE_CLIENT"
+        },
+        {
+          "name": "HIVE_CLIENT"
+        }
+      ]
+    },
+    {
+      "name": "worker",
+      "cardinality": "1+",
+      "components": [
+        {
+          "name": "NODEMANAGER"
+        },
+        {
+          "name": "DATANODE"
+        },
+        {
+          "name": "HBASE_REGIONSERVER"
+        },
+        {
+          "name": "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name": "YARN_CLIENT"
+        },
+        {
+          "name": "HDFS_CLIENT"
+        },
+        {
+          "name": "SPARK2_CLIENT"
+        },
+        {
+          "name": "INFRA_SOLR_CLIENT"
+        },
+        {
+          "name": "ZOOKEEPER_CLIENT"
+        },
+        {
+          "name": "ATLAS_CLIENT"
+        },
+        {
+          "name": "HBASE_CLIENT"
+        },
+        {
+          "name": "HIVE_CLIENT"
+        }
+      ]
+    }
+  ],
+  "Blueprints": {
+    "blueprint_name": "shared-services",
+    "stack_name": "HDP",
+    "stack_version": "2.6"
+  }
+}
+
+
+
+{
+  "inputs": [
+    {
+      "name":"REMOTE_CLUSTER_NAME",
+      "referenceConfiguration":"cluster_name"
+    },
+    {
+      "name":"SOLR_ZOOKEPERS_URL",
+      "referenceConfiguration":"ranger.audit.solr.zookeepers"
+    },
+    {
+      "name":"ADMIN_USERNAME",
+      "referenceConfiguration":"admin_username"
+    },
+    {
+      "name":"RANGER_ADMIN_USERNAME",
+      "referenceConfiguration":"ranger_admin_username"
+    },
+    {
+      "name":"S3_BUCKET",
+      "referenceConfiguration":"s3.bucket"
+    }
+  ],
+  "settings": [
+    {
+      "recovery_settings": []
+    },
+    {
+      "service_settings": [
+        {
+          "name": "HIVE",
+          "credential_store_enabled": "false"
+        }
+      ]
+    },
+    {
+      "component_settings": []
+    }
+  ],
+    "configurations": [
+      {
+        "hive-interactive-env": {
+          "enable_hive_interactive": "true",
+          "hive_security_authorization": "Ranger"
+        }
+      },
+      {
+        "hive-interactive-site": {
+          "hive.metastore.warehouse.dir":"s3a://{{{ S3_BUCKET }}}/{{{ REMOTE_CLUSTER_NAME }}}/apps/hive/warehouse"
+        }
+      },
+      {
+        "core-site": {
+          "fs.trash.interval": "4320",
+          "hadoop.security.group.mapping":"org.apache.hadoop.security.LdapGroupsMapping",
+          "hadoop.security.group.mapping.ldap.url":"{{{ ldapConfig.connectionURL }}}",
+          "hadoop.security.group.mapping.ldap.bind.user":"{{{ ldapConfig.bindDn }}}",
+          "hadoop.security.group.mapping.ldap.bind.password":"{{{ ldapConfig.bindPassword }}}",
+          "hadoop.security.group.mapping.ldap.userbase": "{{{ ldapConfig.userSearchBase }}}",
+          "hadoop.security.group.mapping.ldap.search.filter.user": "(&(objectClass={{{ ldapConfig.userObjectClass }}})({{{ ldapConfig.userNameAttribute }}}={0}))",
+          "hadoop.security.group.mapping.ldap.groupbase": "{{{ ldapConfig.groupSearchBase }}}",
+          "hadoop.security.group.mapping.ldap.search.filter.group": "(objectClass={{{ ldapConfig.groupObjectClass }}})",
+          "hadoop.security.group.mapping.ldap.search.attr.group.name": "{{{ ldapConfig.groupNameAttribute }}}",
+          "hadoop.security.group.mapping.ldap.search.attr.member": "{{{ ldapConfig.groupMemberAttribute }}}"
+        }
+      },
+      {
+        "hdfs-site": {
+          "dfs.namenode.safemode.threshold-pct": "0.99"
+        }
+      },
+      {
+        "hive-env": {
+          "properties": {
+            "hive_security_authorization": "Ranger"
+          }
+        }
+      },
+      {
+        "hive-site": {
+          "hive.exec.compress.output": "true",
+          "hive.merge.mapfiles": "true",
+          "hive.server2.tez.initialize.default.sessions": "true",
+          "hive.server2.transport.mode": "http",
+          "hive.metastore.warehouse.dir":"s3a://{{{ S3_BUCKET }}}/{{{ REMOTE_CLUSTER_NAME }}}/apps/hive/warehouse"
+        }
+      },
+      {
+        "mapred-site": {
+          "mapreduce.job.reduce.slowstart.completedmaps": "0.7",
+          "mapreduce.map.output.compress": "true",
+          "mapreduce.output.fileoutputformat.compress": "true"
+        }
+      },
+      {
+        "yarn-site": {
+          "yarn.acl.enable": "true"
+        }
+      },
+      {
+        "ranger-hive-plugin-properties": {
+          "properties": {
+            "external_admin_username": "{{{ ADMIN_USERNAME }}}",
+            "external_admin_password": "{{{ rangerRds.properties.rangerAdminPassword }}}",
+            "external_ranger_admin_username": "{{{ RANGER_ADMIN_USERNAME }}}",
+            "external_ranger_admin_password": "{{{ rangerRds.properties.rangerAdminPassword }}}"
+          }
+        }
+      },
+      {
+        "ranger-hive-security":{
+          "ranger.plugin.hive.policy.rest.url": "http://localhost:6080",
+          "ranger.plugin.hive.service.name":"{{{ REMOTE_CLUSTER_NAME }}}_hive"
+        }
+      },
+      {
+        "ranger-hive-audit": {
+          "xasecure.audit.is.enabled": "true",
+          "xasecure.audit.destination.hdfs": "true",
+          "xasecure.audit.destination.hdfs.dir":"s3a://{{{ S3_BUCKET }}}/{{{ REMOTE_CLUSTER_NAME }}}/apps/ranger/audit/{{cluster_name}}",
+          "xasecure.audit.destination.solr": "true",
+          "xasecure.audit.destination.solr.zookeepers": "{{{ SOLR_ZOOKEPERS_URL }}}"
+        }
+      },
+      {
+        "zeppelin-config": {
+          "zeppelin.interpreters": "org.apache.zeppelin.jdbc.JDBCInterpreter",
+          "zeppelin.interpreter.group.order": "jdbc"
+        }
+      },
+      {
+        "zeppelin-shiro-ini": {
+          "properties": {
+            "shiro_ini_content": "\n[users]\n# List of users with their password allowed to access Zeppelin.\n# To use a different strategy (LDAP / Database / ...) check the shiro doc at http://shiro.apache.org/configuration.html#Configuration-INISections\n\n\n# Sample LDAP configuration, for user Authentication, currently tested for single Realm\n[main]\nldapRealm = org.apache.zeppelin.realm.LdapRealm\nldapRealm.contextFactory.url = {{{ ldapConfig.connectionURL }}}\nldapRealm.contextFactory.authenticationMechanism = simple\nldapRealm.contextFactory.systemUsername = {{{ ldapConfig.bindDn }}}\nldapRealm.contextFactory.systemPassword = {{{ ldapConfig.bindPassword }}}\nldapRealm.searchBase = {{{ ldapConfig.userSearchBase }}}\nldapRealm.userSearchAttributeName = {{{ ldapConfig.userNameAttribute }}}\nldapRealm.userObjectClass = {{{ ldapConfig.userObjectClass }}}\nldapRealm.memberAttribute = {{{ ldapConfig.groupMemberAttribute }}}\nldapRealm.groupObjectClass = {{{ ldapConfig.groupObjectClass }}}\nldapRealm.authorizationEnabled = true\nldapRealm.groupSearchBase = {{{ ldapConfig.groupSearchBase }}}\n\n\nsessionManager = org.apache.shiro.web.session.mgt.DefaultWebSessionManager\nsecurityManager.sessionManager = $sessionManager\n# 86,400,000 milliseconds = 24 hour\nsecurityManager.sessionManager.globalSessionTimeout = 86400000\nshiro.loginUrl = /api/login\n\n[urls]\n# anon means the access is anonymous.\n# authcBasic means Basic Auth Security\n# To enfore security, comment the line below and uncomment the next one\n/api/version = anon\n#/** = anon\n/** = authc\n"
+          }
+        }
+      }
+    ],
+    "host_groups": [
+      {
+        "name": "master",
+        "configurations": [],
+        "components": [
+          {
+            "name": "APP_TIMELINE_SERVER"
+          },
+          {
+            "name": "HCAT"
+          },
+          {
+            "name": "HDFS_CLIENT"
+          },
+          {
+            "name": "HISTORYSERVER"
+          },
+          {
+            "name": "HIVE_CLIENT"
+          },
+          {
+            "name": "HIVE_METASTORE"
+          },
+          {
+            "name": "HIVE_SERVER"
+          },
+          {
+            "name": "HIVE_SERVER_INTERACTIVE"
+          },
+          {
+            "name": "JOURNALNODE"
+          },
+          {
+            "name": "MAPREDUCE2_CLIENT"
+          },
+          {
+            "name": "METRICS_COLLECTOR"
+          },
+          {
+            "name": "METRICS_MONITOR"
+          },
+          {
+            "name": "NAMENODE"
+          },
+          {
+            "name": "PIG"
+          },
+          {
+            "name": "RESOURCEMANAGER"
+          },
+          {
+            "name": "SECONDARY_NAMENODE"
+          },
+          {
+            "name": "SLIDER"
+          },
+          {
+            "name": "TEZ_CLIENT"
+          },
+          {
+            "name": "WEBHCAT_SERVER"
+          },
+          {
+            "name": "YARN_CLIENT"
+          },
+          {
+            "name": "ZEPPELIN_MASTER"
+          },
+          {
+            "name": "ZOOKEEPER_CLIENT"
+          },
+          {
+            "name": "ZOOKEEPER_SERVER"
+          }
+        ],
+        "cardinality": "1"
+      },
+      {
+        "name": "worker",
+        "configurations": [],
+        "components": [
+          {
+            "name": "HIVE_CLIENT"
+          },
+          {
+            "name": "TEZ_CLIENT"
+          },
+          {
+            "name": "DATANODE"
+          },
+          {
+            "name": "METRICS_MONITOR"
+          },
+          {
+            "name": "NODEMANAGER"
+          }
+        ],
+        "cardinality": "1+"
+      },
+      {
+        "name": "compute",
+        "configurations": [],
+        "components": [
+          {
+            "name": "HIVE_CLIENT"
+          },
+          {
+            "name": "TEZ_CLIENT"
+          },
+          {
+            "name": "METRICS_MONITOR"
+          },
+          {
+            "name": "NODEMANAGER"
+          }
+        ],
+        "cardinality": "1+"
+      }
+    ],
+  "Blueprints": {
+      "blueprint_name": "hdp26-edw-analytics-shared",
+      "stack_name": "HDP",
+      "stack_version": "2.6"
+    }
+}
+
+

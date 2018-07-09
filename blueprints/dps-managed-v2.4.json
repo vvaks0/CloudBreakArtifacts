@@ -14,15 +14,6 @@
       }
     },
     {
-      "core-site": {
-        "properties_attributes": {},
-        "properties": {
-          "fs.defaultFS": "hdfs://%HOSTGROUP::master%:8020",
-          "hadoop.proxyuser.beacon.groups": "*"
-        }
-      }
-    },
-    {
       "yarn-site": {
         "properties_attributes": {},
         "properties": {
@@ -39,30 +30,10 @@
           "hive.metastore.transactional.event.listeners": "org.apache.hive.hcatalog.listener.DbNotificationListener",
           "hive.repl.cm.enabled": "true",
           "hive.repl.cmrootdir": "/apps/hive/cmroot",
-          "hive.repl.rootdir": "/apps/hive/repl",
-          "hive.metastore.warehouse.dir":"s3a://{{{ S3_BUCKET }}}/{{cluster_name}}/apps/hive/warehouse",
-          "hive.repl.replica.functions.root.dir": "s3a://{{{ S3_BUCKET }}}/{{cluster_name}}"
+          "hive.repl.rootdir": "/apps/hive/repl"
         }
       }
     },
-    {
-  	  "application-properties": {
-    	"properties": {
-      		"atlas.authentication.method.ldap.type": "{{{ ldapConfig.directoryTypeShort }}}",
-      		"atlas.authentication.method.ldap": "true",
-      		"atlas.authentication.method.ldap.ad.domain": "{{{ ldapConfig.domain }}}",
-      		"atlas.authentication.method.ldap.ad.url": "{{{ ldapConfig.connectionURL }}}",
-      		"atlas.authentication.method.ldap.ad.base.dn": "{{{ ldapConfig.userSearchBase }}}",
-      		"atlas.authentication.method.ldap.ad.bind.dn": "{{{ ldapConfig.bindDn }}}",
-      		"atlas.authentication.method.ldap.ad.bind.password": "{{{ ldapConfig.bindPassword }}}",
-      		"atlas.authentication.method.ldap.user.searchfilter": "({{{ ldapConfig.userNameAttribute }}}={0})",
-          	"atlas.authentication.method.ldap.user.dnpattern": "{{{ ldapConfig.userNameAttribute }}}={0},{{{ ldapConfig.userSearchBase }}}",
-          	"atlas.authentication.method.ldap.group.searchbase": "{{{ ldapConfig.groupSearchBase }}}",
-          	"atlas.authentication.method.ldap.group.roleattribute": "{{{ ldapConfig.groupNameAttribute }}}"
-      		"atlas.authentication.method.ldap.ugi-groups": "false"
-    	}
-  	  }
-	},
     {
       "ranger-hive-audit": {
         "properties_attributes": {},
@@ -72,61 +43,25 @@
       }
     },
     {
-      "admin-properties": {
-        "properties_attributes": {},
-        "properties": {
-          	"db_user": "{{{ rangerRds.connectionUserName }}}",
-            "db_password": "{{{ rangerRds.connectionPassword }}}",
-            "db_name": "{{{ rangerRds.databaseName }}}",
-            "db_host": "{{{ rangerRds.connectionHost }}}",
-            "DB_FLAVOR": "POSTGRES"
-        }
-      }
-    },
-    {
       "ranger-admin-site": {
         "properties_attributes": {},
         "properties": {
-          "ranger.jpa.jdbc.driver": "org.postgresql.Driver",
-          "ranger.jpa.jdbc.url": "jdbc:postgresql://{{{ rangerRds.connectionHost }}}/{{{ rangerRds.databaseName }}}",
-          "ranger.audit.source.type": "solr",
-          "ranger.authentication.method": "{{{ ldapConfig.directoryType }}}",
-          "ranger.ldap.ad.domain": " ",
-          "ranger.ldap.ad.url": "{{{ ldapConfig.connectionURL }}}",
-          "ranger.ldap.ad.bind.dn": "{{{ ldapConfig.bindDn }}}",
-          "ranger.ldap.ad.bind.password": "{{{ ldapConfig.bindPassword }}}",
-          "ranger.ldap.ad.base.dn": "{{{ ldapConfig.userSearchBase }}}",
-          "ranger.ldap.ad.user.searchfilter": "({{{ ldapConfig.userNameAttribute }}}={0})",
-          "ranger.ldap.url": "{{{ ldapConfig.connectionURL }}}",
-          "ranger.ldap.bind.dn": "{{{ ldapConfig.bindDn }}}",
-          "ranger.ldap.bind.password": "{{{ ldapConfig.bindPassword }}}",
-          "ranger.ldap.base.dn": "{{{ ldapConfig.userSearchBase }}}",
-          "ranger.ldap.user.searchfilter": "({{{ ldapConfig.userNameAttribute }}}={0})",
-          "ranger.ldap.user.dnpattern": "{{{ ldapConfig.userNameAttribute }}}={0},{{{ ldapConfig.userSearchBase }}}",
-          "ranger.ldap.group.searchbase": "{{{ ldapConfig.groupSearchBase }}}",
-          "ranger.ldap.group.roleattribute": "{{{ ldapConfig.groupNameAttribute }}}"  
+          "ranger.jpa.jdbc.url": "jdbc:postgresql://localhost:5432/ranger"
         }
       }
     },
     {
-      "ranger-ugsync-site": {
+      "admin-properties": {
         "properties_attributes": {},
         "properties": {
-          "ranger.usersync.enabled": "true",
-          "ranger.usersync.source.impl.class": "org.apache.ranger.ldapusersync.process.LdapUserGroupBuilder",
-          "ranger.usersync.ldap.url": "{{{ ldapConfig.connectionURL }}}",
-          "ranger.usersync.ldap.binddn": "{{{ ldapConfig.bindDn }}}",
-          "ranger.usersync.ldap.ldapbindpassword": "{{{ ldapConfig.bindPassword }}}",
-          "ranger.usersync.ldap.user.nameattribute": "{{{ ldapConfig.userNameAttribute }}}",
-          "ranger.usersync.ldap.user.searchbase": "{{{ ldapConfig.userSearchBase }}}",
-          "ranger.usersync.ldap.user.objectclass": "{{{ ldapConfig.userObjectClass }}}",
-          "ranger.usersync.ldap.deltasync": "false",
-          "ranger.usersync.group.searchenabled": "true",
-          "ranger.usersync.group.memberattributename": "{{{ ldapConfig.groupMemberAttribute }}}",
-          "ranger.usersync.group.nameattribute": "{{{ ldapConfig.groupNameAttribute }}}",
-          "ranger.usersync.group.objectclass": "{{{ ldapConfig.groupObjectClass }}}",
-          "ranger.usersync.group.searchbase": "{{{ ldapConfig.groupSearchBase }}}",
-          "ranger.usersync.group.searchfilter": " "
+          "DB_FLAVOR": "POSTGRES",
+          "db_name": "ranger",
+          "db_user": "rangeradmin",
+          "policymgr_external_url": "http://localhost:6080",
+          "db_host": "localhost:5432",
+          "db_root_user": "rangerdba",
+          "db_root_password": "rangerdba",
+          "db_password": "ranger"
         }
       }
     },
@@ -134,26 +69,14 @@
       "ranger-env": {
         "properties_attributes": {},
         "properties": {
-          "admin_password": "{{{ rangerRds.properties.rangerAdminPassword }}}",
-          "ranger_admin_password": "{{{ rangerRds.properties.rangerAdminPassword }}}",
+          "admin_password": "admin-password",
+          "ranger_admin_password": "admin-password1",
           "is_solrCloud_enabled": "true",
           "ranger-hdfs-plugin-enabled": "Yes",
           "ranger-hive-plugin-enabled": "Yes",
-          "ranger-atlas-plugin-enabled": "No",
-          "ranger_privelege_user_jdbc_url": "jdbc:postgresql://{{{ rangerRds.connectionHost }}}",
-          "create_db_dbuser": "false",
-          "xasecure.audit.destination.hdfs": "true",
-          "xasecure.audit.destination.hdfs.dir": "s3a://{{{ S3_BUCKET }}}/{{cluster_name}}/apps/ranger/audit/{{cluster_name}}",
-          "xasecure.audit.destination.solr": "true"
-        }
-      }
-    },
-    {
-      "ranger-hive-plugin-properties": {
-        "properties_attributes": {},
-        "properties": {
-          "ranger.service.config.param.enable.hive.metastore.lookup": "true",
-          "ranger.service.config.param.hive.site.file.path": "/etc/hive/conf/hive-site.xml"
+          "ranger-yarn-plugin-enabled": "No",
+          "ranger-atlas-plugin-enabled": "Yes",
+          "ranger-knox-plugin-enabled": "Yes"
         }
       }
     },
@@ -162,8 +85,9 @@
         "properties_attributes": {},
         "properties": {
           "beacon.username": "beacon",
-          "beacon.password": "beacon",
-          "beacon.ranger.user": "beacon_ranger"
+          "beacon.password": "beacon-password",
+          "beacon.ranger.user": "beacon_ranger",
+          "beacon.sso.knox.providerurl": "{{{ gateway.ssoProvider }}}"
         }
       }
     },
@@ -197,6 +121,8 @@
           "dpprofiler.profiler.autoregister": "true",
           "dpprofiler.profiler.hdfs.dir": "/apps/dpprofiler/profilers",
           "dpprofiler.db.user": "profileragent",
+          "dpprofiler.db.password": "profileragent",
+          "dpprofiler.spnego.signature.secret": "123456789101112",
           "dpprofiler.cluster.config.keys": "atlasUrl=application-properties/atlas.rest.address;rangerAuditDir=ranger-env/xasecure.audit.destination.hdfs.dir;metastoreUrl=hive-site/hive.metastore.uris;metastoreKeytab=hive-site/hive.metastore.kerberos.keytab.file;metastorePrincipal=hive-site/hive.metastore.kerberos.principal",
           "dpprofiler.db.database": "profileragent",
           "dpprofiler.db.type": "h2",
@@ -277,6 +203,9 @@
         },
         {
           "name": "KNOX_GATEWAY"
+        },
+        {
+          "name": "ZEPPELIN_MASTER"
         },
         {
           "name": "DATANODE"
@@ -375,7 +304,7 @@
     }
   ],
   "Blueprints": {
-    "blueprint_name": "shared-services",
+    "blueprint_name": "dps-managed",
     "stack_name": "HDP",
     "stack_version": "2.6"
   }
