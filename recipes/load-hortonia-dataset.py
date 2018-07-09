@@ -18,7 +18,7 @@ rm_apps_uri = '/ws/v1/cluster/apps'
 
 home_dir = '/tmp/'
 tag_policy_import_path = home_dir+'masterclass/ranger-atlas/Scripts/ranger-policies-tags.json'
-hive_policy_import_path = home_dir+'masterclass/ranger-atlas/Scripts/ranger-policies.json'
+hive_policy_import_path = home_dir+'masterclass/ranger-atlas/Scripts/ranger-policies-enabled.json'
 
 zk_port = '2181'
 rm_port = '8088'
