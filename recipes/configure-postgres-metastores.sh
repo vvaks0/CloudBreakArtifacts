@@ -18,17 +18,39 @@ ambari-server setup --jdbc-db=postgres --jdbc-driver=/usr/share/java/postgresql-
 export HADOOP_CLASSPATH=${HADOOP_CLASSPATH}:${JAVA_JDBC_LIBS}:/connector jar path
 
 if [[ $(cat /etc/system-release|grep -Po Amazon) == "Amazon" ]]; then       		
-	echo 'local all postgres,hive,rangerdba,rangeradmin,rangerlogger           trust' >> /var/lib/pgsql/9.5/data/pg_hba.conf
-	echo 'host  all postgres,hive,rangerdba,rangeradmin,rangerlogger 0.0.0.0/0 trust' >> /var/lib/pgsql/9.5/data/pg_hba.conf
-	echo 'host  all postgres,hive,rangerdba,rangeradmin,rangerlogger ::/0      trust' >> /var/lib/pgsql/9.5/data/pg_hba.conf
-	echo 'host  all postgres,hive,rangerdba,rangeradmin,rangerlogger ::/0      trust' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo '' >  /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'host  ambari ambari 									    0.0.0.0/0 md5		' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'local ambari ambari 									              md5		' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'local all postgres,hive,rangerdba,rangeradmin,rangerlogger           password 	' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'host  all postgres,hive,rangerdba,rangeradmin,rangerlogger 0.0.0.0/0 password 	' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'host  all postgres,hive,rangerdba,rangeradmin,rangerlogger ::/0      password 	' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'local all postgres,hive,rangerdba,rangeradmin,rangerlogger           md5		' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'host  all postgres,hive,rangerdba,rangeradmin,rangerlogger 0.0.0.0/0 md5		' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'host  all postgres,hive,rangerdba,rangeradmin,rangerlogger ::/0      md5		' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'local all postgres,hive,rangerdba,rangeradmin,rangerlogger           trust		' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'host  all postgres,hive,rangerdba,rangeradmin,rangerlogger 0.0.0.0/0 trust		' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'host  all postgres,hive,rangerdba,rangeradmin,rangerlogger ::/0      trust		' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'local all             all                                     		 peer		' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'host  all             all             127.0.0.1/32            		 ident		' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'host  all             all             ::1/128                 		 ident		' >> /var/lib/pgsql/9.5/data/pg_hba.conf
 	
 	sudo -u postgres /usr/pgsql-9.5/bin/pg_ctl -D /var/lib/pgsql/9.5/data/ reload
 else
-	echo 'local all postgres,hive,rangerdba,rangeradmin,rangerlogger           trust' >> /var/lib/pgsql/data/pg_hba.conf
-	echo 'host  all postgres,hive,rangerdba,rangeradmin,rangerlogger 0.0.0.0/0 trust' >> /var/lib/pgsql/data/pg_hba.conf
-	echo 'host  all postgres,hive,rangerdba,rangeradmin,rangerlogger ::/0      trust' >> /var/lib/pgsql/data/pg_hba.conf
-	echo 'host  all postgres,hive,rangerdba,rangeradmin,rangerlogger ::/0      trust' >> /var/lib/pgsql/data/pg_hba.conf
+	echo '' >  /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'host  ambari ambari 									    0.0.0.0/0 md5		' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'local ambari ambari 									              md5		' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'local all postgres,hive,rangerdba,rangeradmin,rangerlogger           password 	' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'host  all postgres,hive,rangerdba,rangeradmin,rangerlogger 0.0.0.0/0 password 	' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'host  all postgres,hive,rangerdba,rangeradmin,rangerlogger ::/0      password 	' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'local all postgres,hive,rangerdba,rangeradmin,rangerlogger           md5		' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'host  all postgres,hive,rangerdba,rangeradmin,rangerlogger 0.0.0.0/0 md5		' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'host  all postgres,hive,rangerdba,rangeradmin,rangerlogger ::/0      md5		' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'local all postgres,hive,rangerdba,rangeradmin,rangerlogger           trust		' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'host  all postgres,hive,rangerdba,rangeradmin,rangerlogger 0.0.0.0/0 trust		' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'host  all postgres,hive,rangerdba,rangeradmin,rangerlogger ::/0      trust		' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'local all             all                                     		 peer		' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'host  all             all             127.0.0.1/32            		 ident		' >> /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo 'host  all             all             ::1/128                 		 ident		' >> /var/lib/pgsql/9.5/data/pg_hba.conf
 	
 	sudo -u postgres pg_ctl -D /var/lib/pgsql/data/ reload
 fi
