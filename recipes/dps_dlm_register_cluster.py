@@ -293,10 +293,10 @@ enable_ranger_special_policies()
 #print 'Configuring Atlas for LDAP...'
 #atlas_update_result = configure_atlas()
 
-if atlas_update_result.status_code == 400:
-    print json.loads(atlas_update_result.content)['msgDesc']
-else:
-    restart_service('ATLAS')
+#if atlas_update_result.status_code == 400:
+#    print json.loads(atlas_update_result.content)['msgDesc']
+#else:
+#    restart_service('ATLAS')
  
 if not check_external_argument(isDatalake_argument_name):
     exit(1)
