@@ -35,7 +35,7 @@ if [[ $(cat /etc/system-release|grep -Po Amazon) == "Amazon" ]]; then
 	
 	sudo -u postgres /usr/pgsql-9.5/bin/pg_ctl -D /var/lib/pgsql/9.5/data/ reload
 else
-	echo '' >  /var/lib/pgsql/9.5/data/pg_hba.conf
+	echo '' >  /var/lib/pgsql/data/pg_hba.conf
 	echo 'host  ambari ambari 									    0.0.0.0/0 md5		' >> /var/lib/pgsql/data/pg_hba.conf
 	echo 'local ambari ambari 									              md5		' >> /var/lib/pgsql/data/pg_hba.conf
 	echo 'local all postgres,hive,rangerdba,rangeradmin,rangerlogger           password 	' >> /var/lib/pgsql/data/pg_hba.conf
