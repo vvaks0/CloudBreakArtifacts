@@ -104,3 +104,4 @@ $(echo "" | openssl s_client -showcerts -connect $DPS_HOST:443 | openssl x509 -o
       </param>
    </service>
 </topology>" | sed 's/-----BEGIN CERTIFICATE-----//' | sed 's/-----END CERTIFICATE-----//' | tee /etc/knox/conf/topologies/token.xml
+exit 0
