@@ -1,0 +1,323 @@
+{	
+ "configurations": [
+      {
+        "core-site": {
+          "fs.trash.interval": "4320"
+        }
+      },
+      {
+        "hdfs-site": {
+          "dfs.namenode.safemode.threshold-pct": "0.99"
+        }
+      },
+      {
+        "mapred-site": {
+          "mapreduce.job.reduce.slowstart.completedmaps": "0.7",
+          "mapreduce.map.output.compress": "true",
+          "mapreduce.output.fileoutputformat.compress": "true"
+        }
+      },
+      {
+        "yarn-site": {
+          "yarn.acl.enable": "true"
+        }
+      },
+      {
+        "capacity-scheduler" : {
+          "properties" : {
+            "yarn.scheduler.capacity.root.queues" : "default,llap",
+            "yarn.scheduler.capacity.root.capacity" : "100",
+            "yarn.scheduler.capacity.root.default.capacity" : "25",
+            "yarn.scheduler.capacity.root.default.maximum-capacity" : "100",
+            "yarn.scheduler.capacity.root.llap.maximum-capacity" : "100",
+            "yarn.scheduler.capacity.root.llap.capacity" : "75"
+          }
+        }
+      },
+      {
+        "hive-interactive-env": {
+          "enable_hive_interactive": "true"
+        }
+      },
+      {
+        "hive-interactive-site": {
+          "hive.exec.orc.split.strategy":"BI",
+          "hive.stats.fetch.bitvector":"true",
+          "hive.metastore.rawstore.impl":"org.apache.hadoop.hive.metastore.cache.CachedStore"
+       }
+     },
+     {
+        "hive-site": {
+          "hive.exec.compress.output": "true",
+          "hive.merge.mapfiles": "true",
+          "hive.server2.tez.initialize.default.sessions": "true",
+          "hive.server2.transport.mode": "http"
+        }
+      },
+      {
+        "tez-site": {
+          "tez.runtime.shuffle.parallel.copies":"4",
+          "tez.runtime.enable.final-merge.in.output":"false",
+          "tez.am.am-rm.heartbeat.interval-ms.max":"2000"
+        }
+      },
+      {
+        "druid-common": {
+          "properties_attributes": {},
+          "properties": {
+            "druid.metadata.storage.type": "derby",
+            "druid.metadata.storage.connector.connectURI": "jdbc:derby://localhost:1527/druid;create=true",
+            "druid.extensions.loadList": "[\"postgresql-metadata-storage\", \"druid-s3-extensions\",\"druid-datasketches\", \"druid-hdfs-storage\", \"druid-kafka-indexing-service\", \"ambari-metrics-emitter\"]",
+            "druid.selectors.indexing.serviceName": "druid/overlord",
+            "druid.storage.type": "s3"
+          }
+        }
+      },
+      {
+        "druid-overlord": {
+          "properties_attributes": {},
+          "properties": {
+            "druid.indexer.storage.type": "metadata",
+            "druid.indexer.runner.type": "remote",
+            "druid.service": "druid/overlord",
+            "druid.port": "8090"
+          }
+        }
+      },
+      {
+        "druid-middlemanager": {
+          "properties_attributes": {},
+          "properties": {
+            "druid.server.http.numThreads": "50",
+            "druid.worker.capacity": "3",
+            "druid.processing.numThreads": "2",
+            "druid.indexer.runner.javaOpts": "-server -Xmx2g -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dhdp.version={{stack_version}} -Dhadoop.mapreduce.job.classloader=true",
+            "druid.service": "druid/middlemanager",
+            "druid.port": "8091"
+          }
+        }
+      },
+      {
+        "druid-coordinator": {
+          "properties_attributes": {},
+          "properties": {
+            "druid.coordinator.merge.on": "false",
+            "druid.port": "8081"
+          }
+        }
+      },
+      {
+        "druid-historical": {
+          "properties_attributes": {},
+          "properties": {
+            "druid.server.http.numThreads": "50",
+            "druid.processing.numThreads": "10",
+            "druid.service": "druid/historical",
+            "druid.port": "8083",
+            "druid.server.maxSize": "300000000000"
+          }
+        }
+      },
+      {
+        "druid-broker": {
+          "properties_attributes": {},
+          "properties": {
+            "druid.cache.type": "local",
+            "druid.server.http.numThreads": "50",
+            "druid.broker.http.numConnections": "5",
+            "druid.processing.numThreads": "2",
+            "druid.service": "druid/broker",
+            "druid.port": "8082"
+          }
+        }
+      },
+      {
+        "druid-router": {
+          "properties_attributes": {},
+          "properties": {
+          }
+        }
+      },
+      {
+        "superset": {
+          "properties_attributes": {},
+          "properties": {
+            "SECRET_KEY" : "admin",
+            "SUPERSET_DATABASE_TYPE" : "sqlite"
+          }
+        }
+      }
+    ],
+    "host_groups": [
+      {
+        "name": "master",
+        "configurations": [],
+        "components": [
+          {
+            "name": "KNOX_GATEWAY"
+          },
+          {
+            "name": "APP_TIMELINE_SERVER"
+          },
+          {
+            "name": "MAPREDUCE2_CLIENT"
+          },
+          {
+            "name": "HISTORYSERVER"
+          },
+          {
+            "name": "NAMENODE"
+          },
+          {
+            "name": "RESOURCEMANAGER"
+          },
+          {
+            "name": "SECONDARY_NAMENODE"
+          },
+          {
+            "name": "TEZ_CLIENT"
+          },
+          {
+            "name": "YARN_CLIENT"
+          },
+          {
+            "name": "SPARK2_JOBHISTORYSERVER"
+          },
+          {
+            "name": "SPARK2_CLIENT"
+          },
+          {
+            "name": "LIVY_SERVER"
+          },
+          {
+            "name": "ZOOKEEPER_CLIENT"
+          },
+          {
+            "name": "ZOOKEEPER_SERVER"
+          },
+          {
+            "name": "HIVE_CLIENT"
+          },
+          {
+            "name": "HIVE_METASTORE"
+          },
+          {
+            "name": "HIVE_SERVER"
+          },
+          {
+            "name": "HIVE_SERVER_INTERACTIVE"
+          },
+          {
+            "name": "DRUID_OVERLORD"
+          },
+          {
+            "name": "DRUID_COORDINATOR"
+          },
+          {
+            "name": "DRUID_ROUTER"
+          },
+          {
+            "name": "DRUID_BROKER"
+          },
+          {
+            "name": "SUPERSET"
+          },
+          {
+            "name": "ZEPPELIN_MASTER"
+          },
+          {
+            "name": "HDFS_CLIENT"
+          },
+          {
+            "name": "SLIDER"
+          }
+        ],
+        "cardinality": "1"
+      },
+      {
+        "name": "worker",
+        "configurations": [],
+        "components": [
+          {
+            "name": "DATANODE"
+          },
+          {
+            "name": "NODEMANAGER"
+          },
+          {
+            "name": "DRUID_HISTORICAL"
+          },
+          {
+            "name": "SPARK2_CLIENT"
+          },
+          {
+            "name": "TEZ_CLIENT"
+          },
+          {
+            "name": "YARN_CLIENT"
+          },
+          {
+            "name": "MAPREDUCE2_CLIENT"
+          },
+          {
+            "name": "ZOOKEEPER_CLIENT"
+          },
+          {
+            "name": "HDFS_CLIENT"
+          },
+          {
+            "name": "HIVE_CLIENT"
+          },
+          {
+            "name": "SLIDER"
+          }
+        ],
+        "cardinality": "1+"
+      },
+      {
+        "name": "compute",
+        "configurations": [],
+        "components": [
+          {
+            "name": "DATANODE"
+          },
+          {
+            "name": "NODEMANAGER"
+          },
+          {
+            "name": "DRUID_MIDDLEMANAGER"
+          },
+          {
+            "name": "SPARK2_CLIENT"
+          },
+          {
+            "name": "TEZ_CLIENT"
+          },
+          {
+            "name": "YARN_CLIENT"
+          },
+          {
+            "name": "MAPREDUCE2_CLIENT"
+          },
+          {
+            "name": "ZOOKEEPER_CLIENT"
+          },
+          {
+            "name": "HDFS_CLIENT"
+          },
+          {
+            "name": "HIVE_CLIENT"
+          },
+          {
+            "name": "SLIDER"
+          }
+        ],
+        "cardinality": "1+"
+      }
+  ],
+  "Blueprints": {
+    "blueprint_name": "druid-bi",
+    "stack_name": "HDP",
+    "stack_version": "2.6"
+  }
+}

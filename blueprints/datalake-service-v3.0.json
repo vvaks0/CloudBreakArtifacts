@@ -1,0 +1,176 @@
+{
+  "settings": [
+    {
+      "recovery_settings": []
+    },
+    {
+      "service_settings": [
+        {
+          "name": "HIVE",
+          "credential_store_enabled": "false"
+        }
+      ]
+    },
+    {
+      "component_settings": []
+    }
+  ],
+  "configurations": [
+    {
+      "core-site": {
+        "properties_attributes": {},
+        "properties": {
+          "fs.s3a.threads.max": "1000",
+          "fs.s3a.threads.core": "500",
+          "fs.s3a.max.total.tasks": "1000",
+          "fs.s3a.connection.maximum": "1500"
+        }
+      }
+    },
+    {
+      "hbase-site": {
+        "properties_attributes": {},
+        "properties": {
+          "phoenix.query.timeoutMs": "60000",
+          "hfile.block.cache.size": "0.4",
+          "hbase.regionserver.global.memstore.size": "0.4",
+          "hbase.regionserver.handler.count": "60",
+          "hbase.hregion.memstore.flush.size": "536870912",
+          "hbase.hregion.max.filesize": "21474836480",
+          "hbase.regionserver.wal.codec": "org.apache.hadoop.hbase.regionserver.wal.IndexedWALEditCodec",
+          "hbase.defaults.for.version.skip": "true",
+          "hbase.region.server.rpc.scheduler.factory.class": "org.apache.hadoop.hbase.ipc.PhoenixRpcSchedulerFactory",
+          "hbase.rpc.controllerfactory.class": "org.apache.hadoop.hbase.ipc.controller.ServerRpcControllerFactory",
+          "phoenix.functions.allowUserDefinedFunctions": "true",
+          "hbase.bucketcache.size": "24000",
+          "hbase.bucketcache.ioengine": "file:/hbase/cache",
+          "hbase.bucketcache.combinedcache.enabled": "true",
+          "hbase.rs.cacheblocksonwrite": "true",
+          "hfile.block.bloom.cacheonwrite": "true",
+          "hfile.block.index.cacheonwrite": "true",
+          "hbase.rootdir": "s3a://vvaks/hbase"
+        }
+      }
+    },
+    {
+      "hbase-env": {
+        "properties_attributes": {},
+        "properties": {
+          "hbase_java_io_tmpdir": "/tmp",
+          "hbase_log_dir": "/var/log/hbase",
+          "hbase_master_heapsize": "1024m",
+          "hbase_pid_dir": "/var/run/hbase",
+          "hbase_regionserver_heapsize": "16384m",
+          "hbase_regionserver_shutdown_timeout": "30",
+          "hbase_regionserver_xmn_max": "16384",
+          "hbase_regionserver_xmn_ratio": "0.2",
+          "hbase_user": "hbase",
+          "hbase_user_nofile_limit": "32000",
+          "hbase_user_nproc_limit": "16000",
+          "phoenix_sql_enabled": "true"
+        }
+      }
+    },
+    {
+      "ranger-hive-audit": {
+        "properties_attributes": {},
+        "properties": {
+          "xasecure.audit.destination.hdfs.file.rollover.sec": "600"
+        }
+      }
+    },
+    {
+      "ranger-env": {
+        "properties_attributes": {},
+        "properties": {
+          "ranger-hdfs-plugin-enabled": "Yes",
+          "ranger-hive-plugin-enabled": "Yes",
+          "ranger-atlas-plugin-enabled": "Yes",
+          "ranger-knox-plugin-enabled": "Yes"
+        }
+      }
+    },
+    {
+      "kafka-broker": {
+        "properties_attributes": {},
+        "properties": {
+          "default.replication.factor": "1",
+          "offsets.topic.replication.factor": "1"
+        }
+      }
+    }
+  ],
+  "host_groups": [
+    {
+      "name": "master",
+      "cardinality": "1",
+      "components": [
+        {
+          "name": "ATLAS_SERVER"
+        },
+        {
+          "name": "RANGER_TAGSYNC"
+        },
+        {
+          "name": "RANGER_USERSYNC"
+        },
+        {
+          "name": "RANGER_ADMIN"
+        },
+        {
+          "name": "INFRA_SOLR"
+        },
+        {
+          "name": "HIVE_METASTORE"
+        },
+        {
+          "name": "HBASE_MASTER"
+        },
+        {
+          "name": "HBASE_REGIONSERVER"
+        },
+        {
+          "name": "KAFKA_BROKER"
+        },
+        {
+          "name": "ZOOKEEPER_SERVER"
+        },
+        {
+          "name": "NAMENODE"
+        },
+        {
+          "name": "SECONDARY_NAMENODE"
+        },
+        {
+          "name": "KNOX_GATEWAY"
+        },
+        {
+          "name": "DATANODE"
+        },
+        {
+          "name": "HDFS_CLIENT"
+        },
+        {
+          "name": "INFRA_SOLR_CLIENT"
+        },
+        {
+          "name": "ZOOKEEPER_CLIENT"
+        },
+        {
+          "name": "ATLAS_CLIENT"
+        },
+        {
+          "name": "HBASE_CLIENT"
+        },
+        {
+          "name": "HIVE_CLIENT"
+        }
+      ]
+    }
+  ],
+  "Blueprints": {
+    "blueprint_name": "datalake-service",
+    "stack_name": "HDP",
+    "stack_version": "2.6"
+  }
+}

@@ -1,0 +1,382 @@
+{	
+  "configurations": [
+    {
+      "yarn-site": {
+        
+      }
+    },
+    {
+       "capacity-scheduler" : {
+          "properties" : {
+            "yarn.scheduler.capacity.root.queues" : "default,llap",
+            "yarn.scheduler.capacity.root.capacity" : "100",
+            "yarn.scheduler.capacity.root.default.capacity" : "50",
+            "yarn.scheduler.capacity.root.default.maximum-capacity" : "100",
+            "yarn.scheduler.capacity.root.llap.maximum-capacity" : "100",
+            "yarn.scheduler.capacity.root.llap.capacity" : "50",
+            "yarn.scheduler.capacity.maximum-am-resource-percent" : "0.4"
+         }
+       }
+    },
+    {
+      "ranger-hive-audit": {
+        "properties_attributes": {},
+        "properties": {
+          "xasecure.audit.destination.hdfs.file.rollover.sec": "600"
+        }
+      }
+    },
+    {
+        "hive-interactive-env": {
+          "enable_hive_interactive": "true",
+          "hive_security_authorization": "Ranger"
+        }
+    },
+    {
+        "hive-interactive-site": {
+          "hive.exec.orc.split.strategy":"BI",
+          "hive.stats.fetch.bitvector":"true",
+          "hive.metastore.rawstore.impl":"org.apache.hadoop.hive.metastore.cache.CachedStore"
+       }
+    },
+    {
+      "hive-site": {
+        "hive.exec.compress.output": "true",
+        "hive.merge.mapfiles": "true",
+        "hive.server2.tez.initialize.default.sessions": "true",
+        "hive.server2.transport.mode": "http",
+        "hive.metastore.dlm.events": "true",
+        "hive.metastore.transactional.event.listeners": "org.apache.hive.hcatalog.listener.DbNotificationListener",
+        "hive.repl.cm.enabled": "true",
+        "hive.repl.cmrootdir": "/apps/hive/cmroot",
+        "hive.repl.rootdir": "/apps/hive/repl"
+      }
+    },
+    {
+      "ranger-admin-site": {
+        "properties_attributes": {},
+        "properties": {
+          "ranger.jpa.jdbc.url": "jdbc:postgresql://localhost:5432/ranger"
+        }
+      }
+    },
+    {
+      "ranger-env": {
+        "properties_attributes": {},
+        "properties": {
+          "ranger_admin_password": "admin-password1",
+          "keyadmin_user_password":"admin-password1",
+          "rangertagsync_user_password":"admin-password1",
+          "rangerusersync_user_password":"admin-password1",
+          "is_solrCloud_enabled": "true",
+          "ranger-hdfs-plugin-enabled": "Yes",
+          "ranger-hive-plugin-enabled": "Yes",
+          "ranger-atlas-plugin-enabled": "Yes",
+          "ranger-knox-plugin-enabled": "Yes"
+        }
+      }
+    },
+    {
+      "admin-properties": {
+        "properties_attributes": {},
+        "properties": {
+          "DB_FLAVOR": "POSTGRES",
+          "db_name": "ranger",
+          "db_user": "rangeradmin",
+          "policymgr_external_url": "http://localhost:6080",
+          "db_host": "localhost:5432",
+          "db_root_user": "rangerdba",
+          "db_root_password": "rangerdba",
+          "db_password": "ranger"
+        }
+      }
+    },
+    {
+      "atlas-env": {
+        "properties_attributes": {},
+        "properties": {
+          "atlas.admin.password": "admin-password1"
+        }
+      }
+    },
+    {
+      "kafka-broker": {
+        "properties_attributes": {},
+        "properties": {
+          "default.replication.factor": "1",
+          "offsets.topic.replication.factor": "1"
+        }
+      }
+    },
+    {
+        "druid-common": {
+          "properties_attributes": {},
+          "properties": {
+            "druid.metadata.storage.type": "derby",
+            "druid.metadata.storage.connector.connectURI": "jdbc:derby://localhost:1527/druid;create=true",
+            "druid.extensions.loadList": "[\"postgresql-metadata-storage\", \"druid-s3-extensions\",\"druid-datasketches\", \"druid-hdfs-storage\", \"druid-kafka-indexing-service\", \"ambari-metrics-emitter\"]",
+            "druid.selectors.indexing.serviceName": "druid/overlord",
+            "druid.storage.type": "hdfs"
+          }
+        }
+      },
+      {
+        "druid-overlord": {
+          "properties_attributes": {},
+          "properties": {
+            "druid.indexer.storage.type": "metadata",
+            "druid.indexer.runner.type": "remote",
+            "druid.service": "druid/overlord",
+            "druid.port": "8090"
+          }
+        }
+      },
+      {
+        "druid-middlemanager": {
+          "properties_attributes": {},
+          "properties": {
+            "druid.server.http.numThreads": "50",
+            "druid.worker.capacity": "3",
+            "druid.processing.numThreads": "2",
+            "druid.indexer.runner.javaOpts": "-server -Xmx2g -Duser.timezone=UTC -Dfile.encoding=UTF-8 -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager -Dhdp.version={{stack_version}} -Dhadoop.mapreduce.job.classloader=true",
+            "druid.service": "druid/middlemanager",
+            "druid.port": "8091"
+          }
+        }
+      },
+      {
+        "druid-coordinator": {
+          "properties_attributes": {},
+          "properties": {
+            "druid.coordinator.merge.on": "false",
+            "druid.port": "8081"
+          }
+        }
+      },
+      {
+        "druid-historical": {
+          "properties_attributes": {},
+          "properties": {
+            "druid.server.http.numThreads": "50",
+            "druid.processing.numThreads": "2",
+            "druid.service": "druid/historical",
+            "druid.port": "8083",
+            "druid.server.maxSize": "300000000000"
+          }
+        }
+      },
+      {
+        "druid-broker": {
+          "properties_attributes": {},
+          "properties": {
+            "druid.cache.type": "local",
+            "druid.server.http.numThreads": "50",
+            "druid.broker.http.numConnections": "5",
+            "druid.processing.numThreads": "2",
+            "druid.service": "druid/broker",
+            "druid.port": "8082"
+          }
+        }
+      },
+      {
+        "druid-router": {
+          "properties_attributes": {},
+          "properties": {
+          }
+        }
+      },
+      {
+        "superset": {
+          "properties_attributes": {},
+          "properties": {
+            "SECRET_KEY" : "admin",
+            "SUPERSET_DATABASE_TYPE" : "sqlite"
+          }
+        }
+      }
+  ],
+  "host_groups": [
+    {
+      "name": "master",
+      "cardinality": "1",
+      "components": [
+        {
+          "name": "ATLAS_SERVER"
+        },
+        {
+          "name": "RANGER_TAGSYNC"
+        },
+        {
+          "name": "RANGER_USERSYNC"
+        },
+        {
+          "name": "RANGER_ADMIN"
+        },
+        {
+          "name": "INFRA_SOLR"
+        },
+		{
+          "name": "KNOX_GATEWAY"
+        },
+        {
+          "name": "HIVE_SERVER"
+        },
+        {
+          "name": "HIVE_SERVER_INTERACTIVE"
+        },
+        {
+          "name": "HIVE_METASTORE"
+        },
+        {
+          "name": "DRUID_OVERLORD"
+        },
+        {
+          "name": "DRUID_COORDINATOR"
+        },
+        {
+          "name": "DRUID_ROUTER"
+        },
+        {
+          "name": "DRUID_BROKER"
+        },
+        {
+          "name": "SUPERSET"
+        },
+        {
+          "name": "HBASE_MASTER"
+        },
+        {
+          "name": "KAFKA_BROKER"
+        },
+        {
+          "name": "ZOOKEEPER_SERVER"
+        },
+        {
+          "name": "NAMENODE"
+        },
+        {
+          "name": "SECONDARY_NAMENODE"
+        },
+        {
+          "name": "RESOURCEMANAGER"
+        },
+        {
+          "name": "HISTORYSERVER"
+        },
+        {
+          "name": "APP_TIMELINE_SERVER"
+        },
+        {
+          "name": "LIVY2_SERVER"
+        },
+        {
+          "name": "SPARK2_CLIENT"
+        },
+        {
+          "name": "SPARK2_JOBHISTORYSERVER"
+        },
+        {
+          "name": "ZEPPELIN_MASTER"
+        },
+        {
+          "name": "DATANODE"
+        },
+        {
+          "name": "YARN_CLIENT"
+        },
+        {
+          "name": "HDFS_CLIENT"
+        },
+        {
+          "name": "TEZ_CLIENT"
+        },
+        {
+          "name": "INFRA_SOLR_CLIENT"
+        },
+        {
+          "name": "ZOOKEEPER_CLIENT"
+        },
+        {
+          "name": "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name": "ATLAS_CLIENT"
+        },
+        {
+          "name": "HBASE_CLIENT"
+        },
+        {
+          "name": "HIVE_CLIENT"
+        }
+      ]
+    },
+    {
+      "name": "worker",
+      "cardinality": "1+",
+      "components": [
+        {
+          "name": "NODEMANAGER"
+        },
+        {
+          "name": "DATANODE"
+        },
+        {
+          "name": "HBASE_REGIONSERVER"
+        },
+        {
+          "name": "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name": "YARN_CLIENT"
+        },
+        {
+          "name": "HDFS_CLIENT"
+        },
+        {
+          "name": "SPARK2_CLIENT"
+        },
+        {
+          "name": "TEZ_CLIENT"
+        },
+        {
+          "name": "ZOOKEEPER_CLIENT"
+        },
+        {
+          "name": "ATLAS_CLIENT"
+        },
+        {
+          "name": "HBASE_CLIENT"
+        },
+        {
+          "name": "HIVE_CLIENT"
+        }
+      ]
+    },
+    {
+      "name": "druid_worker",
+      "cardinality": "1+",
+      "components": [
+        {
+          "name": "DRUID_HISTORICAL"
+        },
+        {
+          "name": "DRUID_MIDDLEMANAGER"
+        },
+        {
+          "name": "DATANODE"
+        },
+        {
+          "name": "HIVE_CLIENT"
+        },
+        {
+          "name": "ZOOKEEPER_CLIENT"
+        }
+      ]
+    }
+  ],
+  "Blueprints": {
+    "blueprint_name": "hdp30-warehouse-cube",
+    "stack_name": "HDP",
+    "stack_version": "3.0"
+  }
+}
