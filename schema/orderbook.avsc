@@ -1,0 +1,58 @@
+{
+ "type": "record",
+ "name": "orderbook",
+ "fields": [
+  {
+   "name": "symbol",
+   "type": "string"
+  },
+  {
+   "name": "side",
+   "type": "string"
+  },
+  {
+   "name": "amount",
+   "type": "double"
+  },
+  {
+   "name": "second",
+   "type": "int"
+  },
+  {
+   "name": "minute",
+   "type": "int"
+  },
+  {
+   "name": "hour",
+   "type": "int"
+  },
+  {
+   "name": "day",
+   "type": "int"
+  },
+  {
+   "name": "month",
+   "type": "int"
+  },
+  {
+   "name": "year",
+   "type": "int"
+  },
+  {
+   "name": "price",
+   "type": "double"
+  },
+  {
+   "name": "exchange",
+   "type": "string"
+  },
+  {
+   "name": "timestamp",
+   "type": "string"
+  },
+  {
+   "name": "timestamp_epoch",
+   "type": "long"
+  }
+ ]
+}
