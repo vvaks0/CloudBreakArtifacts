@@ -213,7 +213,7 @@ def restart_service(service_name):
     
     stop_service(service_name)
     start_service(service_name)
-    
+
 def get_dps_token():
     #token = json.loads(requests.post(url = dps_url+dps_auth_uri, data = '{"username":"'+dps_admin_user+'","password":"'+dps_admin_password+'"}', headers=headers, verify=False).text)['token']
     #token = requests.post(url = dps_url+dps_auth_uri, data = '{"username":"'+dps_admin_user+'","password":"'+dps_admin_password+'"}', headers=headers, verify=False).cookies.pop('dp_jwt')
@@ -262,7 +262,7 @@ def get_dlm_cluster_details(target_cluster_name):
             return dlm_cluster
     
     return None
-    
+
 def dlm_pair_clusters(source_cluster, destination_cluster):
     headers={'content-type':'application/json'}
     payload = '[{"clusterId": '+str(source_cluster['id'])+',"beaconUrl": "'+source_cluster['beaconUrl']+'"},{"clusterId": '+str(destination_cluster['id'])+',"beaconUrl": "'+destination_cluster['beaconUrl']+'"}]'
