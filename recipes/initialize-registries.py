@@ -3,11 +3,6 @@
 import requests, json, sys, socket, time, subprocess
 from requests.auth import HTTPBasicAuth
 
-if (len(sys.argv) < 2):
-    print 'Need 1 argument [cloud storage bucket]'
-    exit(1)
-
-storage_bucket = sys.argv[1]
 ambari_admin_user = 'admin'
 ambari_admin_password = 'admin-password1'
 
@@ -28,7 +23,8 @@ nifi_client_id = 'recipe'
 
 schemas_path = '/root/CloudBreakArtifacts/schema/'
 nifi_registry_dir =  '/var/lib/nifi-registry'
-nifi_registry_s3 = 's3://'+storage_bucket+'/nifi-registry'
+nifi_registry_config_section_name = 'nifi-registry-properties'
+storage_bucket_config_name = 'nifi.registry.storage.bucket'
 
 nifi_master_component_name = 'NIFI_MASTER'
 nifi_registry_service_name = 'NIFI_REGISTRY'
@@ -47,6 +43,14 @@ host_ip = socket.gethostbyname(socket.gethostname())
 
 headers={'content-type':'application/json'}
 ambari_cluster_name = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri, auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password)).content)['items'][0]['Clusters']['cluster_name']
+
+def check_external_argument(ambari_config_section_name, argument_name):
+    try:
+        get_latest_config(ambari_config_section_name)[argument_name]
+        return True
+    except KeyError, e:
+        print ambari_config_section_name + ' - ' + argument_name + ' is null'  #make sure the property has been configured in Ambari under ' + dps_host_config_file
+        return False
 
 def get_component_host(target_component):
     component_host_name = 'unknown'
@@ -150,6 +154,13 @@ def create_self_reference_remote_group():
     print 'Sending ' + payload + " --> " + nifi_master_url+nifi_api_uri+nifi_process_groups_uri+nifi_root_group_uri+nifi_remote_process_groups_uri
     result = requests.post(url=nifi_master_url+nifi_api_uri+nifi_process_groups_uri+nifi_root_group_uri+nifi_remote_process_groups_uri,data=payload, headers=headers, verify=False)
     print 'result: ' + str(result.status_code)+' - '+result.content
+
+if check_external_argument(nifi_registry_config_section_name, storage_bucket_config_name):
+    storage_bucket = get_latest_config(nifi_registry_config_section_name)[storage_bucket_config_name]
+    nifi_registry_s3 = 's3://'+storage_bucket+'/nifi-registry'
+else:
+    print 'Could not find storage.bucket in nifi-registry-properties section in Ambari...'
+    exit(1)    
 
 nifi_master_host = get_component_host(nifi_master_component_name)
 nifi_registry_host = get_component_host(nifi_registry_component_name)
