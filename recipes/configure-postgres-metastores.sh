@@ -9,6 +9,7 @@ echo "authentication.ldap.pagination.enabled=false" >> /etc/ambari-server/conf/a
 echo "CREATE DATABASE druid;" | sudo -u postgres psql -U postgres
 echo "CREATE DATABASE ranger;" | sudo -u postgres psql -U postgres
 echo "CREATE USER druid WITH PASSWORD 'druid';" | sudo -u postgres psql -U postgres
+echo "CREATE USER ranger WITH PASSWORD 'ranger';" | sudo -u postgres psql -U postgres
 echo "CREATE USER rangerdba WITH PASSWORD 'rangerdba';" | sudo -u postgres psql -U postgres
 echo "CREATE USER rangeradmin WITH PASSWORD 'ranger'" | sudo -u postgres psql -U postgres
 echo "GRANT ALL PRIVILEGES ON DATABASE druid TO druid;" | sudo -u postgres psql -U postgres
