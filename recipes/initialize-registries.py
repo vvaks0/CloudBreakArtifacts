@@ -171,7 +171,7 @@ nifi_master_url = 'http://'+nifi_master_host+':'+nifi_master_port
 
 upload_schema_to_registry('orderbook')
 
-print 'Loading nifi registry from S3 storage...'
+print 'Loading nifi registry from S3 storage... ' + nifi_registry_s3 +' --> ' + nifi_registry_dir
 subprocess.check_output(["aws", "s3", "cp", nifi_registry_s3, nifi_registry_dir, "--recursive"])
 
 create_self_reference_remote_group()
