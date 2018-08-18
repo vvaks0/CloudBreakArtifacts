@@ -174,6 +174,7 @@ upload_schema_to_registry('orderbook')
 print 'Loading nifi registry from S3 storage...'
 subprocess.check_output(["aws", "s3", "cp", nifi_registry_s3, nifi_registry_dir, "--recursive"])
 
-configure_nifi_registry_client()
+create_self_reference_remote_group()
 
+configure_nifi_registry_client()
 restart_service(nifi_registry_service_name)
