@@ -4,8 +4,6 @@ export DPS_HOST=$1
 
 #disable ambari ldap pagination to avoid NPE on sync
 echo "authentication.ldap.pagination.enabled=false" >> /etc/ambari-server/conf/ambari.properties
-
-
 	yum remove -y mysql57-community*
 	yum remove -y mysql56-server*
 	yum remove -y mysql-community*
@@ -35,11 +33,17 @@ echo "authentication.ldap.pagination.enabled=false" >> /etc/ambari-server/conf/a
 mysql --execute="CREATE DATABASE druid DEFAULT CHARACTER SET utf8"
 mysql --execute="CREATE DATABASE registry DEFAULT CHARACTER SET utf8"
 mysql --execute="CREATE DATABASE streamline DEFAULT CHARACTER SET utf8"
+mysql --execute="CREATE USER 'ranger'@'localhost' IDENTIFIED BY 'ranger'"
+mysql --execute="CREATE USER 'ranger'@'%' IDENTIFIED BY 'ranger'"
 mysql --execute="CREATE USER 'rangerdba'@'localhost' IDENTIFIED BY 'rangerdba'"
 mysql --execute="CREATE USER 'rangerdba'@'%' IDENTIFIED BY 'rangerdba'"
 mysql --execute="CREATE USER 'druid'@'%' IDENTIFIED BY 'druid'"
 mysql --execute="CREATE USER 'registry'@'%' IDENTIFIED BY 'registry'"
 mysql --execute="CREATE USER 'streamline'@'%' IDENTIFIED BY 'streamline'"
+mysql --execute="GRANT ALL PRIVILEGES ON *.* TO 'ranger'@'localhost'"
+mysql --execute="GRANT ALL PRIVILEGES ON *.* TO 'ranger'@'%'"
+mysql --execute="GRANT ALL PRIVILEGES ON *.* TO 'ranger'@'localhost' WITH GRANT OPTION"
+mysql --execute="GRANT ALL PRIVILEGES ON *.* TO 'ranger'@'%' WITH GRANT OPTION"
 mysql --execute="GRANT ALL PRIVILEGES ON *.* TO 'rangerdba'@'localhost'"
 mysql --execute="GRANT ALL PRIVILEGES ON *.* TO 'rangerdba'@'%'"
 mysql --execute="GRANT ALL PRIVILEGES ON *.* TO 'rangerdba'@'localhost' WITH GRANT OPTION"
