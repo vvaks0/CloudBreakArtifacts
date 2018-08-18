@@ -255,9 +255,9 @@ def dps_register_cluster():
 
 def get_dlm_cluster_details(target_cluster_name):
     dlm_clusters = json.loads(requests.get(url=dps_url+dlm_clusters_uri, cookies=cookie, headers=headers, verify=False).content)
-    #print dlm_clusters
+    print '*** current cluster: ' ++ dlm_clusters
     for dlm_cluster in dlm_clusters['clusters']:
-        #print dlm_cluster['name'] +' ? '+ target_cluster_name
+        print dlm_cluster['name'] +' ? '+ target_cluster_name
         if dlm_cluster['name'] == target_cluster_name:
             return dlm_cluster
     
