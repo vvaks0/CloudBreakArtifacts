@@ -9,6 +9,8 @@ ambari_admin_password = 'admin-password1'
 ambari_clusters_uri = '/api/v1/clusters'
 ambari_services_uri = '/api/v1/services'
 
+scripts_repo_config_name = 'scripts.repo.name'
+
 schema_registry_api_uri = '/api/v1'
 schema_registry_schemas_uri = '/schemaregistry/schemas'
 schema_registry_schemas_orderbook_versions_uri = '/orderbook/versions'
@@ -21,10 +23,13 @@ nifi_remote_process_groups_uri = '/remote-process-groups'
 
 nifi_client_id = 'recipe'
 
-schemas_path = '/root/CloudBreakArtifacts/schema/'
+nifi_registry_user = 'nifiregistry'
 nifi_registry_dir =  '/var/lib/nifi-registry'
 nifi_registry_config_section_name = 'nifi-registry-properties'
-storage_bucket_config_name = 'nifi.registry.storage.bucket'
+nifi_registry_git_repo_url = 'https://github.com/vakshorton/nifi-flow-registry.git'
+nifi_registry_git_repo_dir = '/home/nifiregistry'
+nifi_registry_git_repo_url_config_name = 'nifi.registry.git.repo.url'
+nifi_registry_storage_bucket_config_name = 'nifi.registry.storage.bucket'
 
 nifi_master_component_name = 'NIFI_MASTER'
 nifi_registry_service_name = 'NIFI_REGISTRY'
@@ -73,9 +78,6 @@ def get_latest_config(config_name):
     config = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri+'/'+ambari_cluster_name+'/configurations?type='+config_name+'&tag='+tag, auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password)).content)['items'][0]['properties']
     return config
 
-def get_schema_registry_host():
-    return host_name
-
 def get_schema_def(schema_path):
     with open(schema_path) as schema_read:
         schema = json.dumps(json.load(schema_read))
@@ -83,6 +85,9 @@ def get_schema_def(schema_path):
     return schema
 
 def upload_schema_to_registry(schema_name):
+    scripts_repo_name = get_latest_config(nifi_registry_config_section_name)[scripts_repo_config_name]
+    schemas_path = '/root/'+scripts_repo_name+'/schema/'
+    
     print 'Creating schema '+schema_name + '...'
     headers={'content-type':'application/json'}
     payload='{"name":"'+schema_name+'","type":"avro","schemaGroup":"'+schema_name+'","description":"'+schema_name+'","evolve":true,"compatibility":"BACKWARD"}'
@@ -91,7 +96,7 @@ def upload_schema_to_registry(schema_name):
     print 'result: ' + str(result.status_code)+' - '+result.content
     print 'Loading schema definition...'
     
-    payload = '{"schemaText":'+json.dumps(get_schema_def(schemas_path+schema_name+'.avsc'))+',"description":"'+schema_name+'"}'
+    payload = '{"schemaText":'+json.dumps(get_schema_def(schemas_path+schema_name))+',"description":"'+schema_name+'"}'
     print 'Sending ' + payload + " --> " + schema_registry_url+schema_registry_api_uri+schema_registry_schemas_uri+schema_registry_schemas_orderbook_versions_uri
     result = requests.post(url=schema_registry_url+schema_registry_api_uri+schema_registry_schemas_uri+schema_registry_schemas_orderbook_versions_uri,data=payload, headers=headers, verify=False)
     print 'result: ' + str(result.status_code)+' - '+result.content
@@ -155,12 +160,22 @@ def create_self_reference_remote_group():
     result = requests.post(url=nifi_master_url+nifi_api_uri+nifi_process_groups_uri+nifi_root_group_uri+nifi_remote_process_groups_uri,data=payload, headers=headers, verify=False)
     print 'result: ' + str(result.status_code)+' - '+result.content
 
-if check_external_argument(nifi_registry_config_section_name, storage_bucket_config_name):
-    storage_bucket = get_latest_config(nifi_registry_config_section_name)[storage_bucket_config_name]
-    nifi_registry_s3 = 's3://'+storage_bucket+'/nifi-registry'
-else:
-    print 'Could not find storage.bucket in nifi-registry-properties section in Ambari...'
-    exit(1)    
+def git_clone_nifi_registry_repo():
+    nifi_registry_user_id = pwd.getpwnam(nifi_registry_user).pw_uid
+    nifi_registry_git_repo_url = get_latest_config(nifi_registry_config_section_name)[nifi_registry_git_repo_url_config_name]
+    subprocess.check_output(["git", "clone", nifi_registry_git_repo_url, nifi_registry_git_repo_dir])
+    for root, dirs, files in os.walk(nifi_registry_git_repo_dir):
+        for dir in dirs:
+            os.chown(os.path.join(root, dir), nifi_registry_user_id, nifi_registry_user_id)
+        for file in files:
+            os.chown(os.path.join(root, file), nifi_registry_user_id, nifi_registry_user_id)
+
+def load_nifi_registry_from_storage_bucket():
+    nifi_registry_storage_bucket = get_latest_config(nifi_registry_config_section_name)[nifi_registry_storage_bucket]
+    nifi_registry_s3 = 's3://'+nifi_registry_storage_bucket+'/nifi-registry'
+    print 'Loading nifi registry from S3 storage... ' + nifi_registry_s3 +' --> ' + nifi_registry_dir
+    subprocess.check_output(["aws", "s3", "cp", nifi_registry_s3, nifi_registry_dir, "--recursive"])
+    restart_service(nifi_registry_service_name)
 
 nifi_master_host = get_component_host(nifi_master_component_name)
 nifi_registry_host = get_component_host(nifi_registry_component_name)
@@ -169,12 +184,14 @@ schema_registry_host = get_component_host(schema_registry_component_name)
 schema_registry_url = 'http://'+schema_registry_host+':'+schema_registry_port
 nifi_master_url = 'http://'+nifi_master_host+':'+nifi_master_port 
 
-upload_schema_to_registry('orderbook')
+if check_external_argument(nifi_registry_config_section_name, storage_bucket_config_name):
+    load_nifi_registry_from_storage_bucket()
 
-print 'Loading nifi registry from S3 storage... ' + nifi_registry_s3 +' --> ' + nifi_registry_dir
-subprocess.check_output(["aws", "s3", "cp", nifi_registry_s3, nifi_registry_dir, "--recursive"])
+if check_external_argument(nifi_registry_config_section_name, nifi_registry_git_repo_url_config_name):
+    git_clone_nifi_registry_repo()
+
+if check_external_argument(nifi_registry_config_section_name, scripts_repo_config_name):
+    upload_schema_to_registry('orderbook.avsc')
 
 create_self_reference_remote_group()
-
 configure_nifi_registry_client()
-restart_service(nifi_registry_service_name)
