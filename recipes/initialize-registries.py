@@ -171,7 +171,7 @@ def git_clone_nifi_registry_repo():
             os.chown(os.path.join(root, file), nifi_registry_user_id, nifi_registry_user_id)
 
 def load_nifi_registry_from_storage_bucket():
-    nifi_registry_storage_bucket = get_latest_config(nifi_registry_config_section_name)[nifi_registry_storage_bucket]
+    nifi_registry_storage_bucket = get_latest_config(nifi_registry_config_section_name)[nifi_registry_storage_bucket_config_name]
     nifi_registry_s3 = 's3://'+nifi_registry_storage_bucket+'/nifi-registry'
     print 'Loading nifi registry from S3 storage... ' + nifi_registry_s3 +' --> ' + nifi_registry_dir
     subprocess.check_output(["aws", "s3", "cp", nifi_registry_s3, nifi_registry_dir, "--recursive"])
