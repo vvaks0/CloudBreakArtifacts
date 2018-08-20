@@ -163,7 +163,8 @@ def create_self_reference_remote_group():
 def git_clone_nifi_registry_repo():
     nifi_registry_user_id = pwd.getpwnam(nifi_registry_user).pw_uid
     nifi_registry_git_repo_url = get_latest_config(nifi_registry_config_section_name)[nifi_registry_git_repo_url_config_name]
-    subprocess.check_output(["git", "clone", nifi_registry_git_repo_url, nifi_registry_git_repo_dir])
+    os.chdir(nifi_registry_git_repo_dir)
+    subprocess.check_output(["git", "clone", nifi_registry_git_repo_url])
     for root, dirs, files in os.walk(nifi_registry_git_repo_dir):
         for dir in dirs:
             os.chown(os.path.join(root, dir), nifi_registry_user_id, nifi_registry_user_id)
