@@ -184,14 +184,14 @@ schema_registry_host = get_component_host(schema_registry_component_name)
 schema_registry_url = 'http://'+schema_registry_host+':'+schema_registry_port
 nifi_master_url = 'http://'+nifi_master_host+':'+nifi_master_port 
 
-if check_external_argument(nifi_registry_config_section_name, nifi_registry_storage_bucket_config_name):
-    load_nifi_registry_from_storage_bucket()
-
 if check_external_argument(nifi_registry_config_section_name, nifi_registry_git_repo_url_config_name):
     git_clone_nifi_registry_repo()
+
+if check_external_argument(nifi_registry_config_section_name, nifi_registry_storage_bucket_config_name):
+    load_nifi_registry_from_storage_bucket()
 
 if check_external_argument(nifi_registry_config_section_name, scripts_repo_config_name):
     upload_schema_to_registry('orderbook.avsc')
 
-create_self_reference_remote_group()
+#create_self_reference_remote_group()
 configure_nifi_registry_client()
