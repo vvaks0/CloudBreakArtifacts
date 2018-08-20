@@ -1,12 +1,5 @@
 #!/bin/bash
 
-#yum install -y git
-#aws s3 cp s3://drawbridge-analytics/key/drawbridge.pem /root/.ssh/id_rsa 
-#chmod 600 /root/.ssh/id_rsa 
-#ssh-keyscan github.com >> ~/.ssh/known_hosts
-#git clone git@github.com:vakshorton/drawbridge.git
-#drawbridge/scripts/initialize-metastores.sh
-
 echo "CREATE DATABASE druid;" | sudo -u postgres psql -U postgres
 #echo "CREATE DATABASE ranger;" | sudo -u postgres psql -U postgres
 echo "CREATE DATABASE registry;" | sudo -u postgres psql -U postgres
