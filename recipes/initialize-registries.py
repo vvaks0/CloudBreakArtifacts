@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import requests, json, sys, socket, time, subprocess, os
+import requests, json, sys, socket, time, subprocess, os, pwd
 from requests.auth import HTTPBasicAuth
 
 ambari_admin_user = 'admin'
