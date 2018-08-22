@@ -96,7 +96,7 @@ def upload_schema_to_registry(schema_name):
     print 'result: ' + str(result.status_code)+' - '+result.content
     print 'Loading schema definition...'
     
-    payload = '{"schemaText":'+json.dumps(get_schema_def(schemas_path+schema_name))+',"description":"'+schema_name+'"}'
+    payload = '{"schemaText":'+json.dumps(get_schema_def(schemas_path+schema_name+'.avsc'))+',"description":"'+schema_name+'"}'
     print 'Sending ' + payload + " --> " + schema_registry_url+schema_registry_api_uri+schema_registry_schemas_uri+schema_registry_schemas_orderbook_versions_uri
     result = requests.post(url=schema_registry_url+schema_registry_api_uri+schema_registry_schemas_uri+schema_registry_schemas_orderbook_versions_uri,data=payload, headers=headers, verify=False)
     print 'result: ' + str(result.status_code)+' - '+result.content
@@ -192,7 +192,7 @@ if check_external_argument(nifi_registry_config_section_name, nifi_registry_stor
     load_nifi_registry_from_storage_bucket()
 
 if check_external_argument(nifi_registry_config_section_name, scripts_repo_config_name):
-    upload_schema_to_registry('orderbook.avsc')
+    upload_schema_to_registry('orderbook')
 
 #create_self_reference_remote_group()
 configure_nifi_registry_client()
