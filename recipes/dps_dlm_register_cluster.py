@@ -10,6 +10,7 @@
 
 import requests, json, socket, time, subprocess
 from requests.auth import HTTPBasicAuth
+from StdSuites.Type_Names_Suite import null
 
 #dps_url = 'https://' + sys.argv[2]
 
@@ -56,11 +57,19 @@ host_name = socket.getfqdn()
 host_ip = socket.gethostbyname(socket.gethostname())
 ranger_url = 'http://'+host_name+':'+ranger_port
 
-headers={'content-type':'application/json'}
+behind_gateway = True
 
+headers={'content-type':'application/json'}
 ambari_cluster_name = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_clusters_uri, auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password)).content)['items'][0]['Clusters']['cluster_name']
-knox_public_url = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_services_uri+'/AMBARI/components/AMBARI_SERVER', auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password)).content)['RootServiceComponents']['properties']['authentication.jwt.providerUrl'].split(ambari_cluster_name)[0] + ambari_cluster_name
-ambari_public_url = knox_public_url + '/' + knox_topology + '/ambari'
+
+def get_knox_public_url():
+    config = json.loads(requests.get('http://'+host_name+':'+ambari_port+ambari_services_uri+'/AMBARI/components/AMBARI_SERVER', auth=HTTPBasicAuth(ambari_admin_user, ambari_admin_password)).content)
+    try:
+        knox_public_url = config['RootServiceComponents']['properties']['authentication.jwt.providerUrl'].split(ambari_cluster_name)[0] + ambari_cluster_name
+    except KeyError:
+        knox_public_url = 'unknown'    
+    
+    return knox_public_url
 
 def configure_ranger():
     ranger_hive_service_name = ambari_cluster_name + '_hive'
@@ -219,10 +228,29 @@ def get_dps_token():
     #token = requests.post(url = dps_url+dps_auth_uri, data = '{"username":"'+dps_admin_user+'","password":"'+dps_admin_password+'"}', headers=headers, verify=False).cookies.pop('dp_jwt')
     #token = requests.get(url = dps_url+dps_identity_uri, cookies=cookie, headers=headers, verify=False).cookies.pop('dp_jwt')
     #cookie = {'dp_jwt':token}
-    
-    token = requests.post(url = dps_url+dps_sso_provider+dps_url, auth=HTTPBasicAuth(dps_admin_user,dps_admin_password), headers=headers, allow_redirects=False, verify=False).cookies.pop('hadoop-jwt')
-    cookie = {'hadoop-jwt':token}    
+    current_index = 0
+    token_name_list = ['hadoop-jwt','dp-hadoop-jwt']
+    cookie = attempt_pop_token(token_name_list, current_index)
+            
     return cookie
+
+def attempt_pop_token(token_name_list, current_index):
+    cookie_name = token_name_list[current_index]
+    print 'attempting to get token with name: ' +  cookie_name
+    try:
+      token = requests.post(url = dps_url+dps_sso_provider+dps_url, auth=HTTPBasicAuth(dps_admin_user,dps_admin_password), headers=headers, allow_redirects=False, verify=False).cookies.pop(cookie_name)
+      cookie_ = {cookie_name:token}
+    except KeyError:
+      cookie_name = ''
+      current_index += 1
+      if current_index >= len(token_name_list):
+        cookie_ = {'missing':'missing'}
+      else:    
+        print 'token with name ' + cookie_name + ' was not found, trying next indexed name...' + token_name_list[current_index] 
+        token = attempt_pop_token(token_name_list, current_index)
+        cookie_ = token
+    
+    return cookie_
 
 def dps_register_cluster():
     tags = ''
@@ -238,8 +266,11 @@ def dps_register_cluster():
       location = '7072'
     
     headers={'content-type':'application/json'}
-    #payload = '{"allowUntrusted":true,"behindGateway":false,"dcName": "DC02","ambariUrl": "http://'+host_name+':'+ambari_port+'","description":" ","location": 7064,"isDatalake": true,"name": "'+ambari_cluster_name+'","state": "TO_SYNC","ambariIpAddress": "http://'+host_ip+':'+ambari_port+'","properties": {"tags": ['+tags+']}}'
-    payload = '{"allowUntrusted":true,"behindGateway":true,"dcName": "'+datacenter+'","ambariUrl": "'+ambari_public_url+'","description":" ","location": '+location+',"isDatalake": true,"name": "'+ambari_cluster_name+'","state": "TO_SYNC","ambariIpAddress": "'+ambari_public_url+'", "knoxEnabled": true, "knoxUrl": "'+knox_public_url+'","properties": {"tags": ['+tags+']}}'
+    
+    if behind_gateway:
+        payload = '{"allowUntrusted":true,"behindGateway":true,"dcName": "'+datacenter+'","ambariUrl": "'+ambari_public_url+'","description":" ","location": '+location+',"isDatalake": true,"name": "'+ambari_cluster_name+'","clusterType":"HDP","state": "TO_SYNC","ambariIpAddress": "'+ambari_public_url+'", "knoxEnabled": true, "knoxUrl": "'+knox_public_url+'","properties": {"tags": ['+tags+']}}'
+    else:
+        payload = '{"allowUntrusted":true,"behindGateway":false,"dcName": "DC02","ambariUrl": "http://'+host_name+':'+ambari_port+'","description":" ","location": '+location+',"isDatalake": true,"name": "'+ambari_cluster_name+'","clusterType":"HDP","state": "TO_SYNC","ambariIpAddress": "http://'+host_ip+':'+ambari_port+'","properties": {"tags": ['+tags+']}}'
     
     print 'Payload: ' + payload
     result = requests.post(url=dps_url+dps_lakes_uri, cookies=cookie, data=payload, headers=headers, verify=False).content
@@ -298,15 +329,19 @@ enable_ranger_special_policies()
 #else:
 #    restart_service('ATLAS')
  
-if not check_external_argument(isDatalake_argument_name):
-    exit(1)
-
-print 'Cluster is Datalake? ' 
-is_datalake = get_latest_config(dps_host_config_file)['dps.cluster.is.datalake']
-print is_datalake
+#if not check_external_argument(isDatalake_argument_name):
+#    exit(1)
 
 if not check_external_argument(dpsHost_argument_name):
     exit(1)
+
+print 'Cluster is Datalake? ' 
+try:
+    is_datalake = get_latest_config(dps_host_config_file)['dps.cluster.is.datalake']
+except KeyError:
+    is_datalake = 'false'
+
+print is_datalake
 
 print 'Getting Auth Token from DPS...'
 dps_url = 'https://'+ get_latest_config(dps_host_config_file)[dpsHost_argument_name]
@@ -314,6 +349,15 @@ cookie = get_dps_token()
 
 print 'Verifying Token is Valid...'
 requests.get(url = dps_url+'/api/knox/status', cookies = cookie, verify=False).content
+
+knox_public_url = get_knox_public_url()
+if knox_public_url == 'unknown':
+    behind_gateway = False
+    knox_public_url = 'https://' + host_ip
+    ambari_public_url = 'https://' + host_ip
+else:
+    behind_gateway = True
+    ambari_public_url = knox_public_url + '/' + knox_topology + '/ambari'
 
 print 'Registering Cluster with Dataplane: ' + dps_url+dps_lakes_uri
 dps_register_cluster()
