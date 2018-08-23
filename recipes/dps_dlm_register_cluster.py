@@ -10,7 +10,6 @@
 
 import requests, json, socket, time, subprocess
 from requests.auth import HTTPBasicAuth
-from StdSuites.Type_Names_Suite import null
 
 #dps_url = 'https://' + sys.argv[2]
 
