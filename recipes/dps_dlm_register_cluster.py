@@ -341,9 +341,12 @@ except KeyError:
     is_datalake = 'false'
 
 print is_datalake
-
 print 'Getting Auth Token from DPS...'
-dps_url = 'https://'+ get_latest_config(dps_host_config_file)[dpsHost_argument_name]
+try:
+    dps_url = 'https://'+ get_latest_config(dps_host_config_file)[dpsHost_argument_name]
+except KeyError:    
+    dps_url = 'https://' + sys.argv[2]
+
 cookie = get_dps_token()
 
 print 'Verifying Token is Valid...'
