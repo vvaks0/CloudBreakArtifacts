@@ -8,7 +8,7 @@
 #  print 'Need at least 2 argument [is_shared_services, dps_host_name] and at most 4 arguments [target_cluster_name, target_dataset_name]'
 #  exit(1)
 
-import requests, json, socket, time, subprocess
+import sys, requests, json, socket, time, subprocess
 from requests.auth import HTTPBasicAuth
 
 #dps_url = 'https://' + sys.argv[2]
@@ -331,8 +331,10 @@ enable_ranger_special_policies()
 #if not check_external_argument(isDatalake_argument_name):
 #    exit(1)
 
-if not check_external_argument(dpsHost_argument_name):
-    exit(1)
+if check_external_argument(dpsHost_argument_name):
+    dps_url = 'https://'+ get_latest_config(dps_host_config_file)[dpsHost_argument_name]
+else:
+    dps_url = 'https://' + sys.argv[2]
 
 print 'Cluster is Datalake? ' 
 try:
@@ -341,12 +343,8 @@ except KeyError:
     is_datalake = 'false'
 
 print is_datalake
-print 'Getting Auth Token from DPS...'
-try:
-    dps_url = 'https://'+ get_latest_config(dps_host_config_file)[dpsHost_argument_name]
-except KeyError:    
-    dps_url = 'https://' + sys.argv[2]
 
+print 'Getting Auth Token from DPS...'
 cookie = get_dps_token()
 
 print 'Verifying Token is Valid...'
