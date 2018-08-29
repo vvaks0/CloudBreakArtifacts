@@ -1,5 +1,26 @@
 #!/bin/bash
 
+yum install -y https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-redhat96-9.6-3.noarch.rpm
+yum install -y postgresql96-server
+yum install -y postgresql96-contrib
+/usr/pgsql-9.6/bin/postgresql96-setup initdb
+sed -i 's,#port = 5432,port = 5433,g' /var/lib/pgsql/9.6/data/postgresql.conf
+
+echo '' >  /var/lib/pgsql/9.6/data/pg_hba.conf
+echo 'local all das,streamsmsgmgr,cloudbreak,registry,ambari,postgres,hive,ranger,rangerdba,rangeradmin,rangerlogger,druid           trust		' >> /var/lib/pgsql/9.6/data/pg_hba.conf
+echo 'host  all das,streamsmsgmgr,cloudbreak,registry,ambari,postgres,hive,ranger,rangerdba,rangeradmin,rangerlogger,druid 0.0.0.0/0 trust		' >> /var/lib/pgsql/9.6/data/pg_hba.conf
+echo 'host  all das,streamsmsgmgr,cloudbreak,registry,ambari,postgres,hive,ranger,rangerdba,rangeradmin,rangerlogger,druid ::/0      trust		' >> /var/lib/pgsql/9.6/data/pg_hba.conf
+echo 'local all             all                                     									peer		' >> /var/lib/pgsql/9.6/data/pg_hba.conf
+echo 'host  all             all             127.0.0.1/32            		 							ident		' >> /var/lib/pgsql/9.6/data/pg_hba.conf
+echo 'host  all             all             ::1/128                 		 							ident		' >> /var/lib/pgsql/9.6/data/pg_hba.conf
+
+systemctl enable postgresql-9.6.service
+systemctl start postgresql-9.6.service
+
+echo "CREATE DATABASE streamsmsgmgr;" | sudo -u postgres psql -U postgres -h localhost -p 5433
+echo "CREATE USER streamsmsgmgr WITH PASSWORD 'streamsmsgmgr';" | sudo -u postgres psql -U postgres -h localhost -p 5433
+echo "GRANT ALL PRIVILEGES ON DATABASE streamsmsgmgr TO streamsmsgmgr;" | sudo -u postgres psql -U postgres -h localhost -p 5433
+
 echo "CREATE DATABASE druid;" | sudo -u postgres psql -U postgres
 #echo "CREATE DATABASE ranger;" | sudo -u postgres psql -U postgres
 echo "CREATE DATABASE registry;" | sudo -u postgres psql -U postgres
