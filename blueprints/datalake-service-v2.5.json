@@ -37,8 +37,8 @@
       "ranger-env": {
         "properties_attributes": {},
         "properties": {
-          "admin_password": "admin-password1",
-          "ranger_admin_password": "admin-password1",
+          "admin_password": "{{{ general.password }}}",
+          "ranger_admin_password": "{{{ general.password }}}",
           "is_solrCloud_enabled": "true",
           "ranger-hdfs-plugin-enabled": "Yes",
           "ranger-hive-plugin-enabled": "Yes",
@@ -63,7 +63,7 @@
         "properties": {
           "beacon_store_user": "beaconuser",
           "beacon_store_db_name": "beacondb",
-          "beacon_store_password": "beaconpassword"
+          "beacon_store_password": "{{{ general.password }}}"
         }
       }
     },
@@ -89,7 +89,8 @@
           "dpprofiler.db.type": "h2",
           "dpprofiler.db.jdbc.url": "jdbc:h2:/var/lib/profiler_agent/h2/profileragent;DATABASE_TO_UPPER=false;DB_CLOSE_DELAY=-1",
           "dpprofiler.db.driver": "org.h2.Driver",
-          "dpprofiler.db.slick.driver": "slick.driver.H2Driver$"
+          "dpprofiler.db.slick.driver": "slick.driver.H2Driver$",
+          "dpprofiler.spnego.signature.secret": "123456789101112"
         }
       }
     }
