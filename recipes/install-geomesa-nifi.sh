@@ -16,4 +16,4 @@ unzip geoserver-2.13.2-bin.zip
 cd geoserver-2.13.2/bin
 echo "export GEOSERVER_HOME=/usr/share/geoserver/geoserver-2.13.2" >> ~/.profile
 . ~/.profile
-nohup ./startup.sh > geoserver.log &
+#nohup ./startup.sh > geoserver.log &
