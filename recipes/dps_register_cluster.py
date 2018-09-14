@@ -196,7 +196,7 @@ def check_external_argument(argument_name):
 ##################################################
 
 
-enable_ranger_special_policies()
+#enable_ranger_special_policies()
 
 with open('/opt/metadata/dps.json') as f:
     dps_meta_data = json.load(f)
