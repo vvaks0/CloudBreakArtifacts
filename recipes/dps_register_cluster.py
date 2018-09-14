@@ -232,6 +232,3 @@ cluster_id = str(dps_register_cluster())
 
 print 'Checking for compatible services...'
 dps_enable_cluster_services(cluster_id)
-
-#https://52.211.36.88/api/lakes/6/services
-#https://52.211.36.88/api/services/5/clusters/6/association
