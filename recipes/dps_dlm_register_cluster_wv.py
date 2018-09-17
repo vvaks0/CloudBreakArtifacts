@@ -278,10 +278,11 @@ def dps_register_cluster():
     print 'Waiting for DPS registration to take effect...'
     time.sleep(3)
     
-    newClusterId = str(json.loads(result)['id'])
+    new_cluster_id = str(json.loads(result)['id'])
     payload = '{}'
-    result = requests.post(url=dps_url+dps_lakes_uri + '/'+ newClusterId + '/sync', data=payload, cookies=cookie, headers=headers, verify=False).content
+    result = requests.post(url=dps_url+dps_lakes_uri + '/'+ new_cluster_id + '/sync', data=payload, cookies=cookie, headers=headers, verify=False).content
     print "Sync Result: " + result
+    return new_cluster_id
 
 def get_dlm_cluster_details(target_cluster_name):
     dlm_clusters = json.loads(requests.get(url=dps_url+dlm_clusters_uri, cookies=cookie, headers=headers, verify=False).content)
@@ -304,6 +305,16 @@ def dlm_create_policy(source_cluster, destination_cluster, dataset_name, replica
     payload = '{"policyDefinition": {"name": "'+replicationPolicyName+'","type": "HIVE","sourceCluster": "'+source_cluster['dataCenter']+'$'+source_cluster['name']+'","targetCluster": "'+destination_cluster['dataCenter']+'$'+destination_cluster['name']+'","frequencyInSec": 3600,"sourceDataset": "'+dataset_name+'"},"submitType": "SUBMIT_AND_SCHEDULE"}' 
     print 'Payload: ' + payload
     print 'Result: ' + requests.post(url=dps_url+dlm_clusters_uri+'/'+str(destination_cluster['id'])+'/policy/'+replicationPolicyName+'/submit', cookies=cookie, data=payload, headers=headers, verify=False).content
+
+def dps_enable_cluster_services(cluster_id):
+    cluster_services = json.loads(requests.get(url=dps_url+dps_lakes_uri + '/'+ cluster_id+'/services', cookies=cookie, headers=headers, verify=False).content)
+    for cluster_service in cluster_services:
+        print 'Checking service '+str(cluster_service)
+        if cluster_service['compatible'] == True and cluster_service['enabled'] == False:
+            print 'Enabling service '+cluster_service['sku']['name']+' for cluster_id '+cluster_id
+            service_id = str(cluster_service['sku']['id'])
+            result = requests.put(url=dps_url+dps_services_uri + '/'+ service_id+'/clusters/'+cluster_id+'/association', cookies=cookie, headers=headers, verify=False).content
+            print result
 
 def check_external_argument(argument_name):
     try:
@@ -365,7 +376,10 @@ else:
     ambari_public_url = knox_public_url + '/' + knox_topology + '/ambari'
 
 print 'Registering Cluster with Dataplane: ' + dps_url+dps_lakes_uri
-dps_register_cluster()
+cluster_id = str(dps_register_cluster())
+
+print 'Checking for compatible services...'
+dps_enable_cluster_services(cluster_id)
 
 if check_external_argument(partner_cluster_argument_name) and check_external_argument(initial_dataset_argument_name):
     
