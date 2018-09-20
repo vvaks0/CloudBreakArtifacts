@@ -379,6 +379,9 @@ else:
 print 'Registering Cluster with Dataplane: ' + dps_url+dps_lakes_uri
 cluster_id = str(dps_register_cluster())
 
+print 'Waiting for DPS registration to take effect...'
+time.sleep(5)
+
 print 'Checking for compatible services...'
 dps_enable_cluster_services(cluster_id)
 
