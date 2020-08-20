@@ -29,7 +29,7 @@ yum clean all
 yum install -y yum-utils
 yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 yum repolist
-yum -y install net-tools ntp wget lsof unzip tar iptables-services sed device-mapper-persistent-data lvm2 docker-ce java-1.8.0-openjdk
+yum -y install git net-tools ntp wget lsof unzip tar iptables-services sed device-mapper-persistent-data lvm2 docker-ce java-1.8.0-openjdk
 
 # Environment Setup 
 echo Modifying Environment Settings
