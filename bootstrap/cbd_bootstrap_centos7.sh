@@ -67,6 +67,7 @@ EOF
 git clone https://github.com/vakshorton/certm
 cd certm
 ./build.sh
+cd /root
 
 # Startup
 
